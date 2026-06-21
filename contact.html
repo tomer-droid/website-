@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>צור קשר — Kamir Group</title>
+  <meta name="description" content="דברו עם Kamir Group על קנייה, מכירה או השקעה בנדל\"ן. נחזור אליכם תוך יום עסקים אחד." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
+  <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="brand" aria-label="Kamir Group — דף הבית">
+        <img src="assets/logo-dark.png" alt="KAMIR GROUP" class="brand__logo brand__logo--dark" />
+        <img src="assets/logo-light.png" alt="" aria-hidden="true" class="brand__logo brand__logo--light" />
+      </a>
+      <nav class="nav__links" aria-label="ראשי">
+        <a href="index.html" data-i18n="nav.home">בית</a>
+        <a href="about.html" data-i18n="nav.about">אודות</a>
+        <a href="roadmap.html" data-i18n="nav.process">התהליך</a>
+        <a href="projects.html" data-i18n="nav.projects">פרויקטים</a>
+        <a href="contact.html" class="active" data-i18n="nav.contact">צור קשר</a>
+      </nav>
+      <div class="nav__cta">
+        <button class="lang-btn" data-lang-toggle aria-label="Switch to English">EN</button>
+        <a href="portal.html" class="btn btn-ghost" data-i18n="nav.login">כניסת משקיעים</a>
+        <a href="contact.html" class="btn btn-primary" data-i18n="nav.cta">בואו נעבוד יחד</a>
+      </div>
+      <button class="nav-toggle" aria-label="פתיחת תפריט" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-menu">
+    <a href="index.html" data-i18n="nav.home">בית</a>
+    <a href="about.html" data-i18n="nav.about">אודות</a>
+    <a href="roadmap.html" data-i18n="nav.process">התהליך</a>
+    <a href="projects.html" data-i18n="nav.projects">פרויקטים</a>
+    <a href="contact.html" data-i18n="nav.contact">צור קשר</a>
+    <a href="portal.html" data-i18n="nav.login">כניסת משקיעים</a>
+    <a href="contact.html" class="btn btn-primary" data-i18n="nav.cta">בואו נעבוד יחד</a>
+    <button class="lang-btn" data-lang-toggle aria-label="Switch to English">EN</button>
+  </div>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb reveal"><a href="index.html" data-i18n="nav.home">בית</a> / <span data-i18n="con.crumb">צור קשר</span></div>
+      <span class="eyebrow reveal" data-i18n="con.eyebrow">דברו איתנו</span>
+      <h1 class="reveal" data-delay="1" data-i18n="con.title">בואו נתחיל שיחה</h1>
+      <p class="lead reveal" data-delay="2" data-i18n="con.lead">קונים, מוכרים, או מתעניינים בהשקעה? השאירו פרטים ונחזור אליכם תוך יום עסקים אחד.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT BODY -->
+  <section class="section">
+    <div class="container split">
+      <!-- FORM -->
+      <div class="reveal reveal-left">
+        <div style="background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); padding:clamp(1.6rem,3vw,2.4rem); box-shadow:var(--shadow-sm);">
+          <h2 style="font-size:clamp(1.5rem,2.4vw,2rem); margin-bottom:1.6rem;" data-i18n="con.form.title">שליחת הודעה</h2>
+          <form data-demo novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="c-name" data-i18n="con.f.name">שם מלא</label>
+                <input id="c-name" name="name" type="text" autocomplete="name" required data-i18n-placeholder="con.f.namePh" placeholder="ישראל ישראלי" />
+              </div>
+              <div class="field">
+                <label for="c-phone" data-i18n="con.f.phone">טלפון</label>
+                <input id="c-phone" name="phone" type="tel" autocomplete="tel" data-i18n-placeholder="con.f.phonePh" placeholder="050-000-0000" />
+              </div>
+              <div class="field full">
+                <label for="c-email" data-i18n="con.f.email">אימייל</label>
+                <input id="c-email" name="email" type="email" autocomplete="email" required data-i18n-placeholder="con.f.emailPh" placeholder="name@example.com" />
+              </div>
+              <div class="field full">
+                <label for="c-topic" data-i18n="con.f.topic">נושא הפנייה</label>
+                <select id="c-topic" name="topic">
+                  <option data-i18n="con.f.t1">השקעה / שותפות</option>
+                  <option data-i18n="con.f.t2">קנייה של נכס</option>
+                  <option data-i18n="con.f.t3">מכירת נכס</option>
+                  <option data-i18n="con.f.t4">אחר</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="c-message" data-i18n="con.f.message">הודעה</label>
+                <textarea id="c-message" name="message" data-i18n-placeholder="con.f.messagePh" placeholder="ספרו לנו במה נוכל לעזור..."></textarea>
+              </div>
+              <div class="field full">
+                <button type="submit" class="btn btn-primary btn-arrow" style="width:100%;">
+                  <span data-i18n="con.f.submit">שליחת הודעה</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+                <p class="form-result" role="status" aria-live="polite" style="margin-top:0.8rem; font-weight:600;"></p>
+                <p class="form-note" data-i18n="con.f.note">* נשמור על פרטיותכם. הפרטים משמשים אך ורק ליצירת קשר.</p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="reveal reveal-right">
+        <span class="eyebrow" data-i18n="con.info.title">פרטי התקשרות</span>
+        <div class="info-list" style="margin-top:1.6rem;">
+          <div class="info-item">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+            <div>
+              <span data-i18n="con.info.emailLabel">אימייל</span>
+              <strong><a href="mailto:tomer@shaykes.com">tomer@shaykes.com</a></strong>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L20 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div>
+            <div>
+              <span data-i18n="con.info.phoneLabel">טלפון</span>
+              <strong><a href="tel:+972528022296" dir="ltr">+972 52-802-2296</a></strong>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <div>
+              <span data-i18n="con.info.hoursLabel">שעות פעילות</span>
+              <strong data-i18n="con.info.hoursVal">א׳–ה׳, 9:00–18:00</strong>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+            <div>
+              <span data-i18n="con.info.areaLabel">אזור פעילות</span>
+              <strong data-i18n="con.info.areaVal">אינדיאנה, ארה"ב</strong>
+            </div>
+          </div>
+        </div>
+        <a href="https://wa.me/972528022296" target="_blank" rel="noopener" class="btn btn-primary btn-arrow" style="margin-top:2rem;">
+          <span data-i18n="con.wa">שלחו לנו וואטסאפ</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__about">
+          <a href="index.html" class="brand"><img src="assets/logo-light.png" alt="KAMIR GROUP" class="brand__logo" /></a>
+          <p data-i18n="footer.about">חברת נדל"ן והשקעות. אנחנו רוכשים, משפצים, מוכרים ומשקיעים — עם איכות ויושרה במרכז כל עסקה.</p>
+          <div class="footer__socials">
+            <a href="#" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 8h-2a2 2 0 0 0-2 2v12"/><path d="M8 13h6"/><path d="M18 2a4 4 0 0 0-4 4"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 10v7M7 7v.01M11 17v-4a2 2 0 0 1 4 0v4M11 13v4"/></svg></a>
+          </div>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.companyTitle">החברה</h4>
+          <a href="about.html" data-i18n="footer.aboutus">אודותינו</a>
+          <a href="projects.html" data-i18n="footer.projects">פרויקטים</a>
+          <a href="contact.html" data-i18n="footer.contact">צור קשר</a>
+          <a href="portal.html" data-i18n="footer.portal">אזור משקיעים</a>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.whatTitle">מה אנחנו עושים</h4>
+          <a href="about.html" data-i18n="footer.acq">רכישות</a>
+          <a href="about.html" data-i18n="footer.reno">שיפוצים</a>
+          <a href="about.html" data-i18n="footer.invest">השקעות</a>
+          <a href="projects.html" data-i18n="footer.pastdeals">עסקאות עבר</a>
+        </div>
+        <div class="footer__col">
+          <h4 data-i18n="footer.touchTitle">יצירת קשר</h4>
+          <a href="mailto:tomer@shaykes.com">tomer@shaykes.com</a>
+          <a href="tel:+972528022296">+972 52-802-2296</a>
+          <a href="contact.html" data-i18n="footer.partner">שותפות עסקית</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span id="year"></span> Kamir Group. <span data-i18n="footer.rights">כל הזכויות שמורות.</span></span>
+        <span data-i18n="footer.built">נבנה בקפידה.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

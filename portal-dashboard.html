@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>אזור המשקיע — Kamir Group</title>
+  <meta name="description" content="אזור המשקיע של Kamir Group — נתוני הנכס, דוחות, חלוקות, מסמכים ואנשי קשר." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
+  <link rel="apple-touch-icon" href="assets/favicon-180.png" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav__inner">
+      <a href="index.html" class="brand" aria-label="Kamir Group — דף הבית">
+        <img src="assets/logo-dark.png" alt="KAMIR GROUP" class="brand__logo brand__logo--dark" />
+        <img src="assets/logo-light.png" alt="" aria-hidden="true" class="brand__logo brand__logo--light" />
+      </a>
+      <nav class="nav__links" aria-label="ראשי">
+        <a href="index.html" data-i18n="nav.home">בית</a>
+        <a href="about.html" data-i18n="nav.about">אודות</a>
+        <a href="roadmap.html" data-i18n="nav.process">התהליך</a>
+        <a href="projects.html" data-i18n="nav.projects">פרויקטים</a>
+        <a href="contact.html" data-i18n="nav.contact">צור קשר</a>
+      </nav>
+      <div class="nav__cta">
+        <button class="lang-btn" data-lang-toggle aria-label="Switch to English">EN</button>
+        <a href="portal.html" class="btn btn-ghost active" data-i18n="nav.login">כניסת משקיעים</a>
+        <a href="contact.html" class="btn btn-primary" data-i18n="nav.cta">בואו נעבוד יחד</a>
+      </div>
+      <button class="nav-toggle" aria-label="פתיחת תפריט" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-menu">
+    <a href="index.html" data-i18n="nav.home">בית</a>
+    <a href="about.html" data-i18n="nav.about">אודות</a>
+    <a href="roadmap.html" data-i18n="nav.process">התהליך</a>
+    <a href="projects.html" data-i18n="nav.projects">פרויקטים</a>
+    <a href="contact.html" data-i18n="nav.contact">צור קשר</a>
+    <a href="portal.html" data-i18n="nav.login">כניסת משקיעים</a>
+    <a href="contact.html" class="btn btn-primary" data-i18n="nav.cta">בואו נעבוד יחד</a>
+    <button class="lang-btn" data-lang-toggle aria-label="Switch to English">EN</button>
+  </div>
+
+  <!-- INVESTOR DASHBOARD (rendered by js/portal.js) -->
+  <main id="portal-app" aria-live="polite"></main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__bottom" style="border:0;">
+        <span>© <span id="year"></span> Kamir Group. <span data-i18n="footer.rights">כל הזכויות שמורות.</span></span>
+        <span data-i18n="footer.built">נבנה בקפידה.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/portal-data.js"></script>
+  <script src="js/portal.js"></script>
+</body>
+</html>

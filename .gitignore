@@ -1,0 +1,15 @@
+# OS / editor junk
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Large source media — NOT part of the website (kept locally only)
+# 55GB of raw videos/zips; GitHub rejects files >100MB.
+סרטונים/
+
+# Local-only tooling config
+.claude/settings.local.json
+
+# Logs / temp
+*.log
+.cache/
