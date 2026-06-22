@@ -240,7 +240,8 @@
     sheet: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'),
     upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>'),
     ext: svg('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>'),
-    shield: svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>')
+    shield: svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+    folder: svg('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>')
   };
 
   var activeTab = "overview";
@@ -300,6 +301,29 @@
       '<span class="ftile__value">' + value + "</span></div>";
   }
 
+  /* Donut chart: segments = [{tone, label, value}]. Renders an SVG ring
+     (drawn from 12 o'clock clockwise) with a value in the middle. */
+  function donutChart(segments, centerTop, centerBottom, aria) {
+    var total = segments.reduce(function (s, x) { return s + Math.max(0, x.value); }, 0) || 1;
+    var R = 54, CX = 70, CY = 70;
+    var C = 2 * Math.PI * R;
+    var off = 0;
+    var ring = segments.map(function (seg) {
+      var len = (Math.max(0, seg.value) / total) * C;
+      var dash = len.toFixed(2) + " " + (C - len).toFixed(2);
+      var c = '<circle class="fdonut__seg fdonut__seg--' + seg.tone + '" r="' + R + '" cx="' + CX + '" cy="' + CY + '"' +
+        ' stroke-dasharray="' + dash + '" stroke-dashoffset="' + (-off).toFixed(2) + '"></circle>';
+      off += len;
+      return c;
+    }).join("");
+    return '<svg class="fdonut" viewBox="0 0 140 140" role="img" aria-label="' + esc(aria || "") + '">' +
+      '<circle class="fdonut__track" r="' + R + '" cx="' + CX + '" cy="' + CY + '"></circle>' +
+      '<g transform="rotate(-90 ' + CX + ' ' + CY + ')">' + ring + "</g>" +
+      '<text class="fdonut__top" x="' + CX + '" y="' + (CY - 2) + '" text-anchor="middle">' + esc(centerTop) + "</text>" +
+      '<text class="fdonut__bottom" x="' + CX + '" y="' + (CY + 16) + '" text-anchor="middle">' + esc(centerBottom) + "</text>" +
+      "</svg>";
+  }
+
   function renderFinancials(p) {
     var f = p.financials;
 
@@ -327,27 +351,54 @@
       "</div>" +
       (f.interestRate ? '<p class="fnote">' + esc(ui("interestRate")) + ': <b>' + f.interestRate + "%</b></p>" : "");
 
-    /* ---- 3. monthly cashflow waterfall ---- */
+    /* ---- 3. monthly cashflow — donut + plain-language in/out/keep ---- */
     var gross = f.grossRent || 0;
-    function flowRow(label, amt, tone) {
-      var pct = gross > 0 ? Math.min(100, Math.round((Math.abs(amt) / gross) * 100)) : 0;
-      var sign = tone === "neg" ? "−" : "";
-      return '<div class="fflow">' +
-        '<div class="fflow__head"><span>' + esc(label) + '</span><b class="' + (tone || "") + '">' + sign + money(Math.abs(amt)) + "</b></div>" +
-        '<div class="fflow__track"><span class="fflow__fill fflow__fill--' + (tone || "pos") + '" style="width:' + pct + '%"></span></div>' +
+    var totalOut = (f.monthlyMortgage || 0) + (f.monthlyInsurance || 0) + (f.monthlyOperating || 0);
+
+    var segs = [
+      { tone: "net",  label: ui("youKeep"),    value: f.netCashflow },
+      f.monthlyMortgage  > 0 ? { tone: "loan", label: ui("mortgagePay"), value: f.monthlyMortgage }  : null,
+      f.monthlyInsurance > 0 ? { tone: "ins",  label: ui("insurance"),   value: f.monthlyInsurance } : null,
+      f.monthlyOperating > 0 ? { tone: "op",   label: ui("operating"),   value: f.monthlyOperating } : null
+    ].filter(Boolean);
+
+    var legend = segs.map(function (s) {
+      var pct = gross > 0 ? Math.round((s.value / gross) * 100) : 0;
+      return '<li class="fleg"><span class="fleg__dot fleg__dot--' + s.tone + '"></span>' +
+        '<span class="fleg__label">' + esc(s.label) + "</span>" +
+        '<span class="fleg__val">' + money(s.value) + ' <small>' + pct + "%</small></span></li>";
+    }).join("");
+
+    var donut =
+      '<div class="fdonut-wrap">' +
+        donutChart(segs, money(gross), ui("perMonth"), ui("finMonthlyFlow") + " — " + money(gross)) +
+        '<ul class="flegend2">' + legend + "</ul>" +
       "</div>";
-    }
-    var flow =
-      flowRow(ui("grossRent"), gross, "pos") +
-      (f.monthlyMortgage > 0 ? flowRow(ui("mortgagePay"), f.monthlyMortgage, "neg") : "") +
-      (f.monthlyInsurance > 0 ? flowRow(ui("insurance"), f.monthlyInsurance, "neg") : "") +
-      (f.monthlyOperating > 0 ? flowRow(ui("operating"), f.monthlyOperating, "neg") : "");
-    var netPct = gross > 0 ? Math.min(100, Math.round((f.netCashflow / gross) * 100)) : 0;
-    var netBlock =
-      '<div class="fnet">' +
-        '<div class="fnet__head"><span>' + esc(ui("netCashflow")) + '</span><b>' + money(f.netCashflow) + " <small>" + ui("perMonth") + "</small></b></div>" +
-        '<div class="fflow__track"><span class="fflow__fill fflow__fill--net" style="width:' + netPct + '%"></span></div>' +
-        '<p class="fnet__yield">' + esc(ui("cashOnCash")) + ': <b>' + f.cashOnCash + "%</b></p>" +
+
+    /* plain-language money in -> out -> keep */
+    var keepPct = gross > 0 ? Math.round((f.netCashflow / gross) * 100) : 0;
+    var inout =
+      '<div class="fio">' +
+        '<div class="fio__item fio__item--in">' +
+          '<span class="fio__k">' + ui("moneyIn") + "</span>" +
+          '<span class="fio__v">' + money(gross) + "</span>" +
+          '<span class="fio__s">' + ui("perMonth") + "</span></div>" +
+        '<div class="fio__op">−</div>' +
+        '<div class="fio__item fio__item--out">' +
+          '<span class="fio__k">' + ui("moneyOut") + "</span>" +
+          '<span class="fio__v">' + money(totalOut) + "</span>" +
+          '<span class="fio__s">' + ui("moneyOutSub") + "</span></div>" +
+        '<div class="fio__op">=</div>' +
+        '<div class="fio__item fio__item--keep">' +
+          '<span class="fio__k">' + ui("youKeep") + "</span>" +
+          '<span class="fio__v">' + money(f.netCashflow) + "</span>" +
+          '<span class="fio__s">' + keepPct + "% " + ui("ofRent") + "</span></div>" +
+      "</div>";
+
+    var monthlyCard =
+      '<div class="pcard fmonthly">' +
+        '<h3 class="pcard__title">' + ui("finMonthlyFlow") + "</h3>" +
+        donut + inout +
       "</div>";
 
     /* ---- 4. full purchase + renovation ledger ---- */
@@ -375,10 +426,9 @@
     }
 
     return '<div class="fhead">' + tiles + "</div>" +
-      '<div class="pgrid pgrid--2">' +
-        '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>" +
-        '<div class="pcard"><h3 class="pcard__title">' + ui("finMonthlyFlow") + "</h3>" + flow + netBlock + "</div>" +
-      "</div>" + ledger;
+      monthlyCard +
+      '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>" +
+      ledger;
   }
 
   function renderDistributions(p) {
@@ -419,18 +469,49 @@
   }
 
   function photoFigure(ph) {
-    return '<figure class="pphoto" data-full="' + esc(ph.src) + '" tabindex="0" role="button" aria-label="' + esc(L(ph.caption)) + '">' +
-      '<img src="' + esc(ph.src) + '" alt="' + esc(L(ph.caption)) + '" loading="lazy" />' +
-      "<figcaption>" + esc(L(ph.caption)) + "</figcaption></figure>";
+    var cap = L(ph.caption);
+    return '<figure class="pphoto" data-full="' + esc(ph.src) + '" tabindex="0" role="button" aria-label="' + esc(cap || ui("tabPhotos")) + '">' +
+      '<img src="' + esc(ph.src) + '" alt="' + esc(cap) + '" loading="lazy" />' +
+      (cap ? "<figcaption>" + esc(cap) + "</figcaption>" : "") + "</figure>";
   }
   function renderPhotos(p) {
-    var ext = p.photos.exterior.map(photoFigure).join("");
-    var int = p.photos.interior.map(photoFigure).join("");
+    var ph = p.photos || {};
+    /* New shape: a single flat gallery of all photos. */
+    if (Array.isArray(ph.gallery) && ph.gallery.length) {
+      var cells = ph.gallery.map(photoFigure).join("");
+      return '<p class="psection__intro">' + ui("photosIntro") + "</p>" +
+        '<div class="pcard"><div class="pgallery pgallery--all">' + cells + "</div></div>";
+    }
+    /* Legacy shape: separate exterior / interior lists. */
+    var ext = (ph.exterior || []).map(photoFigure).join("");
+    var int = (ph.interior || []).map(photoFigure).join("");
     return '<div class="pcard"><h3 class="pcard__title">' + ui("photosExterior") + '</h3><div class="pgallery">' + ext + "</div></div>" +
-      '<div class="pcard"><h3 class="pcard__title">' + ui("photosInterior") + '</h3><div class="pgallery">' + int + "</div></div>";
+      ((ph.interior && ph.interior.length)
+        ? '<div class="pcard"><h3 class="pcard__title">' + ui("photosInterior") + '</h3><div class="pgallery">' + int + "</div></div>"
+        : "");
   }
 
   function renderDocuments(p) {
+    /* Drive folders for this property — the files stay in Google Drive,
+       the investor opens them straight from the portal in a new tab.
+       Shared rendering; the folder links themselves are per-property data. */
+    var folders = p.driveFolders || [];
+    var folderCards = folders.map(function (fo) {
+      return '<a class="pcard pdrivefolder" href="' + esc(fo.url) + '" target="_blank" rel="noopener" aria-label="' + esc(L(fo.title)) + '">' +
+        '<span class="pdrivefolder__icon">' + ICONS.folder + "</span>" +
+        '<span class="pdrivefolder__body">' +
+          "<b>" + esc(L(fo.title)) + "</b>" +
+          (L(fo.desc) ? "<p>" + esc(L(fo.desc)) + "</p>" : "") +
+        "</span>" +
+        '<span class="pdrivefolder__ext">' + ICONS.ext + "<span>" + ui("openDrive") + "</span></span>" +
+        "</a>";
+    }).join("");
+    var foldersBlock = folders.length
+      ? '<div class="pcard"><h3 class="pcard__title">' + ui("driveFoldersTitle") + "</h3>" +
+          '<p class="pcard__sub">' + ui("driveFoldersIntro") + "</p>" +
+          '<div class="pdrivefolders">' + folderCards + "</div></div>"
+      : "";
+
     var docs = p.documents || [];
     var items = docs.map(function (d) {
       return '<div class="pdoc" data-demo-doc>' +
@@ -467,7 +548,7 @@
           "</div>" +
         "</div>";
 
-    return '<p class="psection__intro">' + ui("docsIntro") + "</p>" + uploader + list;
+    return '<p class="psection__intro">' + ui("docsIntro") + "</p>" + foldersBlock + uploader + list;
   }
 
   function renderContacts() {

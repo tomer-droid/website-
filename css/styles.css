@@ -1451,6 +1451,18 @@ html[dir="ltr"] .addr-ltr { text-align: left; }
 .home .nav:not(.scrolled) .lang-btn { color: #F6EFE3; border-color: rgba(246,239,227,0.4); }
 .home .nav:not(.scrolled) .lang-btn:hover { color: #fff; border-color: #fff; }
 .home .nav:not(.scrolled) .nav-toggle span { background: #F6EFE3; }
+/* Investor-login (ghost) button: keep it clearly visible over the dark hero */
+.home .nav:not(.scrolled) .btn-ghost {
+  color: #FFFFFF;
+  border-color: rgba(246,239,227,0.65);
+  background: rgba(255,255,255,0.10);
+  backdrop-filter: saturate(120%) blur(2px);
+}
+.home .nav:not(.scrolled) .btn-ghost:hover {
+  color: #fff;
+  border-color: #fff;
+  background: rgba(255,255,255,0.18);
+}
 
 /* ============================================================
    Hebrew typography (applied when <html lang="he">)
@@ -1710,6 +1722,13 @@ html[dir="rtl"] .padminbar__pick select {
   background: linear-gradient(0deg, rgba(20,20,20,0.7), transparent);
 }
 .pphoto:focus-visible { outline: 3px solid var(--ochre); outline-offset: 2px; }
+/* full gallery: responsive auto-fill so all photos sit in a clean grid */
+.pgallery--all { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0.7rem; }
+.pgallery--all .pphoto img { height: 150px; }
+@media (max-width: 560px) {
+  .pgallery--all { grid-template-columns: repeat(2, 1fr); }
+  .pgallery--all .pphoto img { height: 130px; }
+}
 
 /* lightbox */
 .plightbox { position: fixed; inset: 0; z-index: 2000; background: rgba(20,20,20,0.9); display: grid; place-items: center; padding: 4vw; }
@@ -1727,6 +1746,27 @@ html[dir="rtl"] .padminbar__pick select {
 .pdoc__meta { font-size: 0.78rem; color: var(--ink-soft); }
 .pdoc__dl { flex: 0 0 auto; background: transparent; border: 1px solid var(--line); border-radius: 9px; color: var(--ink-soft); padding: 0.4rem; cursor: pointer; transition: all 0.2s var(--ease); }
 .pdoc__dl:hover { color: var(--clay); border-color: var(--clay); }
+
+/* Drive folders (per property) */
+.pcard__sub { margin: -0.4rem 0 1rem; font-size: 0.85rem; color: var(--ink-soft); }
+.pdrivefolders { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.9rem; }
+.pdrivefolder {
+  display: flex; align-items: center; gap: 0.9rem; padding: 1rem;
+  border: 1px solid var(--line); border-radius: 14px; background: var(--paper);
+  text-decoration: none; transition: all 0.2s var(--ease);
+}
+.pdrivefolder:hover { border-color: var(--clay); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.pdrivefolder__icon { flex: 0 0 auto; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: rgba(180,95,60,0.1); color: var(--clay); }
+.pdrivefolder__icon svg { width: 22px; height: 22px; }
+.pdrivefolder__body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+.pdrivefolder__body b { font-weight: 600; color: var(--ink); font-size: 0.95rem; }
+.pdrivefolder__body p { margin: 0; font-size: 0.8rem; color: var(--ink-soft); }
+.pdrivefolder__ext { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; font-weight: 600; color: var(--clay); }
+.pdrivefolder__ext svg { width: 15px; height: 15px; }
+@media (max-width: 560px) {
+  .pdrivefolders { grid-template-columns: 1fr; }
+  .pdrivefolder__ext span { display: none; }
+}
 
 /* contacts */
 .pcontact h3 { font-size: 1.1rem; margin: 0 0 0.2rem; }
@@ -1843,6 +1883,56 @@ html[dir="rtl"] .padminbar__pick select {
 .fnet__yield b { color: var(--sage); font-weight: 700; }
 .fnote { margin: 0.9rem 0 0; padding-top: 0.8rem; border-top: 1px dashed var(--line); font-size: 0.9rem; color: var(--ink-soft); }
 .fnote b { color: var(--ink); font-weight: 700; }
+
+/* ---- monthly cashflow: donut + plain-language in/out/keep ---- */
+.fmonthly { margin-bottom: 1.4rem; }
+.fdonut-wrap {
+  display: flex; align-items: center; gap: clamp(1.2rem, 4vw, 2.6rem);
+  flex-wrap: wrap; margin: 0.4rem 0 0.6rem;
+}
+.fdonut { width: clamp(150px, 38vw, 200px); height: auto; flex: 0 0 auto; }
+.fdonut__track { fill: none; stroke: var(--cream); stroke-width: 16; }
+.fdonut__seg { fill: none; stroke-width: 16; stroke-linecap: butt; }
+.fdonut__seg--net  { stroke: var(--sage); }
+.fdonut__seg--loan { stroke: var(--ink); }
+.fdonut__seg--ins  { stroke: var(--ochre); }
+.fdonut__seg--op   { stroke: var(--clay); }
+.fdonut__top { font-family: var(--font-display); font-size: 19px; font-weight: 700; fill: var(--ink); }
+.fdonut__bottom { font-family: var(--font-body); font-size: 9px; fill: var(--ink-soft); letter-spacing: 0.04em; }
+@media (prefers-reduced-motion: no-preference) {
+  .fdonut__seg { transition: stroke-dasharray 0.6s var(--ease); }
+}
+.flegend2 { list-style: none; margin: 0; padding: 0; flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; gap: 0.6rem; }
+.fleg { display: flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; }
+.fleg__dot { width: 12px; height: 12px; border-radius: 4px; flex: 0 0 auto; }
+.fleg__dot--net  { background: var(--sage); }
+.fleg__dot--loan { background: var(--ink); }
+.fleg__dot--ins  { background: var(--ochre); }
+.fleg__dot--op   { background: var(--clay); }
+.fleg__label { color: var(--ink); }
+.fleg__val { margin-inline-start: auto; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fleg__val small { font-weight: 500; color: var(--ink-soft); font-size: 0.78em; margin-inline-start: 0.25rem; }
+
+.fio {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch;
+  gap: 0.6rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px dashed var(--line);
+}
+.fio__item { background: var(--cream); border-radius: 14px; padding: 0.9rem 1rem; text-align: center; border: 1px solid var(--line); }
+.fio__item--in   { border-color: rgba(110,114,87,0.35); }
+.fio__item--out  { border-color: rgba(178,69,47,0.30); }
+.fio__item--keep { background: var(--sage); border-color: var(--sage); }
+.fio__k { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 0.25rem; }
+.fio__item--keep .fio__k { color: rgba(255,255,255,0.85); }
+.fio__v { display: block; font-family: var(--font-display); font-size: clamp(1.25rem, 3.4vw, 1.7rem); font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fio__item--out .fio__v { color: var(--clay); }
+.fio__item--keep .fio__v { color: #fff; }
+.fio__s { display: block; font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.2rem; }
+.fio__item--keep .fio__s { color: rgba(255,255,255,0.9); }
+.fio__op { align-self: center; font-family: var(--font-display); font-size: 1.6rem; color: var(--ink-soft); }
+@media (max-width: 640px) {
+  .fio { grid-template-columns: 1fr; }
+  .fio__op { transform: rotate(90deg); justify-self: center; font-size: 1.2rem; }
+}
 
 /* Zillow link on the property hero */
 .pzillow {

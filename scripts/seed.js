@@ -116,6 +116,15 @@ const media = [
   }
 ];
 
+/* Build a flat photo gallery: assets/properties/<dir>/01.jpg … NN.jpg */
+function gallery(dir, count) {
+  const arr = [];
+  for (let i = 1; i <= count; i++) {
+    arr.push({ src: "assets/properties/" + dir + "/" + String(i).padStart(2, "0") + ".jpg" });
+  }
+  return arr;
+}
+
 /* ============================================================
    MANAGERS (admins) — accounts that may preview ANY investor's
    portal from the browser (the "Manager view" picker in the portal).
@@ -150,13 +159,13 @@ const sampleInvestor = {
       order: 1,
       name:    { he: "1216 E Jefferson Blvd", en: "1216 E Jefferson Blvd" },
       address: "1216 E Jefferson Blvd",
-      city:    { he: "משוואקה, אינדיאנה 46545", en: "Mishawaka, Indiana 46545" },
+      city:    { he: "Mishawaka, Indiana 46545", en: "Mishawaka, Indiana 46545" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
       tenant:  { he: "מאוכלס", en: "Occupied" },
       leaseStart: { he: "16 ביוני 2025", en: "June 16, 2025" },
       leaseEnd:   { he: "סוף אפריל 2027", en: "End of April 2027" },
       zillowUrl: "https://www.zillow.com/homes/1216-E-Jefferson-Blvd-Mishawaka-IN-46545_rb/",
-      hero: "assets/properties/jefferson.jpg",
+      hero: "assets/properties/jefferson/01.jpg",
       specs: {
         beds: 3, baths: 2, sqft: "1,100", year: "—",
         type: { he: "בית פרטי", en: "Single-family home" }
@@ -209,12 +218,14 @@ const sampleInvestor = {
         { period: { he: "מרץ 2026", en: "March 2026" }, gross: 1950, mortgage: 0, insurance: 0, operating: 300.50, net: 1649.50, status: { he: "שולם", en: "Paid" } },
         { period: { he: "אפריל 2026", en: "April 2026" }, gross: 1375, mortgage: 0, insurance: 0, operating: 337.25, net: 1037.75, status: { he: "שולם", en: "Paid" } }
       ],
-      photos: {
-        exterior: [
-          { src: "assets/properties/jefferson.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
-        ],
-        interior: []
-      },
+      photos: { gallery: gallery("jefferson", 16) },
+      driveFolders: [
+        {
+          title: { he: "תיקיית הנכס — 1216 E Jefferson Blvd", en: "Property folder — 1216 E Jefferson Blvd" },
+          desc:  { he: "כל מסמכי הקנייה, השיפוץ והתיעוד של הנכס ב-Drive", en: "All purchase, renovation and documentation files on Drive" },
+          url:   "https://drive.google.com/drive/folders/1QnD5yNldT-W7lzDZbfgvGjepTC7UxI4R"
+        }
+      ],
       documents: []
     },
     /* ----------------------------------------------------------
@@ -229,14 +240,14 @@ const sampleInvestor = {
       order: 2,
       name:    { he: "636 S 25th St", en: "636 S 25th St" },
       address: "636 S 25th St",
-      city:    { he: "סאות' בנד, אינדיאנה 46615", en: "South Bend, Indiana 46615" },
+      city:    { he: "South Bend, Indiana 46615", en: "South Bend, Indiana 46615" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
       tenant:  { he: "מאוכלס", en: "Occupied" },
       /* TODO: lease dates for 636 — fill once confirmed by the owner */
       leaseStart: null,
       leaseEnd:   null,
       zillowUrl: "https://www.zillow.com/homes/636-S-25th-St-South-Bend-IN-46615_rb/",
-      hero: "assets/properties/s25th.jpg",
+      hero: "assets/properties/s25th/01.jpg",
       specs: {
         beds: 4, baths: 2, sqft: "1,800", year: "1907",
         type: { he: "בית פרטי", en: "Single-family home" }
@@ -286,12 +297,14 @@ const sampleInvestor = {
         { period: { he: "מרץ 2026", en: "March 2026" }, gross: 2000, mortgage: 1034, insurance: 0, operating: 257.97, net: 708.03, status: { he: "שולם", en: "Paid" } },
         { period: { he: "אפריל 2026", en: "April 2026" }, gross: 1419.35, mortgage: 1034, insurance: 0, operating: 99.35, net: 286.00, status: { he: "שולם", en: "Paid" } }
       ],
-      photos: {
-        exterior: [
-          { src: "assets/properties/s25th.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
-        ],
-        interior: []
-      },
+      photos: { gallery: gallery("s25th", 15) },
+      driveFolders: [
+        {
+          title: { he: "תיקיית הנכס — 636 S 25th St", en: "Property folder — 636 S 25th St" },
+          desc:  { he: "כל מסמכי הקנייה, השיפוץ והתיעוד של הנכס ב-Drive", en: "All purchase, renovation and documentation files on Drive" },
+          url:   "https://drive.google.com/drive/folders/1elO6O3tjUuCVhq3ALz_2ttZvlJcziAs1"
+        }
+      ],
       documents: []
     }
   ]

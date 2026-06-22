@@ -70,7 +70,12 @@
     noLoan:       { he: "ללא הלוואה — 100% הון עצמי",         en: "No loan — 100% equity" },
     /* financials — visual dashboard */
     finValueEquity:{ he: "שווי והון עצמי",                   en: "Value & equity" },
-    finMonthlyFlow:{ he: "תזרים חודשי",                      en: "Monthly cash flow" },
+    finMonthlyFlow:{ he: "לאן הולכת השכירות",                en: "Where the rent goes" },
+    moneyIn:      { he: "נכנס (שכירות)",                     en: "Comes in (rent)" },
+    moneyOut:     { he: "יוצא (הוצאות)",                     en: "Goes out (expenses)" },
+    moneyOutSub:  { he: "משכנתא · ביטוח · תפעול",            en: "Mortgage · insurance · operating" },
+    youKeep:      { he: "נשאר לך נטו",                       en: "You keep (net)" },
+    ofRent:       { he: "מהשכירות",                          en: "of rent" },
     finLedger:    { he: "פירוט הרכישה והשיפוץ",              en: "Purchase & renovation ledger" },
     interestRate: { he: "ריבית המשכנתא",                     en: "Mortgage interest rate" },
     openSheet:    { he: "פתיחת הגיליון המלא ↗",              en: "Open the full spreadsheet ↗" },
@@ -94,8 +99,11 @@
     /* photos */
     photosExterior:{ he: "חוץ",                               en: "Exterior" },
     photosInterior:{ he: "פנים",                              en: "Interior" },
+    photosIntro:  { he: "צילומים מקצועיים של הנכס. לחצו על תמונה להגדלה.", en: "Professional photos of the property. Click any photo to enlarge." },
     /* documents */
     docsIntro:    { he: "כל מסמכי הקנייה, הקבלות ומסמכי החברה — במקום אחד. אפשר גם להעלות מסמכים משלכם.", en: "All purchase documents, receipts and company papers — in one place. You can also upload your own." },
+    driveFoldersTitle: { he: "תיקיות הנכס ב-Drive",            en: "Property folders on Drive" },
+    driveFoldersIntro: { he: "המסמכים נשמרים ב-Google Drive. לחצו לפתיחת התיקייה בכרטיסייה חדשה.", en: "The files live in Google Drive. Click to open the folder in a new tab." },
     download:     { he: "הורדה",                              en: "Download" },
     docDemoMsg:   { he: "המסמך יהיה זמין להורדה בקרוב. בינתיים נשמח לשלוח עותק — פנו אלינו.", en: "This document will be downloadable soon. In the meantime we're happy to send a copy — just reach out." },
     docsEmpty:    { he: "עדיין לא הועלו מסמכים לנכס זה.",       en: "No documents have been added for this property yet." },
