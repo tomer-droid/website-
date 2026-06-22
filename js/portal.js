@@ -470,43 +470,44 @@
         inout + views +
       "</div>";
 
-    /* ---- 4. full purchase + renovation ledger ---- */
-    var ledger = "";
-    if (p.expenses && p.expenses.length) {
-      var total = 0;
-      var body = p.expenses.map(function (e) {
-        total += Number(e.amount) || 0;
-        return "<tr><td>" + esc(L(e.label)) + "</td><td class='fmuted'>" + esc(e.vendor || "") + "</td>" +
-          "<td class='fnum'>" + money(e.amount) + "</td></tr>";
-      }).join("");
-      var sheetBtn = p.sheetUrl
-        ? '<a class="pbtn pbtn--ghost fledger__sheet" href="' + esc(p.sheetUrl) + '" target="_blank" rel="noopener">' +
-            ICONS.sheet + "<span>" + ui("openSheet") + "</span></a>"
-        : "";
-      ledger =
-        '<div class="pcard fledger">' +
-          '<div class="fledger__head"><h3 class="pcard__title">' + ui("finLedger") + "</h3>" + sheetBtn + "</div>" +
-          '<div class="ptable-wrap"><table class="ptable ftable"><thead><tr>' +
-            "<th>" + ui("colItem") + "</th><th>" + ui("colVendor") + "</th><th class='fnum'>" + ui("colAmount") + "</th>" +
-          "</tr></thead><tbody>" + body +
-          "<tr class='ftable__total'><td colspan='2'>" + ui("totalSpent") + "</td><td class='fnum'>" + money(total) + "</td></tr>" +
-          "</tbody></table></div>" +
-        "</div>";
-    }
-
     return '<div class="fhead">' + tiles + "</div>" +
       monthlyCard +
-      '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>" +
-      ledger;
+      '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>";
+  }
+
+  /* Full purchase + renovation ledger — lives in the Payments & Distributions
+     tab (it's the money paid out on the property, not part of the monthly
+     cashflow snapshot). Shared rendering; the line items are per-property. */
+  function renovationLedger(p) {
+    if (!p.expenses || !p.expenses.length) return "";
+    var total = 0;
+    var body = p.expenses.map(function (e) {
+      total += Number(e.amount) || 0;
+      return "<tr><td>" + esc(L(e.label)) + "</td><td class='fmuted'>" + esc(e.vendor || "") + "</td>" +
+        "<td class='fnum'>" + money(e.amount) + "</td></tr>";
+    }).join("");
+    var sheetBtn = p.sheetUrl
+      ? '<a class="pbtn pbtn--ghost fledger__sheet" href="' + esc(p.sheetUrl) + '" target="_blank" rel="noopener">' +
+          ICONS.sheet + "<span>" + ui("openSheet") + "</span></a>"
+      : "";
+    return '<div class="pcard fledger">' +
+        '<div class="fledger__head"><h3 class="pcard__title">' + ui("finLedger") + "</h3>" + sheetBtn + "</div>" +
+        '<div class="ptable-wrap"><table class="ptable ftable"><thead><tr>' +
+          "<th>" + ui("colItem") + "</th><th>" + ui("colVendor") + "</th><th class='fnum'>" + ui("colAmount") + "</th>" +
+        "</tr></thead><tbody>" + body +
+        "<tr class='ftable__total'><td colspan='2'>" + ui("totalSpent") + "</td><td class='fnum'>" + money(total) + "</td></tr>" +
+        "</tbody></table></div>" +
+      "</div>";
   }
 
   function renderDistributions(p) {
     var next = null;
+    var ledger = renovationLedger(p);
     var dists = p.distributions || [];
     if (!dists.length) {
       return '<p class="psection__intro">' + ui("distIntro") + "</p>" +
         '<div class="pcard pempty">' + ICONS.dist +
-        "<p>" + ui("distEmpty") + "</p></div>";
+        "<p>" + ui("distEmpty") + "</p></div>" + ledger;
     }
     var body = dists.map(function (d) {
       var paid = d.status === "paid" ||
@@ -534,7 +535,7 @@
         "<th>" + ui("colPeriod") + "</th><th>" + ui("colGross") + "</th><th>" + ui("colMortgage") +
         "</th><th>" + ui("colInsurance") + "</th><th>" + ui("colOperating") + "</th><th>" +
         ui("colNet") + "</th><th>" + ui("colStatus") + "</th>" +
-      "</tr></thead><tbody>" + body + "</tbody></table></div>";
+      "</tr></thead><tbody>" + body + "</tbody></table></div>" + ledger;
   }
 
   function photoFigure(ph) {
