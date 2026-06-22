@@ -130,7 +130,12 @@
     noAccessMsg:    { he: "נכנסתם עם החשבון {email}, אבל הוא עדיין לא מחובר לאזור המשקיעים. אם אתם משקיעים שלנו — פנו אלינו ונחבר אתכם.", en: "You signed in as {email}, but it isn't linked to an investor account yet. If you're one of our investors, contact us and we'll set it up." },
     switchAccount:  { he: "התחברות עם חשבון אחר",             en: "Use a different account" },
     contactUs:      { he: "צרו קשר",                          en: "Contact us" },
-    configMissing:  { he: "אזור המשקיעים נמצא בהגדרה. נסו שוב בקרוב.", en: "The investor area is being set up. Please check back soon." }
+    configMissing:  { he: "אזור המשקיעים נמצא בהגדרה. נסו שוב בקרוב.", en: "The investor area is being set up. Please check back soon." },
+
+    /* ---- admin (manager preview) ---- */
+    adminMode:      { he: "מצב מנהל",                          en: "Manager view" },
+    adminViewing:   { he: "צופים בתיק של",                     en: "Viewing portfolio of" },
+    adminNoInvestors:{ he: "עדיין אין משקיעים במערכת. הוסיפו משקיע ראשון כדי לצפות בתיק שלו כאן.", en: "There are no investors yet. Add your first investor to preview their portfolio here." }
   };
 
   /* DATA is filled at runtime from Firestore after sign-in. */

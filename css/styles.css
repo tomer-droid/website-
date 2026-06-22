@@ -1544,6 +1544,43 @@ html[dir="rtl"] .link-arrow svg { transform: scaleX(-1); }
    Investor Portal — dashboard
    ============================================================ */
 .pdash { padding: 7.5rem 0 4rem; background: var(--cream); min-height: 80vh; }
+
+/* admin (manager preview) bar */
+.padminbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.8rem 1.2rem;
+  margin-bottom: 1.4rem; padding: 0.7rem 1rem;
+  background: var(--ink); color: var(--paper);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
+}
+.padminbar__tag {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.padminbar__tag svg { width: 18px; height: 18px; color: var(--ochre); }
+.padminbar__pick { display: inline-flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+.padminbar__pick > span { font-size: 0.85rem; opacity: 0.78; }
+.padminbar__pick select {
+  font: inherit; font-size: 0.9rem; color: var(--ink);
+  background: var(--paper); border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px; padding: 0.5rem 2.2rem 0.5rem 0.95rem;
+  cursor: pointer; max-width: min(78vw, 360px);
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23232323' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.85rem center;
+}
+html[dir="rtl"] .padminbar__pick select {
+  padding: 0.5rem 0.95rem 0.5rem 2.2rem;
+  background-position: left 0.85rem center;
+}
+.padminbar__pick select:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+@media (max-width: 600px) {
+  .padminbar { align-items: stretch; }
+  .padminbar__pick { width: 100%; }
+  .padminbar__pick select { flex: 1 1 auto; max-width: 100%; }
+}
+
 .pdash__top {
   display: flex; align-items: flex-start; justify-content: space-between;
   flex-wrap: wrap; gap: 1rem; margin-bottom: 0.4rem;

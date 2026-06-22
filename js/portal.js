@@ -58,38 +58,82 @@
     });
   }
 
+  /* ---- Admin (manager preview) state ----
+     An admin account (listed in config/admins) can view ANY investor's
+     portal in the browser via the picker in the admin bar. Regular
+     investors only ever see their own data. */
+  var IS_ADMIN = false;        // is the signed-in user a manager?
+  var INVESTOR_LIST = [];      // [{key, name}] — populated for admins only
+  var ADMIN_VIEW_KEY = null;   // emailKey of the investor currently being viewed
+  var SHARED_CONFIG = null;    // cached shared {contacts, media}
+
   /* ---- Firestore data loading ---- */
   function emailKey(user) {
     return (user.email || "").toLowerCase();
   }
-  /* Load the signed-in investor's data + shared config from Firestore.
-     Resolves with a DATA object (same shape the dashboard renders), or
-     null if this account has no investor record (not authorized). */
-  function loadPortalData(user) {
+
+  /* Shared, non-sensitive data (support contacts + explainer videos). */
+  function loadConfig() {
     var db = firebase.firestore();
-    var ref = db.collection("investors").doc(emailKey(user));
+    return Promise.all([
+      db.collection("config").doc("contacts").get(),
+      db.collection("config").doc("media").get()
+    ]).then(function (res) {
+      return {
+        contacts: res[0].exists ? (res[0].data().items || []) : [],
+        media: res[1].exists ? (res[1].data().items || []) : []
+      };
+    });
+  }
+
+  /* Load one investor's doc + properties by their email key.
+     Resolves {key, investor:{name,since}, properties:[...]} or null. */
+  function loadInvestorByKey(key) {
+    var db = firebase.firestore();
+    var ref = db.collection("investors").doc(key);
     return ref.get().then(function (inv) {
       if (!inv.exists) return null;
       var info = inv.data() || {};
-      return Promise.all([
-        ref.collection("properties").get(),
-        db.collection("config").doc("contacts").get(),
-        db.collection("config").doc("media").get()
-      ]).then(function (res) {
-        var props = res[0].docs.map(function (d) {
+      return ref.collection("properties").get().then(function (snap) {
+        var props = snap.docs.map(function (d) {
           var data = d.data();
           if (data.id == null) data.id = d.id;
           return data;
         });
         props.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
-        var contacts = res[1].exists ? (res[1].data().items || []) : [];
-        var media = res[2].exists ? (res[2].data().items || []) : [];
-        return {
-          investor: { name: info.name, since: info.since },
-          properties: props,
-          shared: { contacts: contacts, media: media }
-        };
+        return { key: key, investor: { name: info.name, since: info.since }, properties: props };
       });
+    });
+  }
+
+  /* Manager email list (config/admins.emails), lowercased. */
+  function loadAdminEmails() {
+    var db = firebase.firestore();
+    return db.collection("config").doc("admins").get().then(function (doc) {
+      if (!doc.exists) return [];
+      return (doc.data().emails || []).map(function (e) { return String(e).toLowerCase(); });
+    }).catch(function () { return []; });
+  }
+
+  /* All investors (admins only — gated by firestore.rules). */
+  function loadInvestorList() {
+    var db = firebase.firestore();
+    return db.collection("investors").get().then(function (snap) {
+      return snap.docs.map(function (d) {
+        var info = d.data() || {};
+        return { key: d.id, name: info.name || { he: d.id, en: d.id } };
+      }).sort(function (a, b) { return L(a.name).localeCompare(L(b.name)); });
+    });
+  }
+
+  /* Load the signed-in investor's data + shared config from Firestore.
+     Resolves with a DATA object (same shape the dashboard renders), or
+     null if this account has no investor record (not authorized). */
+  function loadPortalData(user) {
+    return Promise.all([loadInvestorByKey(emailKey(user)), loadConfig()]).then(function (res) {
+      var inv = res[0];
+      if (!inv) return null;
+      return { investor: inv.investor, properties: inv.properties, shared: res[1] };
     });
   }
 
@@ -153,8 +197,10 @@
     auth.onAuthStateChanged(function (user) {
       if (!user) return;
       setMsg(result, ui("signedIn"), "ok");
-      loadPortalData(user).then(function (data) {
-        if (data) {
+      Promise.all([loadAdminEmails(), loadInvestorByKey(emailKey(user))]).then(function (res) {
+        var isAdmin = res[0].indexOf(emailKey(user)) !== -1;
+        var hasOwn = !!res[1];
+        if (isAdmin || hasOwn) {
           window.location.replace("portal-dashboard.html");
         } else {
           showNoAccess(user);
@@ -193,7 +239,8 @@
     doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'),
     sheet: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'),
     upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>'),
-    ext: svg('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>')
+    ext: svg('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>'),
+    shield: svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>')
   };
 
   var activeTab = "overview";
@@ -506,9 +553,25 @@
 
     var activeDef = TABS.filter(function (t) { return t.id === activeTab; })[0] || TABS[0];
 
+    var adminBar = "";
+    if (IS_ADMIN) {
+      var opts = INVESTOR_LIST.map(function (i) {
+        return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
+          esc(L(i.name)) + " — " + esc(i.key) + "</option>";
+      }).join("");
+      adminBar =
+        '<div class="padminbar">' +
+          '<div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
+          '<label class="padminbar__pick"><span>' + ui("adminViewing") + "</span>" +
+            '<select id="admin-investor" aria-label="' + esc(ui("adminViewing")) + '">' + opts + "</select>" +
+          "</label>" +
+        "</div>";
+    }
+
     app.innerHTML =
       '<section class="pdash">' +
         '<div class="container">' +
+          adminBar +
           '<div class="pdash__top">' +
             '<div><span class="pdash__hello">' + ui("welcome") + ", <b>" + esc(L(d.investor.name)) + "</b></span>" +
               '<span class="pdash__since">' + ui("investorSince") + " " + esc(L(d.investor.since)) + "</span></div>" +
@@ -551,6 +614,13 @@
   }
 
   function attach(app) {
+    /* admin investor picker */
+    var asel = app.querySelector("#admin-investor");
+    if (asel) asel.addEventListener("change", function () {
+      ADMIN_VIEW_KEY = asel.value;
+      loadAndRenderInvestor(app, ADMIN_VIEW_KEY);
+    });
+
     /* logout */
     var lo = app.querySelector("#portal-logout");
     if (lo) lo.addEventListener("click", function () {
@@ -742,6 +812,56 @@
       "</div></div></section>";
   }
 
+  /* ---- Admin boot: load investor list, then view one investor ---- */
+  function bootAdmin(app, user) {
+    return loadInvestorList().then(function (list) {
+      INVESTOR_LIST = list;
+      var ownKey = emailKey(user);
+      var hasOwn = list.some(function (i) { return i.key === ownKey; });
+      ADMIN_VIEW_KEY = hasOwn ? ownKey : (list[0] ? list[0].key : null);
+      if (!ADMIN_VIEW_KEY) { app.innerHTML = adminEmptyBlock(); return; }
+      return loadAndRenderInvestor(app, ADMIN_VIEW_KEY);
+    });
+  }
+  function loadAndRenderInvestor(app, key) {
+    app.innerHTML = stateBlock(ui("loading"), true);
+    return loadInvestorByKey(key).then(function (inv) {
+      if (!inv) { app.innerHTML = adminEmptyBlock(); return; }
+      activePropIdx = 0;
+      activeTab = "overview";
+      PD.DATA = { investor: inv.investor, properties: inv.properties, shared: SHARED_CONFIG };
+      renderDashboard(app);
+    });
+  }
+  /* Admin view when no investors exist / selected investor has no data. */
+  function adminEmptyBlock() {
+    var opts = INVESTOR_LIST.map(function (i) {
+      return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
+        esc(L(i.name)) + " — " + esc(i.key) + "</option>";
+    }).join("");
+    var bar = INVESTOR_LIST.length
+      ? '<div class="padminbar"><div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
+          '<label class="padminbar__pick"><span>' + ui("adminViewing") + "</span>" +
+          '<select id="admin-investor">' + opts + "</select></label></div>"
+      : "";
+    setTimeout(function () {
+      var app = document.getElementById("portal-app");
+      var sel = app && app.querySelector("#admin-investor");
+      if (sel) sel.addEventListener("change", function () {
+        ADMIN_VIEW_KEY = sel.value;
+        loadAndRenderInvestor(app, ADMIN_VIEW_KEY);
+      });
+      var lo = app && app.querySelector("#portal-logout");
+      if (lo) lo.addEventListener("click", function () {
+        firebase.auth().signOut().then(function () { window.location.replace("portal.html"); });
+      });
+    }, 0);
+    return '<section class="pdash"><div class="container">' + bar +
+      '<div class="pstate"><p>' + esc(ui("adminNoInvestors")) + "</p>" +
+      '<button class="pbtn pbtn--ghost" id="portal-logout" style="margin-top:14px">' + ui("logout") + "</button>" +
+      "</div></div></section>";
+  }
+
   /* ---- boot ---- */
   document.addEventListener("DOMContentLoaded", function () {
     var loginRoot = document.getElementById("portal-login");
@@ -758,10 +878,17 @@
     app.innerHTML = stateBlock(ui("loading"), true);
     firebase.auth().onAuthStateChanged(function (user) {
       if (!user) { window.location.replace("portal.html"); return; }
-      loadPortalData(user).then(function (data) {
-        if (!data) { window.location.replace("portal.html"); return; }
-        PD.DATA = data;
-        renderDashboard(app);
+      loadConfig().then(function (config) {
+        SHARED_CONFIG = config;
+        return loadAdminEmails().then(function (admins) {
+          IS_ADMIN = admins.indexOf(emailKey(user)) !== -1;
+          if (IS_ADMIN) return bootAdmin(app, user);
+          return loadInvestorByKey(emailKey(user)).then(function (inv) {
+            if (!inv) { window.location.replace("portal.html"); return; }
+            PD.DATA = { investor: inv.investor, properties: inv.properties, shared: config };
+            renderDashboard(app);
+          });
+        });
       }).catch(function () {
         app.innerHTML = stateBlock(ui("loadError"));
       });

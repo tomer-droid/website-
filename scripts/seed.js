@@ -117,6 +117,17 @@ const media = [
 ];
 
 /* ============================================================
+   MANAGERS (admins) — accounts that may preview ANY investor's
+   portal from the browser (the "Manager view" picker in the portal).
+   Add the Google email(s) you sign in with. Emails are matched
+   case-insensitively. These accounts get READ access to every
+   investor via firestore.rules; they never write from the browser.
+   ============================================================ */
+const admins = [
+  "tomer@shaykes.com"
+];
+
+/* ============================================================
    SAMPLE INVESTOR — copy this block per real investor
    ============================================================ */
 const sampleInvestor = {
@@ -297,6 +308,10 @@ async function seed() {
   console.log("  ✔ config/contacts  (" + contacts.length + " contacts)");
   await db.collection("config").doc("media").set({ items: media });
   console.log("  ✔ config/media     (" + media.length + " videos)");
+  await db.collection("config").doc("admins").set({
+    emails: admins.map((e) => e.toLowerCase())
+  });
+  console.log("  ✔ config/admins    (" + admins.length + " manager" + (admins.length === 1 ? "" : "s") + ")");
 
   /* sample investor + properties */
   const emailKey = sampleInvestor.email.toLowerCase();

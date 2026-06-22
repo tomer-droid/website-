@@ -36,19 +36,28 @@ service cloud.firestore {
       return request.auth.token.email.lower();
     }
 
-    // Shared, non-sensitive data (support contacts, explainer videos).
+    // A manager: an account whose email is listed in config/admins.emails.
+    // Managers may read (and list) every investor's data so the owner can
+    // preview any investor's portal in the browser. All writes stay server-side.
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/config/admins)
+        && (myEmail() in get(/databases/$(database)/documents/config/admins).data().emails);
+    }
+
+    // Shared, non-sensitive data (support contacts, explainer videos, admins).
     match /config/{doc} {
       allow read: if signedIn();
       allow write: if false;
     }
 
-    // Per-investor private data — only the matching investor may read.
+    // Per-investor private data — the matching investor OR a manager may read.
     match /investors/{email} {
-      allow read: if signedIn() && email == myEmail();
+      allow read: if signedIn() && (email == myEmail() || isAdmin());
       allow write: if false;
 
       match /properties/{propId} {
-        allow read: if signedIn() && email == myEmail();
+        allow read: if signedIn() && (email == myEmail() || isAdmin());
         allow write: if false;
       }
     }
