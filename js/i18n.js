@@ -46,7 +46,7 @@
       "idx.pill2": "אינדיאנה, ארה\"ב",
       "idx.pill3": "נדל\"ן למגורים",
       "idx.hero.eyebrow": "Kamir Group · חברת השקעות נדל\"ן",
-      "idx.hero.title": "רוכשים, משביחים ומשכירים<br />נדל\"ן למגורים <span class=\"serif-accent\">בצפון אינדיאנה.</span>",
+      "idx.hero.title": "השקעות נדל\"ן למגורים <span class=\"serif-accent\">בצפון אינדיאנה, ארה\"ב.</span>",
       "idx.hero.desc": "Kamir Group היא חברת השקעות נדל\"ן הפועלת בארה\"ב — בסאות' בנד, משוואקה וגריינג'ר שבאינדיאנה. אנחנו רוכשים בתים, משפצים אותם מהיסוד ומשכירים לטווח ארוך, ומשקיעים את ההון שלנו לצד השותפים בכל עסקה.",
       "idx.hero.cta1": "לצפייה בפרויקטים",
       "idx.hero.cta2": "להשקיע איתנו",
@@ -183,7 +183,7 @@
 
       /* ---- Shared CTA band (index) ---- */
       "idx.cta.title": "בואו נבנה משהו יחד.",
-      "idx.cta.desc": "בין אם אתם קונים נכס, מוכרים אחד, או מחפשים להשקיע לצידנו — נשמח לדבר.",
+      "idx.cta.desc": "בין אם אתם מחפשים לרכוש נכס מניב או להשקיע לצידנו — נשמח לדבר.",
       "idx.cta.btn1": "ליצירת קשר",
       "idx.cta.btn2": "לעיון בפרויקטים",
 
@@ -390,7 +390,7 @@
       "con.crumb": "צור קשר",
       "con.eyebrow": "דברו איתנו",
       "con.title": "בואו נתחיל שיחה",
-      "con.lead": "קונים, מוכרים, או מתעניינים בהשקעה? השאירו פרטים ונחזור אליכם תוך יום עסקים אחד.",
+      "con.lead": "מתעניינים ברכישה או בהשקעה? השאירו פרטים ונחזור אליכם תוך יום עסקים אחד.",
       "con.form.title": "שליחת הודעה",
       "con.f.name": "שם מלא",
       "con.f.namePh": "ישראל ישראלי",
@@ -470,7 +470,7 @@
       "idx.pill2": "Indiana, USA",
       "idx.pill3": "Residential Real Estate",
       "idx.hero.eyebrow": "Kamir Group · Real Estate Investment",
-      "idx.hero.title": "We buy, renovate & rent<br />homes <span class=\"serif-accent\">across Northern Indiana.</span>",
+      "idx.hero.title": "Residential real estate investment <span class=\"serif-accent\">in Northern Indiana, USA.</span>",
       "idx.hero.desc": "Kamir Group is a U.S. real estate investment company operating in South Bend, Mishawaka and Granger, Indiana. We acquire homes, renovate them from the ground up and rent them long-term — investing our own capital alongside our partners in every deal.",
       "idx.hero.cta1": "View Our Projects",
       "idx.hero.cta2": "Invest With Us",
@@ -599,7 +599,7 @@
       "portal.hidePw": "Hide password",
 
       "idx.cta.title": "Let's build something together.",
-      "idx.cta.desc": "Whether you're buying a home, selling one, or looking to invest alongside us — we'd love to talk.",
+      "idx.cta.desc": "Whether you're looking to buy an income property or invest alongside us — we'd love to talk.",
       "idx.cta.btn1": "Get in touch",
       "idx.cta.btn2": "Browse projects",
 
@@ -802,7 +802,7 @@
       "con.crumb": "Contact",
       "con.eyebrow": "Get In Touch",
       "con.title": "Let's start a conversation",
-      "con.lead": "Buying, selling, or interested in investing? Leave your details and we'll get back to you within one business day.",
+      "con.lead": "Interested in buying or investing? Leave your details and we'll get back to you within one business day.",
       "con.form.title": "Send a message",
       "con.f.name": "Full name",
       "con.f.namePh": "Jane Doe",

@@ -314,9 +314,10 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 2;
   background:
-    linear-gradient(105deg, rgba(28,31,37,0.92) 0%, rgba(28,31,37,0.55) 45%, rgba(28,31,37,0.25) 100%),
-    linear-gradient(0deg, rgba(28,31,37,0.6), rgba(28,31,37,0));
+    linear-gradient(105deg, rgba(20,22,27,0.95) 0%, rgba(20,22,27,0.7) 42%, rgba(20,22,27,0.4) 100%),
+    linear-gradient(0deg, rgba(20,22,27,0.72), rgba(20,22,27,0) 55%);
 }
 .hero__media img,
 .hero__photo {
@@ -348,7 +349,7 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
 
 .hero__inner {
   position: relative;
-  z-index: 2;
+  z-index: 5;
   color: #F6EFE3;
   max-width: 760px;
 }
@@ -949,6 +950,7 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
 }
 .deal__link:hover { color: #FBF7F0; gap: 0.5rem; }
 a.deal__media { display: block; cursor: pointer; }
+a.story__media { display: block; cursor: pointer; }
 /* English street addresses read left-to-right even inside RTL cards */
 .addr-ltr { direction: ltr; unicode-bidi: isolate; text-align: right; }
 html[dir="ltr"] .addr-ltr { text-align: left; }
@@ -1410,8 +1412,8 @@ html[lang="he"] .project__status { letter-spacing: 0.02em; }
    ============================================================ */
 html[dir="rtl"] .hero__media::after {
   background:
-    linear-gradient(255deg, rgba(28,31,37,0.92) 0%, rgba(28,31,37,0.55) 45%, rgba(28,31,37,0.25) 100%),
-    linear-gradient(0deg, rgba(28,31,37,0.6), rgba(28,31,37,0));
+    linear-gradient(255deg, rgba(20,22,27,0.95) 0%, rgba(20,22,27,0.7) 42%, rgba(20,22,27,0.4) 100%),
+    linear-gradient(0deg, rgba(20,22,27,0.72), rgba(20,22,27,0) 55%);
 }
 html[dir="rtl"] .split__media .badge-float { left: auto; right: 1.2rem; }
 html[dir="rtl"] .project__status { left: auto; right: 1rem; }
