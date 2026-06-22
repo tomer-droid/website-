@@ -115,7 +115,10 @@
     }).catch(function () { return []; });
   }
 
-  /* All investors (admins only — gated by firestore.rules). */
+  /* All investors (admins only — gated by firestore.rules).
+     Resolves to an array, or null when the list query is denied
+     (e.g. the admin rules have not been published yet). The caller
+     then gracefully falls back to the admin's own record. */
   function loadInvestorList() {
     var db = firebase.firestore();
     return db.collection("investors").get().then(function (snap) {
@@ -123,6 +126,9 @@
         var info = d.data() || {};
         return { key: d.id, name: info.name || { he: d.id, en: d.id } };
       }).sort(function (a, b) { return L(a.name).localeCompare(L(b.name)); });
+    }).catch(function (e) {
+      if (e && e.code === "permission-denied") return null;
+      throw e;
     });
   }
 
@@ -690,17 +696,26 @@
 
     var adminBar = "";
     if (IS_ADMIN) {
-      var opts = INVESTOR_LIST.map(function (i) {
-        return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
-          esc(L(i.name)) + " — " + esc(i.key) + "</option>";
-      }).join("");
-      adminBar =
-        '<div class="padminbar">' +
-          '<div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
-          '<label class="padminbar__pick"><span>' + ui("adminViewing") + "</span>" +
-            '<select id="admin-investor" aria-label="' + esc(ui("adminViewing")) + '">' + opts + "</select>" +
-          "</label>" +
-        "</div>";
+      if (INVESTOR_LIST.length) {
+        var opts = INVESTOR_LIST.map(function (i) {
+          return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
+            esc(L(i.name)) + " — " + esc(i.key) + "</option>";
+        }).join("");
+        adminBar =
+          '<div class="padminbar">' +
+            '<div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
+            '<label class="padminbar__pick"><span>' + ui("adminViewing") + "</span>" +
+              '<select id="admin-investor" aria-label="' + esc(ui("adminViewing")) + '">' + opts + "</select>" +
+            "</label>" +
+          "</div>";
+      } else {
+        // Fallback: admin viewing own record because the investor list
+        // query is not yet permitted. Show the badge without the picker.
+        adminBar =
+          '<div class="padminbar">' +
+            '<div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
+          "</div>";
+      }
     }
 
     app.innerHTML =
@@ -965,9 +980,17 @@
 
   /* ---- Admin boot: load investor list, then view one investor ---- */
   function bootAdmin(app, user) {
+    var ownKey = emailKey(user);
     return loadInvestorList().then(function (list) {
+      // list === null -> the investors list query was denied (admin rules
+      // not published yet). Fall back to the admin's own record so the
+      // dashboard still renders; the picker reappears once rules are live.
+      if (!list) {
+        INVESTOR_LIST = [];
+        ADMIN_VIEW_KEY = ownKey;
+        return loadAndRenderInvestor(app, ownKey);
+      }
       INVESTOR_LIST = list;
-      var ownKey = emailKey(user);
       var hasOwn = list.some(function (i) { return i.key === ownKey; });
       ADMIN_VIEW_KEY = hasOwn ? ownKey : (list[0] ? list[0].key : null);
       if (!ADMIN_VIEW_KEY) { app.innerHTML = adminEmptyBlock(); return; }
