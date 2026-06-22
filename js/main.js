@@ -125,6 +125,39 @@
     );
   }
 
+  /* ---------- Hero scroll-reactive slideshow ---------- */
+  const heroSlides = document.querySelectorAll(".hero__slide");
+  if (heroSlides.length > 1) {
+    let current = 0;
+    const setActive = (i) => {
+      if (i === current || !heroSlides[i]) return;
+      heroSlides[current].classList.remove("is-active");
+      heroSlides[i].classList.add("is-active");
+      current = i;
+    };
+    // Map scroll progress through the first viewport to the active slide.
+    let ticking = false;
+    const updateHero = () => {
+      const vh = window.innerHeight || 1;
+      const p = Math.min(Math.max(window.scrollY / vh, 0), 0.999);
+      setActive(Math.floor(p * heroSlides.length));
+      ticking = false;
+    };
+    const onHeroScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(updateHero);
+    };
+    updateHero();
+    window.addEventListener("scroll", onHeroScroll, { passive: true });
+    // Gentle auto-advance while the visitor is still at the very top.
+    if (!prefersReduced) {
+      setInterval(() => {
+        if (window.scrollY < 40) setActive((current + 1) % heroSlides.length);
+      }, 4500);
+    }
+  }
+
   /* ---------- Project filters ---------- */
   const filters = document.querySelectorAll(".filter");
   const projects = document.querySelectorAll("[data-category]");
@@ -192,6 +225,30 @@
       if (eye) eye.style.display = show ? "none" : "";
       if (eyeOff) eyeOff.style.display = show ? "" : "none";
       btn.setAttribute("aria-label", show ? t("portal.hidePw", "Hide password") : t("portal.showPw", "Show password"));
+    });
+  });
+
+  /* ---------- Video tour: click-to-load (keeps page light) ---------- */
+  document.querySelectorAll(".video-card[data-video]").forEach((card) => {
+    const play = () => {
+      const src = card.getAttribute("data-video");
+      if (!src || card.dataset.loaded === "1") return;
+      card.dataset.loaded = "1";
+      const video = document.createElement("video");
+      video.src = src;
+      video.controls = true;
+      video.autoplay = true;
+      video.setAttribute("playsinline", "");
+      video.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;z-index:3;";
+      card.appendChild(video);
+      card.classList.add("is-playing");
+      const ov = card.querySelector(".video-play");
+      if (ov) ov.style.display = "none";
+      video.play().catch(function () {});
+    };
+    card.addEventListener("click", play);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); play(); }
     });
   });
 })();

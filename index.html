@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/favicon-180.png" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=3" />
 </head>
 <body class="home">
 
@@ -55,17 +55,20 @@
   <!-- ===== HERO ===== -->
   <section class="hero">
     <div class="hero__media">
-      <div class="hero__photo ph" data-label="תמונת נושא — הנכס הכי טוב שלכם"></div>
+      <div class="hero__slide is-active" style="background-image:url('assets/properties/lasalle.jpg')"></div>
+      <div class="hero__slide" style="background-image:url('assets/properties/grove.jpg')"></div>
+      <div class="hero__slide" style="background-image:url('assets/properties/granger.jpg')"></div>
+      <div class="hero__slide" style="background-image:url('assets/properties/cedar.jpg')"></div>
     </div>
     <div class="container hero__inner">
       <div class="hero__pills reveal">
-        <span class="pill" data-i18n="idx.pill1">רכישה · שיפוץ · מכירה</span>
-        <span class="pill" data-i18n="idx.pill2">שותפויות השקעה</span>
-        <span class="pill" data-i18n="idx.pill3">נכסים מניבים</span>
+        <span class="pill" data-i18n="idx.pill1">סאות' בנד · משוואקה · גריינג'ר</span>
+        <span class="pill" data-i18n="idx.pill2">אינדיאנה, ארה"ב</span>
+        <span class="pill" data-i18n="idx.pill3">נדל"ן למגורים</span>
       </div>
-      <span class="eyebrow reveal" data-delay="1" data-i18n="idx.hero.eyebrow">Kamir Group</span>
-      <h1 class="display reveal" data-delay="2" data-i18n="idx.hero.title">אנחנו יוצרים ערך<br />ב<span class="serif-accent">כל נכס שאנחנו נוגעים בו.</span></h1>
-      <p class="reveal" data-delay="3" data-i18n="idx.hero.desc">חברת נדל"ן והשקעות. אנחנו מאתרים את הנכסים הנכונים, משדרגים אותם בקפידה, ושותפים למשקיעים שרוצים לצמוח יחד איתנו — נכון, בכל פעם.</p>
+      <span class="eyebrow reveal" data-delay="1" data-i18n="idx.hero.eyebrow">Kamir Group · חברת השקעות נדל"ן</span>
+      <h1 class="display reveal" data-delay="2" data-i18n="idx.hero.title">רוכשים, משביחים ומשכירים<br />נדל"ן למגורים <span class="serif-accent">בצפון אינדיאנה.</span></h1>
+      <p class="reveal" data-delay="3" data-i18n="idx.hero.desc">Kamir Group היא חברת השקעות נדל"ן הפועלת בארה"ב — בסאות' בנד, משוואקה וגריינג'ר שבאינדיאנה. אנחנו רוכשים בתים, משפצים אותם מהיסוד ומשכירים לטווח ארוך, ומשקיעים את ההון שלנו לצד השותפים בכל עסקה.</p>
       <div class="hero__actions reveal" data-delay="4">
         <a href="projects.html" class="btn btn-primary btn-arrow">
           <span data-i18n="idx.hero.cta1">לצפייה בפרויקטים</span>
@@ -93,29 +96,6 @@
           <div class="stat__num"><span data-count="2">0</span></div>
           <div class="stat__label" data-i18n="stat.experience">תחומים — השבחה והחזקה</div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== INTRO / WHO WE ARE ===== -->
-  <section class="section">
-    <div class="container split split--media-right">
-      <div class="split__media reveal reveal-left">
-        <div class="ph" data-label="תמונת צוות / נכס"></div>
-        <div class="badge-float">
-          <strong data-i18n="idx.intro.badgeStrong">14 עסקאות</strong>
-          <small data-i18n="idx.intro.badgeSmall">השבחה · השקעה · החזקה</small>
-        </div>
-      </div>
-      <div class="reveal reveal-right">
-        <span class="eyebrow" data-i18n="idx.intro.eyebrow">מי אנחנו</span>
-        <h2 style="margin:1.1rem 0 1.2rem;" data-i18n="idx.intro.title">יזמים <span class="serif-accent">וגם</span> משקיעים — לא אחד מהם.</h2>
-        <p class="lead" style="margin-bottom:1.4rem;" data-i18n="idx.intro.lead">יש חברות שרק משפצות ומוכרות. אחרות רק משקיעות. אנחנו עושים את שניהם, במכוון. המבט הכפול הזה הוא מה שמשאיר את ההחלטות שלנו מבוססות: אנחנו מכירים נכס גם כיזם וגם כבעלים.</p>
-        <p style="color:var(--ink-soft); margin-bottom:1.8rem;" data-i18n="idx.intro.body">אנחנו עובדים בגישה מעשית וישירה — מעורבים בכל שלב, שקופים מול שותפים, ואובססיביים לאיכות. בין אם אנחנו משפצים נכס בודד או מרכזים עסקה עם שותפים, אותו סטנדרט תקף תמיד.</p>
-        <a href="about.html" class="link-arrow">
-          <span data-i18n="idx.intro.link">לקריאת הסיפור שלנו</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
       </div>
     </div>
   </section>
@@ -310,7 +290,7 @@
 
         <article class="deal reveal" data-delay="2">
           <div class="deal__media video-card">
-            <div class="ph addr-ltr" data-label="314 E Fairview Ave"></div>
+            <img src="assets/properties/fairview.jpg" alt="314 E Fairview Ave, South Bend" loading="lazy" />
             <span class="deal__live"><span class="deal__dot"></span><span data-i18n="idx.d3.status">בתהליך סגירה</span></span>
           </div>
           <div class="deal__body">
@@ -326,42 +306,6 @@
             </div>
           </div>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== TESTIMONIALS ===== -->
-  <section class="section section--cream">
-    <div class="container">
-      <div class="section-head center">
-        <span class="eyebrow" data-i18n="idx.testi.eyebrow">סומכים עלינו</span>
-        <h2 data-i18n="idx.testi.title">מה שותפים ולקוחות אומרים</h2>
-      </div>
-      <div class="cards-grid">
-        <div class="quote reveal">
-          <div class="stars">★★★★★</div>
-          <p data-i18n="idx.q1.text">"הם התייחסו להשקעה שלי כאילו זה הכסף שלהם. שקופים לכל אורך הדרך, והתשואות דיברו בעד עצמן."</p>
-          <div class="quote__by">
-            <div class="quote__avatar">ד</div>
-            <div><strong data-i18n="idx.q1.name">דוד ר.</strong><small data-i18n="idx.q1.role">שותף השקעה</small></div>
-          </div>
-        </div>
-        <div class="quote reveal" data-delay="1">
-          <div class="stars">★★★★★</div>
-          <p data-i18n="idx.q2.text">"איכות השיפוץ הייתה ברמה אחרת. רואים שבאמת אכפת להם מכל נכס."</p>
-          <div class="quote__by">
-            <div class="quote__avatar">ש</div>
-            <div><strong data-i18n="idx.q2.name">שרה ל.</strong><small data-i18n="idx.q2.role">רוכשת נכס</small></div>
-          </div>
-        </div>
-        <div class="quote reveal" data-delay="2">
-          <div class="stars">★★★★★</div>
-          <p data-i18n="idx.q3.text">"ישירים, הגונים, ומכירים את המספרים שלהם. בדיוק מי שאתה רוצה בצד השני של עסקה."</p>
-          <div class="quote__by">
-            <div class="quote__avatar">מ</div>
-            <div><strong data-i18n="idx.q3.name">מיכאל ת.</strong><small data-i18n="idx.q3.role">שותף חוזר</small></div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -427,7 +371,7 @@
   </footer>
 
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-  <script src="js/i18n.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/i18n.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 </html>

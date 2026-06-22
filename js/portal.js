@@ -60,36 +60,23 @@
       hint.innerHTML =
         '<span class="portal__demo-tag">' + (he ? "מצב הדגמה" : "Demo mode") + "</span>" +
         '<span class="portal__demo-text">' +
-          (he ? "להתנסות, התחברו עם: " : "To explore, sign in with: ") +
-          '<code>' + esc(PD.CREDS.user) + '</code> / <code>' + esc(PD.CREDS.pass) + "</code></span>";
+          (he ? "לחצו על “כניסה לחשבון” כדי לראות את הדשבורד לדוגמה."
+              : "Click “Sign in” to view the sample dashboard.") + "</span>";
     }
     paintHint();
     window.addEventListener("langchange", paintHint);
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var u = (form.querySelector('[name="username"]') || {}).value || "";
-      var p = (form.querySelector('[name="password"]') || {}).value || "";
-      u = u.trim();
-
-      var ok = (u.toLowerCase() === PD.CREDS.user.toLowerCase() && p === PD.CREDS.pass);
-
-      if (ok) {
-        if (result) {
-          result.style.color = "var(--sage)";
-          result.textContent = lang() === "he" ? "התחברתם בהצלחה — טוען את הפורטל…" : "Signed in — loading your portal…";
-        }
-        if (btn) btn.disabled = true;
-        try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) {}
-        setTimeout(function () { window.location.href = "portal-dashboard.html"; }, 650);
-      } else {
-        if (result) {
-          result.style.color = "var(--clay)";
-          result.textContent = lang() === "he"
-            ? "שם משתמש או סיסמה שגויים. נסו את פרטי ההדגמה שמופיעים למטה."
-            : "Incorrect username or password. Try the demo credentials shown below.";
-        }
+      /* DEMO mode: any submit opens the dashboard. No real credential
+         check yet — a production portal needs server-side auth. */
+      if (result) {
+        result.style.color = "var(--sage)";
+        result.textContent = lang() === "he" ? "התחברתם בהצלחה — טוען את הפורטל…" : "Signed in — loading your portal…";
       }
+      if (btn) btn.disabled = true;
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) {}
+      setTimeout(function () { window.location.href = "portal-dashboard.html"; }, 650);
     });
   }
 
