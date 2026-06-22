@@ -25,6 +25,11 @@
      of a failing upload. Flip to true once Storage is enabled on Blaze. */
   var UPLOADS_ENABLED = false;
 
+  /* General company Google Drive — the "everything" folder shown as a system
+     link in the Contacts tab. Defaults to the Drive home; swap this for the
+     exact shared-folder URL once it's confirmed. Shared across all investors. */
+  var GENERAL_DRIVE_URL = "https://drive.google.com/drive/my-drive";
+
   /* ---- Firebase bootstrap ---- */
   function configReady() {
     var c = window.KAMIR_FIREBASE_CONFIG;
@@ -326,7 +331,7 @@
     var ring = segments.map(function (seg) {
       var len = (Math.max(0, seg.value) / total) * C;
       var dash = len.toFixed(2) + " " + (C - len).toFixed(2);
-      var c = '<circle class="fdonut__seg fdonut__seg--' + seg.tone + '" r="' + R + '" cx="' + CX + '" cy="' + CY + '"' +
+      var c = '<circle class="fdonut__seg fdonut__seg--' + seg.tone + '" data-tone="' + seg.tone + '" r="' + R + '" cx="' + CX + '" cy="' + CY + '"' +
         ' stroke-dasharray="' + dash + '" stroke-dashoffset="' + (-off).toFixed(2) + '"></circle>';
       off += len;
       return c;
@@ -379,7 +384,9 @@
 
     var legend = segs.map(function (s) {
       var pct = gross > 0 ? Math.round((s.value / gross) * 100) : 0;
-      return '<li class="fleg"><span class="fleg__dot fleg__dot--' + s.tone + '"></span>' +
+      return '<li class="fleg" tabindex="0" data-tone="' + s.tone + '" data-val="' + money(s.value) +
+        '" data-label="' + esc(s.label) + " · " + pct + '%">' +
+        '<span class="fleg__dot fleg__dot--' + s.tone + '"></span>' +
         '<span class="fleg__label">' + esc(s.label) + "</span>" +
         '<span class="fleg__val">' + money(s.value) + ' <small>' + pct + "%</small></span></li>";
     }).join("");
@@ -646,24 +653,37 @@
           '<a class="pbtn pbtn--ghost" href="mailto:' + esc(c.email) + '">' + ICONS.mail + "<span>" + esc(c.email) + "</span></a>" +
         "</div></div>";
     }).join("");
-    /* Essential systems — Mercury (bank) & TenantCloud (property mgmt).
-       These are links to external systems, not people, so they live in their
-       own block. Banks/login portals can't be embedded, so they open in a
-       new tab. Shared across every investor. */
-    var tools = [
-      { icon: ICONS.bank, name: ui("mercuryName"), desc: ui("mercuryDesc"), url: "https://mercury.com" },
-      { icon: ICONS.keys, name: ui("tenantcloudName"), desc: ui("tenantcloudDesc"), url: "https://www.tenantcloud.com" }
+    /* Essential systems — Mercury (bank), TenantCloud (property mgmt) and the
+       general company Drive. These are links to external systems, not people,
+       so they live in their own block. We show each brand's REAL logo (its
+       favicon, served by Google at high-res) inside a branded tile so the card
+       looks like the genuine product. Login portals can't be embedded, so they
+       open in a new tab. Shared across every investor. */
+    var systems = [
+      { name: ui("mercuryName"),     role: ui("mercuryRole"),     desc: ui("mercuryDesc"),     url: "https://mercury.com",            domain: "mercury.com",      color: "#5266EB", mono: "M" },
+      { name: ui("tenantcloudName"), role: ui("tenantcloudRole"), desc: ui("tenantcloudDesc"), url: "https://www.tenantcloud.com",     domain: "tenantcloud.com",  color: "#37A64A", mono: "T" },
+      { name: ui("driveName"),       role: ui("driveRole"),       desc: ui("driveDesc"),       url: GENERAL_DRIVE_URL,                domain: "drive.google.com", color: "#1FA463", mono: "D" }
     ];
-    var toolCards = tools.map(function (t) {
-      return '<a class="pcard pdrivefolder" href="' + esc(t.url) + '" target="_blank" rel="noopener" aria-label="' + esc(t.name) + '">' +
-        '<span class="pdrivefolder__icon">' + t.icon + "</span>" +
-        '<span class="pdrivefolder__body"><b>' + esc(t.name) + "</b><p>" + esc(t.desc) + "</p></span>" +
-        '<span class="pdrivefolder__ext">' + ICONS.ext + "<span>" + ui("openLink") + "</span></span>" +
+    var sysCards = systems.map(function (s) {
+      var logo = "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(s.domain) + "&sz=128";
+      return '<a class="pcard psyslink" href="' + esc(s.url) + '" target="_blank" rel="noopener" ' +
+          'style="--brand:' + s.color + '" aria-label="' + esc(s.name) + '">' +
+        '<span class="psyslink__logo">' +
+          '<img src="' + logo + '" alt="" width="64" height="64" loading="lazy" referrerpolicy="no-referrer" ' +
+            'onerror="this.style.display=\'none\';this.parentNode.classList.add(\'is-mono\');" />' +
+          '<span class="psyslink__mono">' + esc(s.mono) + "</span>" +
+        "</span>" +
+        '<span class="psyslink__body">' +
+          '<b class="psyslink__name">' + esc(s.name) + "</b>" +
+          '<span class="psyslink__role">' + esc(s.role) + "</span>" +
+          '<span class="psyslink__desc">' + esc(s.desc) + "</span>" +
+        "</span>" +
+        '<span class="psyslink__go">' + ui("openLink") + "</span>" +
         "</a>";
     }).join("");
     var toolsBlock = '<div class="pcard" style="margin-top:1.2rem"><h3 class="pcard__title">' + ui("toolsTitle") + "</h3>" +
       '<p class="pcard__sub">' + ui("toolsIntro") + "</p>" +
-      '<div class="pdrivefolders">' + toolCards + "</div></div>";
+      '<div class="psyslinks">' + sysCards + "</div></div>";
 
     return '<p class="psection__intro">' + ui("contactsIntro") + '</p><div class="pgrid pgrid--2">' + items + "</div>" + toolsBlock;
   }
@@ -860,6 +880,38 @@
         app.querySelectorAll(".finview").forEach(function (v) {
           v.classList.toggle("is-active", v.getAttribute("data-finview") === id);
         });
+      });
+    });
+
+    /* financials donut ↔ legend interactivity — hovering/focusing a legend
+       row dims the other slices, thickens the matching one, and swaps the
+       donut centre to that slice's amount. Touch-friendly (tap to focus). */
+    app.querySelectorAll(".fdonut-wrap").forEach(function (wrap) {
+      var donut = wrap.querySelector(".fdonut");
+      var segEls = wrap.querySelectorAll(".fdonut__seg");
+      var top = wrap.querySelector(".fdonut__top");
+      var bot = wrap.querySelector(".fdonut__bottom");
+      if (!donut || !top) return;
+      var defTop = top.textContent;
+      var defBot = bot ? bot.textContent : "";
+      function focusTone(tone, valTxt, labelTxt) {
+        donut.classList.toggle("is-focus", !!tone);
+        segEls.forEach(function (s) {
+          s.classList.toggle("is-hot", !!tone && s.getAttribute("data-tone") === tone);
+        });
+        top.textContent = tone ? valTxt : defTop;
+        if (bot) bot.textContent = tone ? labelTxt : defBot;
+      }
+      wrap.querySelectorAll(".fleg").forEach(function (li) {
+        var tone = li.getAttribute("data-tone");
+        var v = li.getAttribute("data-val") || "";
+        var lbl = li.getAttribute("data-label") || "";
+        var on = function () { focusTone(tone, v, lbl); };
+        var off = function () { focusTone(null); };
+        li.addEventListener("mouseenter", on);
+        li.addEventListener("mouseleave", off);
+        li.addEventListener("focus", on);
+        li.addEventListener("blur", off);
       });
     });
 

@@ -1791,6 +1791,42 @@ html[dir="rtl"] .padminbar__pick select {
   .pdrivefolder__ext span { display: none; }
 }
 
+/* ---- branded system links (Mercury / TenantCloud / Drive) ---- */
+.psyslinks { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.9rem; }
+.psyslink {
+  --brand: var(--clay);
+  position: relative; display: flex; flex-direction: column; gap: 0.55rem;
+  padding: 1.15rem 1.2rem 1rem; text-decoration: none; overflow: hidden;
+  border: 1px solid var(--line); transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
+}
+.psyslink::before {
+  content: ""; position: absolute; inset-inline: 0; top: 0; height: 4px;
+  background: var(--brand); opacity: 0.9;
+}
+.psyslink:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: color-mix(in srgb, var(--brand) 45%, var(--line)); }
+.psyslink__logo {
+  width: 52px; height: 52px; border-radius: 14px; flex: 0 0 auto;
+  display: grid; place-items: center; background: #fff;
+  border: 1px solid var(--line); box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.psyslink__logo img { width: 34px; height: 34px; object-fit: contain; display: block; }
+.psyslink__mono {
+  display: none; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem;
+  color: #fff; width: 100%; height: 100%; place-items: center; background: var(--brand);
+}
+.psyslink__logo.is-mono { background: var(--brand); border-color: transparent; }
+.psyslink__logo.is-mono .psyslink__mono { display: grid; }
+.psyslink__body { display: flex; flex-direction: column; gap: 0.12rem; }
+.psyslink__name { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+.psyslink__role { font-size: 0.82rem; font-weight: 600; color: var(--brand); }
+.psyslink__desc { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.45; margin-top: 0.15rem; }
+.psyslink__go {
+  margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center;
+  font-size: 0.82rem; font-weight: 700; color: var(--brand);
+  padding-top: 0.5rem;
+}
+@media (max-width: 560px) { .psyslinks { grid-template-columns: 1fr; } }
+
 /* contacts */
 .pcontact h3 { font-size: 1.1rem; margin: 0 0 0.2rem; }
 .pcontact__role { color: var(--ochre); font-weight: 600; font-size: 0.85rem; margin: 0 0 0.7rem; }
@@ -1877,14 +1913,24 @@ html[dir="rtl"] .padminbar__pick select {
 
 /* ---- financials: headline tiles ---- */
 .fhead { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
-.ftile { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; position: relative; overflow: hidden; }
+.ftile {
+  background: linear-gradient(160deg, #fff 30%, var(--cream));
+  border: 1px solid var(--line); border-radius: 14px; padding: 1.15rem 1.25rem;
+  position: relative; overflow: hidden;
+  transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
+}
+.ftile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 .ftile::before { content: ""; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--clay); }
+.ftile--value  { background: linear-gradient(160deg, #fff 30%, rgba(53,58,66,0.07)); }
 .ftile--value::before { background: var(--ink); }
+.ftile--equity { background: linear-gradient(160deg, #fff 30%, rgba(110,114,87,0.10)); }
 .ftile--equity::before { background: var(--sage); }
+.ftile--invest { background: linear-gradient(160deg, #fff 30%, rgba(200,149,74,0.12)); }
 .ftile--invest::before { background: var(--ochre); }
+.ftile--yield  { background: linear-gradient(160deg, #fff 30%, rgba(180,95,60,0.11)); }
 .ftile--yield::before { background: var(--clay); }
 .ftile__label { display: block; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 0.4rem; }
-.ftile__value { display: block; font-family: var(--font-display); font-size: 1.55rem; color: var(--ink); line-height: 1.1; }
+.ftile__value { display: block; font-family: var(--font-display); font-size: 1.7rem; color: var(--ink); line-height: 1.1; }
 
 /* ---- value composition bar ---- */
 .fbar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; background: var(--cream); margin: 0.4rem 0 1rem; }
@@ -1933,13 +1979,21 @@ html[dir="rtl"] .padminbar__pick select {
 .fdonut__seg--loan { stroke: var(--ink); }
 .fdonut__seg--ins  { stroke: var(--ochre); }
 .fdonut__seg--op   { stroke: var(--clay); }
-.fdonut__top { font-family: var(--font-display); font-size: 19px; font-weight: 700; fill: var(--ink); }
+.fdonut__top { font-family: var(--font-display); font-size: 19px; font-weight: 700; fill: var(--ink); transition: fill 0.2s var(--ease); }
 .fdonut__bottom { font-family: var(--font-body); font-size: 9px; fill: var(--ink-soft); letter-spacing: 0.04em; }
+/* interactive focus: dim the others, thicken the hovered slice */
+.fdonut__seg { transition: opacity 0.2s var(--ease), stroke-width 0.2s var(--ease); }
+.fdonut.is-focus .fdonut__seg { opacity: 0.22; }
+.fdonut.is-focus .fdonut__seg.is-hot { opacity: 1; stroke-width: 19; }
 @media (prefers-reduced-motion: no-preference) {
-  .fdonut__seg { transition: stroke-dasharray 0.6s var(--ease); }
+  .fdonut__seg { transition: stroke-dasharray 0.6s var(--ease), opacity 0.2s var(--ease), stroke-width 0.2s var(--ease); }
+  .fdonut { animation: fdonutIn 0.6s var(--ease) both; transform-origin: 50% 50%; }
+  @keyframes fdonutIn { from { opacity: 0; transform: rotate(-14deg) scale(0.9); } to { opacity: 1; transform: none; } }
 }
-.flegend2 { list-style: none; margin: 0; padding: 0; flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; gap: 0.6rem; }
-.fleg { display: flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; }
+.flegend2 { list-style: none; margin: 0; padding: 0; flex: 1 1 200px; min-width: 180px; display: flex; flex-direction: column; gap: 0.4rem; }
+.fleg { display: flex; align-items: center; gap: 0.6rem; font-size: 0.95rem; padding: 0.3rem 0.45rem; border-radius: 9px; cursor: default; transition: background 0.15s var(--ease); }
+.fleg:hover, .fleg:focus-visible { background: var(--cream); outline: none; }
+.fleg:focus-visible { box-shadow: inset 0 0 0 1.5px var(--clay); }
 .fleg__dot { width: 12px; height: 12px; border-radius: 4px; flex: 0 0 auto; }
 .fleg__dot--net  { background: var(--gain); }
 .fleg__dot--loan { background: var(--ink); }
@@ -1998,6 +2052,16 @@ html[dir="rtl"] .padminbar__pick select {
 .fbars__row--ref .fbars__label { font-weight: 600; }
 @media (prefers-reduced-motion: no-preference) {
   .fbars__fill { transition: width 0.6s var(--ease); }
+  /* grow each bar in when the bars view becomes active */
+  .finview[data-finview="bars"].is-active .fbars__fill {
+    animation: fbarGrow 0.7s var(--ease) both; transform-origin: left center;
+  }
+  html[dir="rtl"] .finview[data-finview="bars"].is-active .fbars__fill { transform-origin: right center; }
+  .finview[data-finview="bars"].is-active .fbars__row:nth-child(2) .fbars__fill { animation-delay: 0.06s; }
+  .finview[data-finview="bars"].is-active .fbars__row:nth-child(3) .fbars__fill { animation-delay: 0.12s; }
+  .finview[data-finview="bars"].is-active .fbars__row:nth-child(4) .fbars__fill { animation-delay: 0.18s; }
+  .finview[data-finview="bars"].is-active .fbars__row:nth-child(5) .fbars__fill { animation-delay: 0.24s; }
+  @keyframes fbarGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 }
 
 /* table view */
