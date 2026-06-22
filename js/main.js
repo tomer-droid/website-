@@ -201,7 +201,7 @@
         setTimeout(() => {
           labelEl.textContent = t(sentKey, "Message sent ✓");
           if (note) {
-            note.textContent = t(resultKey, "Thanks — we'll be in touch.");
+            note.textContent = t(resultKey, "Thanks, we'll be in touch.");
             note.style.color = "var(--sage)";
           }
           form.reset();

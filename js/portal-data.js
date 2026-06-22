@@ -1,10 +1,10 @@
 /* ============================================================
-   Kamir Group — Investor Portal UI strings
+   Kamir Group, Investor Portal UI strings
    ------------------------------------------------------------
    This file holds ONLY the bilingual UI labels (chrome) for the
    investor dashboard. The actual investor data (properties,
    financials, distributions, documents) and the shared data
-   (contacts, media) are loaded at runtime from Firestore — see
+   (contacts, media) are loaded at runtime from Firestore, see
    js/portal.js. Access is gated by Google Sign-In + Firestore
    security rules (firestore.rules).
 
@@ -67,8 +67,8 @@
     netCashflow:  { he: "תזרים נטו לחודש",                    en: "Net monthly cashflow" },
     cashOnCash:   { he: "תשואה על ההון (שנתי)",              en: "Cash-on-cash (annual)" },
     perMonth:     { he: "/ חודש",                             en: "/ mo" },
-    noLoan:       { he: "ללא הלוואה — 100% הון עצמי",         en: "No loan — 100% equity" },
-    /* financials — visual dashboard */
+    noLoan:       { he: "ללא הלוואה, 100% הון עצמי",         en: "No loan, 100% equity" },
+    /* financials, visual dashboard */
     finValueEquity:{ he: "שווי והון עצמי",                   en: "Value & equity" },
     finMonthlyFlow:{ he: "לאן הולכת השכירות",                en: "Where the rent goes" },
     moneyIn:      { he: "נכנס (שכירות)",                     en: "Comes in (rent)" },
@@ -106,17 +106,17 @@
     photosInterior:{ he: "פנים",                              en: "Interior" },
     photosIntro:  { he: "צילומים מקצועיים של הנכס. לחצו על תמונה להגדלה.", en: "Professional photos of the property. Click any photo to enlarge." },
     /* documents */
-    docsIntro:    { he: "כל מסמכי הקנייה, הקבלות ומסמכי החברה — במקום אחד. אפשר גם להעלות מסמכים משלכם.", en: "All purchase documents, receipts and company papers — in one place. You can also upload your own." },
+    docsIntro:    { he: "כל מסמכי הקנייה, הקבלות ומסמכי החברה, במקום אחד. אפשר גם להעלות מסמכים משלכם.", en: "All purchase documents, receipts and company papers, in one place. You can also upload your own." },
     driveFoldersTitle: { he: "תיקיות הנכס ב-Drive",            en: "Property folders on Drive" },
     driveFoldersIntro: { he: "המסמכים נשמרים ב-Google Drive. לחצו לצפייה בתיקייה כאן בפורטל.", en: "The files live in Google Drive. Click to view the folder right here in the portal." },
     download:     { he: "הורדה",                              en: "Download" },
-    docDemoMsg:   { he: "המסמך יהיה זמין להורדה בקרוב. בינתיים נשמח לשלוח עותק — פנו אלינו.", en: "This document will be downloadable soon. In the meantime we're happy to send a copy — just reach out." },
+    docDemoMsg:   { he: "המסמך יהיה זמין להורדה בקרוב. בינתיים נשמח לשלוח עותק, פנו אלינו.", en: "This document will be downloadable soon. In the meantime we're happy to send a copy, just reach out." },
     docsEmpty:    { he: "עדיין לא הועלו מסמכים לנכס זה.",       en: "No documents have been added for this property yet." },
     uploadTitle:  { he: "העלאת מסמך",                          en: "Upload a document" },
     uploadHint:   { he: "גררו לכאן קובץ או לחצו לבחירה · PDF, תמונה או מסמך · עד 25MB", en: "Drag a file here or click to choose · PDF, image or doc · up to 25MB" },
     uploadUnavailable:{ he: "ההעלאה תופעל בקרוב",              en: "Uploads activating soon" },
     uploadTooBig: { he: "הקובץ גדול מדי (מעל 25MB)",          en: "File too large (over 25MB)" },
-    uploadFailed: { he: "ההעלאה נכשלה — נסו שוב",             en: "Upload failed — try again" },
+    uploadFailed: { he: "ההעלאה נכשלה, נסו שוב",             en: "Upload failed, try again" },
     uploadDone:   { he: "הועלה בהצלחה ✓",                     en: "Uploaded ✓" },
     catPurchase:  { he: "רכישה",                              en: "Purchase" },
     catCompany:   { he: "חברה (LLC)",                         en: "Company (LLC)" },
@@ -124,12 +124,12 @@
     catReceipts:  { he: "קבלות",                              en: "Receipts" },
     catLease:     { he: "השכרה",                              en: "Lease" },
     /* contacts */
-    contactsIntro:{ he: "עם מי מדברים ומתי — אנשי הקשר שמלווים את הנכס שלכם.", en: "Who to talk to and when — the people who support your property." },
+    contactsIntro:{ he: "עם מי מדברים ומתי, אנשי הקשר שמלווים את הנכס שלכם.", en: "Who to talk to and when, the people who support your property." },
     whenToContact:{ he: "מתי לפנות",                          en: "When to contact" },
     call:         { he: "התקשרו",                             en: "Call" },
     email:        { he: "אימייל",                             en: "Email" },
     toolsTitle:   { he: "מערכות וקישורים",                    en: "Systems & links" },
-    toolsIntro:   { he: "הכלים שבהם אנו מנהלים את הכספים, השכירות והקבצים של הנכס — לכניסה ישירה.", en: "The systems we use to manage the property's banking, rentals and files — for direct access." },
+    toolsIntro:   { he: "הכלים שבהם אנו מנהלים את הכספים, השכירות והקבצים של הנכס, לכניסה ישירה.", en: "The systems we use to manage the property's banking, rentals and files, for direct access." },
     mercuryName:  { he: "Mercury",                            en: "Mercury" },
     mercuryRole:  { he: "הבנק של החברה",                      en: "Company banking" },
     mercuryDesc:  { he: "חשבון הבנק של החברה: יתרות, העברות ותנועות.", en: "The company's bank account: balances, transfers and activity." },
@@ -138,21 +138,21 @@
     tenantcloudDesc:{ he: "מערכת ניהול השכירות: דיירים, תשלומים וקריאות שירות.", en: "Rental management: tenants, payments and service requests." },
     driveName:    { he: "Google Drive",                       en: "Google Drive" },
     driveRole:    { he: "כל הקבצים והמסמכים",                 en: "All files & documents" },
-    driveDesc:    { he: "התיקייה הכללית של החברה — מסמכים, חוזים וקבצים.", en: "The company's general folder — documents, contracts and files." },
+    driveDesc:    { he: "התיקייה הכללית של החברה, מסמכים, חוזים וקבצים.", en: "The company's general folder, documents, contracts and files." },
     openLink:     { he: "פתיחה ↗",                            en: "Open ↗" },
     /* media */
-    mediaIntro:   { he: "סרטוני הסבר ועדכונים שהכנו עבורכם — זהים לכל המשקיעים.", en: "Explainer videos and updates we've prepared for you — the same for every investor." },
+    mediaIntro:   { he: "סרטוני הסבר ועדכונים שהכנו עבורכם, זהים לכל המשקיעים.", en: "Explainer videos and updates we've prepared for you, the same for every investor." },
     watch:        { he: "צפייה",                              en: "Watch" },
     openDrive:    { he: "פתיחה ב-Drive ↗",                    en: "Open in Drive ↗" },
 
     /* ---- auth / loading states ---- */
     loading:        { he: "טוען את הפורטל שלכם…",              en: "Loading your portal…" },
     signingIn:      { he: "מתחבר עם Google…",                 en: "Signing in with Google…" },
-    signedIn:       { he: "התחברתם בהצלחה — טוען את הפורטל…",  en: "Signed in — loading your portal…" },
+    signedIn:       { he: "התחברתם בהצלחה, טוען את הפורטל…",  en: "Signed in, loading your portal…" },
     signinError:    { he: "ההתחברות נכשלה. נסו שוב.",          en: "Sign-in failed. Please try again." },
     loadError:      { he: "אירעה תקלה בטעינת הנתונים. רעננו את הדף או נסו שוב מאוחר יותר.", en: "Something went wrong loading your data. Refresh the page or try again later." },
     noAccessTitle:  { he: "החשבון עדיין לא מחובר לתיק השקעות", en: "This account isn't linked to a portfolio yet" },
-    noAccessMsg:    { he: "נכנסתם עם החשבון {email}, אבל הוא עדיין לא מחובר לאזור המשקיעים. אם אתם משקיעים שלנו — פנו אלינו ונחבר אתכם.", en: "You signed in as {email}, but it isn't linked to an investor account yet. If you're one of our investors, contact us and we'll set it up." },
+    noAccessMsg:    { he: "נכנסתם עם החשבון {email}, אבל הוא עדיין לא מחובר לאזור המשקיעים. אם אתם משקיעים שלנו, פנו אלינו ונחבר אתכם.", en: "You signed in as {email}, but it isn't linked to an investor account yet. If you're one of our investors, contact us and we'll set it up." },
     switchAccount:  { he: "התחברות עם חשבון אחר",             en: "Use a different account" },
     contactUs:      { he: "צרו קשר",                          en: "Contact us" },
     configMissing:  { he: "אזור המשקיעים נמצא בהגדרה. נסו שוב בקרוב.", en: "The investor area is being set up. Please check back soon." },

@@ -1,5 +1,5 @@
 /* ============================================================
-   Kamir Group — Investor Portal logic
+   Kamir Group, Investor Portal logic
    ------------------------------------------------------------
    Real authentication via Firebase Google Sign-In, with per-
    investor data loaded from Cloud Firestore. Access is enforced
@@ -25,7 +25,7 @@
      of a failing upload. Flip to true once Storage is enabled on Blaze. */
   var UPLOADS_ENABLED = false;
 
-  /* General company Google Drive — the "everything" folder shown as a system
+  /* General company Google Drive, the "everything" folder shown as a system
      link in the Contacts tab. Defaults to the Drive home; swap this for the
      exact shared-folder URL once it's confirmed. Shared across all investors. */
   var GENERAL_DRIVE_URL = "https://drive.google.com/drive/my-drive";
@@ -75,7 +75,7 @@
      portal in the browser via the picker in the admin bar. Regular
      investors only ever see their own data. */
   var IS_ADMIN = false;        // is the signed-in user a manager?
-  var INVESTOR_LIST = [];      // [{key, name}] — populated for admins only
+  var INVESTOR_LIST = [];      // [{key, name}], populated for admins only
   var ADMIN_VIEW_KEY = null;   // emailKey of the investor currently being viewed
   var SHARED_CONFIG = null;    // cached shared {contacts, media}
 
@@ -127,7 +127,7 @@
     }).catch(function () { return []; });
   }
 
-  /* All investors (admins only — gated by firestore.rules).
+  /* All investors (admins only, gated by firestore.rules).
      Resolves to an array, or null when the list query is denied
      (e.g. the admin rules have not been published yet). The caller
      then gracefully falls back to the admin's own record. */
@@ -371,7 +371,7 @@
       "</div>" +
       (f.interestRate ? '<p class="fnote">' + esc(ui("interestRate")) + ': <b>' + f.interestRate + "%</b></p>" : "");
 
-    /* ---- 3. monthly cashflow — donut + plain-language in/out/keep ---- */
+    /* ---- 3. monthly cashflow, donut + plain-language in/out/keep ---- */
     var gross = f.grossRent || 0;
     var totalOut = (f.monthlyMortgage || 0) + (f.monthlyInsurance || 0) + (f.monthlyOperating || 0);
 
@@ -394,14 +394,14 @@
     var keepPct = gross > 0 ? Math.round((f.netCashflow / gross) * 100) : 0;
     var pctOf = function (v) { return gross > 0 ? Math.round((v / gross) * 100) : 0; };
 
-    /* VIEW A — donut + legend */
+    /* VIEW A, donut + legend */
     var donut =
       '<div class="fdonut-wrap">' +
-        donutChart(segs, money(gross), ui("perMonth"), ui("finMonthlyFlow") + " — " + money(gross)) +
+        donutChart(segs, money(gross), ui("perMonth"), ui("finMonthlyFlow") + ", " + money(gross)) +
         '<ul class="flegend2">' + legend + "</ul>" +
       "</div>";
 
-    /* VIEW B — horizontal bars (magnitude comparison vs. rent) */
+    /* VIEW B, horizontal bars (magnitude comparison vs. rent) */
     var barsRows =
       '<div class="fbars__row fbars__row--ref">' +
         '<div class="fbars__top"><span class="fbars__label">' + ui("moneyIn") + "</span>" +
@@ -418,7 +418,7 @@
       }).join("");
     var bars = '<div class="fbars">' + barsRows + "</div>";
 
-    /* VIEW C — precise numeric table */
+    /* VIEW C, precise numeric table */
     var outSegs = segs.filter(function (s) { return s.tone !== "net"; });
     var tableBody =
       '<tr class="fcft__in"><td>' + ui("moneyIn") + "</td><td class='fnum'>" + money(gross) + "</td><td class='fnum'>100%</td></tr>" +
@@ -451,7 +451,7 @@
           '<span class="fio__s">' + keepPct + "% " + ui("ofRent") + "</span></div>" +
       "</div>";
 
-    /* view toggle — investor picks donut / bars / table; choice persists */
+    /* view toggle, investor picks donut / bars / table; choice persists */
     var fv = "donut";
     try { fv = (window.localStorage && localStorage.getItem("kamir_fin_view")) || "donut"; } catch (e) {}
     if (fv !== "donut" && fv !== "bars" && fv !== "table") fv = "donut";
@@ -482,7 +482,7 @@
       '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>";
   }
 
-  /* Full purchase + renovation ledger — lives in the Payments & Distributions
+  /* Full purchase + renovation ledger, lives in the Payments & Distributions
      tab (it's the money paid out on the property, not part of the monthly
      cashflow snapshot). Shared rendering; the line items are per-property. */
   function renovationLedger(p) {
@@ -569,7 +569,7 @@
   }
 
   function renderDocuments(p) {
-    /* Drive folders for this property — the files stay in Google Drive,
+    /* Drive folders for this property, the files stay in Google Drive,
        the investor opens them straight from the portal in a new tab.
        Shared rendering; the folder links themselves are per-property data. */
     var folders = p.driveFolders || [];
@@ -616,7 +616,7 @@
       ? '<div class="pcard pdocs">' + items + "</div>"
       : '<div class="pcard pempty">' + ICONS.docs + "<p>" + ui("docsEmpty") + "</p></div>";
 
-    /* upload zone — lets the investor add their own documents.
+    /* upload zone, lets the investor add their own documents.
        When uploads are disabled (Spark plan) we render a non-interactive
        "coming soon" card rather than a control that would fail. */
     var uploader = UPLOADS_ENABLED
@@ -653,7 +653,7 @@
           '<a class="pbtn pbtn--ghost" href="mailto:' + esc(c.email) + '">' + ICONS.mail + "<span>" + esc(c.email) + "</span></a>" +
         "</div></div>";
     }).join("");
-    /* Essential systems — Mercury (bank), TenantCloud (property mgmt) and the
+    /* Essential systems, Mercury (bank), TenantCloud (property mgmt) and the
        general company Drive. These are links to external systems, not people,
        so they live in their own block. We show each brand's REAL logo (its
        favicon, served by Google at high-res) inside a branded tile so the card
@@ -761,7 +761,7 @@
       if (INVESTOR_LIST.length) {
         var opts = INVESTOR_LIST.map(function (i) {
           return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
-            esc(L(i.name)) + " — " + esc(i.key) + "</option>";
+            esc(L(i.name)) + ", " + esc(i.key) + "</option>";
         }).join("");
         adminBar =
           '<div class="padminbar">' +
@@ -867,7 +867,7 @@
       });
     });
 
-    /* financials view toggle (donut / bars / table) — swap views in place */
+    /* financials view toggle (donut / bars / table), swap views in place */
     app.querySelectorAll(".finseg").forEach(function (seg) {
       seg.addEventListener("click", function () {
         var id = seg.getAttribute("data-finview");
@@ -883,7 +883,7 @@
       });
     });
 
-    /* financials donut ↔ legend interactivity — hovering/focusing a legend
+    /* financials donut ↔ legend interactivity, hovering/focusing a legend
        row dims the other slices, thickens the matching one, and swaps the
        donut centre to that slice's amount. Touch-friendly (tap to focus). */
     app.querySelectorAll(".fdonut-wrap").forEach(function (wrap) {
@@ -915,7 +915,7 @@
       });
     });
 
-    /* photo lightbox — with prev/next (arrow keys + on-screen buttons) */
+    /* photo lightbox, with prev/next (arrow keys + on-screen buttons) */
     var lb = app.querySelector("#plightbox");
     var lbImg = lb ? lb.querySelector("img") : null;
     var lbCap = lb ? lb.querySelector(".plightbox__cap") : null;
@@ -1169,7 +1169,7 @@
   function adminEmptyBlock() {
     var opts = INVESTOR_LIST.map(function (i) {
       return '<option value="' + esc(i.key) + '"' + (i.key === ADMIN_VIEW_KEY ? " selected" : "") + ">" +
-        esc(L(i.name)) + " — " + esc(i.key) + "</option>";
+        esc(L(i.name)) + ", " + esc(i.key) + "</option>";
     }).join("");
     var bar = INVESTOR_LIST.length
       ? '<div class="padminbar"><div class="padminbar__tag">' + ICONS.shield + "<span>" + ui("adminMode") + "</span></div>" +
