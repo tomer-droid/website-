@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="405 E Woodside St, South Bend">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EFE7DA"/>
+      <stop offset="1" stop-color="#E2D3BE"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <g fill="none" stroke="#B45F3C" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" transform="translate(400 250)">
+    <path d="M-110 30 L0 -70 L110 30"/>
+    <path d="M-85 18 L-85 120 L85 120 L85 18"/>
+    <rect x="-22" y="55" width="44" height="65" fill="#B45F3C" stroke="none"/>
+  </g>
+  <text x="400" y="470" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" fill="#2B2A28" font-weight="600">405 E Woodside St</text>
+  <text x="400" y="515" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#6E7257" letter-spacing="2">SOUTH BEND, IN 46614</text>
+</svg>

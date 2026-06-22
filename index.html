@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/favicon-180.png" />
-  <link rel="stylesheet" href="css/styles.css?v=21" />
+  <link rel="stylesheet" href="css/styles.css?v=22" />
 </head>
 <body class="home">
 
@@ -80,7 +80,7 @@
   <!-- ===== STATS ===== -->
   <section class="section section--tight section--cream">
     <div class="container">
-      <div class="stats stats--3">
+      <div class="stats stats--2">
         <div class="stat reveal">
           <div class="stat__num"><span data-count="14">0</span></div>
           <div class="stat__label" data-i18n="stat.homes">עסקאות שבוצעו</div>
@@ -88,10 +88,6 @@
         <div class="stat reveal" data-delay="1">
           <div class="stat__num"><span data-count="2.6" data-prefix="$" data-suffix="M">0</span></div>
           <div class="stat__label" data-i18n="stat.transactions">נפח עסקאות שנסגרו</div>
-        </div>
-        <div class="stat reveal" data-delay="2">
-          <div class="stat__num"><span data-count="2">0</span></div>
-          <div class="stat__label" data-i18n="stat.experience">תחומים, השבחה והחזקה</div>
         </div>
       </div>
     </div>
@@ -139,8 +135,45 @@
     </div>
   </section>
 
+  <!-- ===== WHO IS THIS FOR ===== -->
+  <section class="section" id="fit">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow" data-i18n="idx.fit.eyebrow">למי זה מתאים</span>
+        <h2 data-i18n="idx.fit.title">הליווי הזה נבנה בדיוק בשבילכם</h2>
+        <p class="lead" style="margin-inline:auto;" data-i18n="idx.fit.lead">לא כל אחד, ובכוונה. אנחנו עובדים עם משקיעים שמחפשים השקעה רצינית בנדל״ן אמריקאי, בלי לנהל אותה בעצמם.</p>
+      </div>
+      <ul class="fit-grid">
+        <li class="fit-card reveal">
+          <span class="fit-card__ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </span>
+          <p data-i18n="idx.fit.c1">יש לכם הון פנוי להשקעה של מעל ₪200,000.</p>
+        </li>
+        <li class="fit-card reveal" data-delay="1">
+          <span class="fit-card__ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 7-7"/><path d="M14 8h6v6"/></svg>
+          </span>
+          <p data-i18n="idx.fit.c2">אתם מבינים את הפוטנציאל של נדל״ן בארה״ב ורוצים חלק ממנו.</p>
+        </li>
+        <li class="fit-card reveal" data-delay="2">
+          <span class="fit-card__ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><path d="M2 12h3M19 12h3" opacity="0"/></svg>
+          </span>
+          <p data-i18n="idx.fit.c3">אתם רוצים שהכסף יעבוד בשבילכם, תזרים חודשי לצד עליית ערך.</p>
+        </li>
+        <li class="fit-card reveal" data-delay="3">
+          <span class="fit-card__ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 6L9 17l-5-5"/></svg>
+          </span>
+          <p data-i18n="idx.fit.c4">אתם מעדיפים שמישהו מנוסה ינהל את הכול עבורכם, מקצה לקצה.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
   <!-- ===== SUCCESS STORIES ===== -->
-  <section class="section" id="success">
+  <section class="section section--cream" id="success">
     <div class="container">
       <div class="section-head center">
         <span class="eyebrow" data-i18n="idx.success.eyebrow">סיפורי הצלחה</span>
@@ -282,6 +315,78 @@
     </div>
   </section>
 
+  <!-- ===== PORTAL PEEK ===== -->
+  <section class="section section--cream" id="peek">
+    <div class="container">
+      <div class="peek">
+        <div class="peek__intro reveal">
+          <span class="eyebrow" data-i18n="idx.peek.eyebrow">פורטל המשקיעים</span>
+          <h2 data-i18n="idx.peek.title">הצצה לפורטל המשקיעים שלכם</h2>
+          <p class="lead" data-i18n="idx.peek.lead">כל מה שקורה עם הכסף שלכם, במקום אחד. תשואות, תזרים, מסמכים ועדכוני נכסים, בשקיפות מלאה ומכל מכשיר.</p>
+          <ul class="peek__perks">
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span data-i18n="idx.peek.p1">מעקב תשואות ותזרים בזמן אמת</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span data-i18n="idx.peek.p2">מסמכי השקעה ודוחות מסודרים</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+              <span data-i18n="idx.peek.p3">עדכונים שוטפים על כל נכס</span>
+            </li>
+          </ul>
+          <a href="portal.html" class="btn btn-primary btn-arrow">
+            <span data-i18n="idx.peek.cta">לכניסה לפורטל</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="peek__device reveal" data-delay="1">
+          <div class="peek-ui">
+            <div class="peek-ui__bar"><span></span><span></span><span></span></div>
+            <div class="peek-ui__body">
+              <div class="peek-ui__head">
+                <div class="peek-ui__id">
+                  <span class="peek-ui__avatar">K</span>
+                  <span class="peek-ui__who">
+                    <strong data-i18n="idx.peek.hello">שלום, שותף</strong>
+                    <small data-i18n="idx.peek.sub">תיק הנכסים שלך</small>
+                  </span>
+                </div>
+                <span class="peek-ui__chip" data-i18n="idx.peek.demo">תצוגה מקדימה</span>
+              </div>
+              <div class="peek-ui__stats">
+                <div class="peek-tile"><span data-i18n="idx.peek.t1">שכ"ד חודשי</span><strong>$1,700</strong></div>
+                <div class="peek-tile"><span data-i18n="idx.peek.t2">תזרים נטו</span><strong class="up">$437</strong></div>
+                <div class="peek-tile"><span data-i18n="idx.peek.t3">נכסים בתיק</span><strong>2</strong></div>
+              </div>
+              <div class="peek-prop">
+                <img src="assets/properties/grove.jpg" alt="" loading="lazy" />
+                <div class="peek-prop__txt">
+                  <strong class="addr-ltr">302 E Grove St</strong>
+                  <small data-i18n="idx.peek.propsub">Mishawaka, IN · מושכר ומניב</small>
+                </div>
+                <span class="peek-prop__pill up" dir="ltr">+$437</span>
+              </div>
+              <div class="peek-docs">
+                <div class="peek-doc">
+                  <span class="peek-doc__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+                  <span data-i18n="idx.peek.doc1">דוח תשואה, Q1 2026</span>
+                </div>
+                <div class="peek-doc">
+                  <span class="peek-doc__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+                  <span data-i18n="idx.peek.doc2">הסכם השקעה</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== CTA ===== -->
   <section class="section">
     <div class="container">
@@ -341,7 +446,7 @@
   </footer>
 
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-  <script src="js/i18n.js?v=21"></script>
-  <script src="js/main.js?v=21"></script>
+  <script src="js/i18n.js?v=22"></script>
+  <script src="js/main.js?v=22"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/favicon-180.png" />
-  <link rel="stylesheet" href="css/styles.css?v=21" />
+  <link rel="stylesheet" href="css/styles.css?v=22" />
 </head>
 <body>
 
@@ -66,6 +66,7 @@
         <button class="filter" data-filter="forsale" data-i18n="prj.f.forsale">למכירה</button>
         <button class="filter" data-filter="rental" data-i18n="prj.f.rental">מניב</button>
         <button class="filter" data-filter="progress" data-i18n="prj.f.progress">בתהליך</button>
+        <button class="filter" data-filter="sold" data-i18n="prj.f.sold">נמכר</button>
       </div>
 
       <div class="projects-grid">
@@ -110,10 +111,10 @@
           </div>
         </article>
 
-        <!-- FOR SALE, 412 E La Salle Ave (has video) -->
-        <article class="project reveal" data-category="forsale">
+        <!-- SOLD, 412 E La Salle Ave (has video) -->
+        <article class="project reveal" data-category="sold">
           <a class="project__media" href="https://www.zillow.com/homes/412-E-La-Salle-Ave-Mishawaka-IN-46545_rb/" target="_blank" rel="noopener" aria-label="צפייה ב-412 E La Salle Ave ב-Zillow">
-            <span class="project__status status--invest" data-i18n="idx.d1.status">למכירה</span>
+            <span class="project__status status--done" data-i18n="prj.f.sold">נמכר</span>
             <img src="assets/properties/lasalle.jpg" alt="412 E La Salle Ave, Mishawaka" loading="lazy" />
           </a>
           <div class="project__body">
@@ -122,9 +123,9 @@
               <span data-i18n="prj.lasalle.loc">Mishawaka, IN 46545</span>
             </div>
             <h3 class="addr-ltr" data-i18n="prj.lasalle.title">412 E La Salle Ave</h3>
-            <p data-i18n="prj.lasalle.text">Fix & Flip, הנכס נרכש, שופץ מהיסוד וכעת מוצע למכירה. צפו בתמונות, בנכס המלא ובמחיר ב-Zillow.</p>
+            <p data-i18n="prj.lasalle.text">Fix & Flip שהושלם, הנכס נרכש, שופץ מהיסוד ונמכר. צפו בתמונות ובפרטי הנכס ב-Zillow.</p>
             <div class="project__meta">
-              <div><span data-i18n="lbl.stage">שלב</span><strong data-i18n="prj.lasalle.stage">השבחה · Fix & Flip</strong></div>
+              <div><span data-i18n="lbl.status">סטטוס</span><strong data-i18n="prj.lasalle.statusVal">נמכר · Fix & Flip הושלם</strong></div>
             </div>
             <a class="link-arrow" style="margin-top:1.2rem;" href="https://www.zillow.com/homes/412-E-La-Salle-Ave-Mishawaka-IN-46545_rb/" target="_blank" rel="noopener" data-i18n="idx.deals.zillow">צפייה ב-Zillow ↗</a>
           </div>
@@ -248,6 +249,27 @@
           </div>
         </article>
 
+        <!-- INCOME, 405 E Woodside St -->
+        <article class="project reveal" data-delay="1" data-category="rental">
+          <a class="project__media" href="https://www.zillow.com/homes/405-E-Woodside-St-South-Bend-IN-46614_rb/" target="_blank" rel="noopener" aria-label="צפייה ב-405 E Woodside St ב-Zillow">
+            <span class="project__status status--sold" data-i18n="idx.success.tag">מושכר ומניב</span>
+            <img src="assets/properties/woodside.svg" alt="405 E Woodside St, South Bend" loading="lazy" />
+          </a>
+          <div class="project__body">
+            <div class="project__loc">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <span data-i18n="prj.woodside.loc">South Bend, IN 46614</span>
+            </div>
+            <h3 class="addr-ltr" data-i18n="prj.woodside.title">405 E Woodside St</h3>
+            <p data-i18n="prj.woodside.text">נכס מגורים מושכר ומניב באזור South Bend, חלק מתיק הנכסים שאנחנו מחזיקים ומנהלים עבור שותפינו, עם תזרים חודשי יציב.</p>
+            <div class="project__meta">
+              <div><span data-i18n="lbl.value">שווי נכס</span><strong data-i18n="prj.woodside.value">$135,000</strong></div>
+              <div><span data-i18n="lbl.status">סטטוס</span><strong class="up" data-i18n="idx.s3.status">מושכר ומניב</strong></div>
+            </div>
+            <a class="link-arrow" style="margin-top:1.2rem;" href="https://www.zillow.com/homes/405-E-Woodside-St-South-Bend-IN-46614_rb/" target="_blank" rel="noopener" data-i18n="idx.deals.zillow">צפייה ב-Zillow ↗</a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -330,7 +352,7 @@
   </footer>
 
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-  <script src="js/i18n.js?v=21"></script>
-  <script src="js/main.js?v=21"></script>
+  <script src="js/i18n.js?v=22"></script>
+  <script src="js/main.js?v=22"></script>
 </body>
 </html>
