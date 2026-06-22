@@ -252,7 +252,7 @@
         '<p class="pcontact__role">' + esc(L(c.role)) + "</p>" +
         '<p class="pcontact__when"><b>' + ui("whenToContact") + ":</b> " + esc(L(c.when)) + "</p>" +
         '<div class="pcontact__actions">' +
-          '<a class="pbtn" href="tel:' + esc(c.phone) + '">' + ICONS.phone + "<span>" + esc(c.phoneLabel) + "</span></a>" +
+          '<a class="pbtn" href="tel:' + esc(c.phone) + '">' + ICONS.phone + '<span dir="ltr">' + esc(c.phoneLabel) + "</span></a>" +
           '<a class="pbtn pbtn--ghost" href="mailto:' + esc(c.email) + '">' + ICONS.mail + "<span>" + esc(c.email) + "</span></a>" +
         "</div></div>";
     }).join("");
