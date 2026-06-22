@@ -109,8 +109,8 @@
   const heroMedia = document.querySelector(".hero__media");
   const heroSection = document.querySelector(".hero");
   if (heroMedia && heroSection && !prefersReduced) {
-    const BASE_SCALE = 1.06; // overflow room so pointer shift never reveals an edge
-    const MAX = 14;          // max pointer-driven shift (px)
+    const BASE_SCALE = 1.13; // overflow room so pointer shift never reveals an edge
+    const MAX = 30;          // max pointer-driven shift (px)
     let scrollY = window.scrollY;
     let targetX = 0, targetY = 0; // pointer target offsets
     let curX = 0, curY = 0;       // eased current offsets

@@ -316,8 +316,8 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
   inset: 0;
   z-index: 2;
   background:
-    linear-gradient(105deg, rgba(20,22,27,0.86) 0%, rgba(20,22,27,0.55) 44%, rgba(20,22,27,0.22) 100%),
-    linear-gradient(0deg, rgba(20,22,27,0.62), rgba(20,22,27,0) 58%);
+    linear-gradient(105deg, rgba(20,22,27,0.70) 0%, rgba(20,22,27,0.38) 46%, rgba(20,22,27,0.08) 100%),
+    linear-gradient(0deg, rgba(20,22,27,0.50), rgba(20,22,27,0) 60%);
 }
 .hero__media img,
 .hero__photo {
@@ -1933,6 +1933,47 @@ html[dir="rtl"] .padminbar__pick select {
   .fio { grid-template-columns: 1fr; }
   .fio__op { transform: rotate(90deg); justify-self: center; font-size: 1.2rem; }
 }
+
+/* ---- monthly cashflow: view toggle (donut / bars / table) ---- */
+.fmonthly__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.fmonthly__head .pcard__title { margin: 0; padding: 0; border: 0; }
+.finview-toggle { display: inline-flex; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.finseg { border: 0; background: transparent; cursor: pointer; font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink-soft); padding: 0.42rem 0.95rem; border-radius: 999px; transition: all 0.2s var(--ease); }
+.finseg:hover { color: var(--ink); }
+.finseg.is-active { background: var(--paper); color: var(--ink); box-shadow: var(--shadow-sm); }
+.finviews { margin-top: 0.2rem; }
+.finview { display: none; }
+.finview.is-active { display: block; }
+
+/* bars view */
+.fbars { display: flex; flex-direction: column; gap: 0.95rem; margin-top: 0.3rem; }
+.fbars__top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 0.92rem; }
+.fbars__label { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--ink); }
+.fbars__val { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fbars__val small { font-weight: 500; color: var(--ink-soft); font-size: 0.78em; margin-inline-start: 0.3rem; }
+.fbars__track { height: 13px; background: var(--cream); border-radius: 999px; overflow: hidden; }
+.fbars__fill { display: block; height: 100%; border-radius: 999px; }
+.fbars__fill--rent { background: var(--ink); opacity: 0.18; }
+.fbars__fill--net  { background: var(--sage); }
+.fbars__fill--loan { background: var(--ink); }
+.fbars__fill--ins  { background: var(--ochre); }
+.fbars__fill--op   { background: var(--clay); }
+.fbars__row--ref { opacity: 0.9; }
+.fbars__row--ref .fbars__label { font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) {
+  .fbars__fill { transition: width 0.6s var(--ease); }
+}
+
+/* table view */
+.fcftable { width: 100%; border-collapse: collapse; }
+.fcftable th, .fcftable td { padding: 0.65rem 0.7rem; text-align: start; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+.fcftable th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); font-weight: 600; }
+.fcftable .fnum { text-align: end; font-variant-numeric: tabular-nums; }
+.fcftable td .fleg__dot { display: inline-block; vertical-align: middle; margin-inline-end: 0.5rem; }
+.fcft__in td { font-weight: 700; color: var(--ink); }
+.fcft__keep td { font-weight: 700; color: var(--ink); background: rgba(110,114,87,0.12); border-bottom: 0; }
+.fcft__keep td:first-child { border-start-start-radius: 10px; border-end-start-radius: 10px; }
+.fcft__keep td:last-child { border-start-end-radius: 10px; border-end-end-radius: 10px; }
 
 /* Zillow link on the property hero */
 .pzillow {

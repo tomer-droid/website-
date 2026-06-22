@@ -369,14 +369,48 @@
         '<span class="fleg__val">' + money(s.value) + ' <small>' + pct + "%</small></span></li>";
     }).join("");
 
+    var keepPct = gross > 0 ? Math.round((f.netCashflow / gross) * 100) : 0;
+    var pctOf = function (v) { return gross > 0 ? Math.round((v / gross) * 100) : 0; };
+
+    /* VIEW A — donut + legend */
     var donut =
       '<div class="fdonut-wrap">' +
         donutChart(segs, money(gross), ui("perMonth"), ui("finMonthlyFlow") + " — " + money(gross)) +
         '<ul class="flegend2">' + legend + "</ul>" +
       "</div>";
 
-    /* plain-language money in -> out -> keep */
-    var keepPct = gross > 0 ? Math.round((f.netCashflow / gross) * 100) : 0;
+    /* VIEW B — horizontal bars (magnitude comparison vs. rent) */
+    var barsRows =
+      '<div class="fbars__row fbars__row--ref">' +
+        '<div class="fbars__top"><span class="fbars__label">' + ui("moneyIn") + "</span>" +
+          '<span class="fbars__val">' + money(gross) + " <small>100%</small></span></div>" +
+        '<div class="fbars__track"><span class="fbars__fill fbars__fill--rent" style="width:100%"></span></div>' +
+      "</div>" +
+      segs.map(function (s) {
+        var pct = pctOf(s.value);
+        return '<div class="fbars__row">' +
+          '<div class="fbars__top"><span class="fbars__label"><span class="fleg__dot fleg__dot--' + s.tone + '"></span>' + esc(s.label) + "</span>" +
+            '<span class="fbars__val">' + money(s.value) + " <small>" + pct + "%</small></span></div>" +
+          '<div class="fbars__track"><span class="fbars__fill fbars__fill--' + s.tone + '" style="width:' + pct + '%"></span></div>' +
+        "</div>";
+      }).join("");
+    var bars = '<div class="fbars">' + barsRows + "</div>";
+
+    /* VIEW C — precise numeric table */
+    var outSegs = segs.filter(function (s) { return s.tone !== "net"; });
+    var tableBody =
+      '<tr class="fcft__in"><td>' + ui("moneyIn") + "</td><td class='fnum'>" + money(gross) + "</td><td class='fnum'>100%</td></tr>" +
+      outSegs.map(function (s) {
+        return "<tr><td><span class='fleg__dot fleg__dot--" + s.tone + "'></span>" + esc(s.label) + "</td>" +
+          "<td class='fnum'>−" + money(s.value) + "</td><td class='fnum fmuted'>" + pctOf(s.value) + "%</td></tr>";
+      }).join("") +
+      "<tr class='fcft__keep'><td>" + ui("youKeep") + "</td><td class='fnum'>" + money(f.netCashflow) + "</td><td class='fnum'>" + keepPct + "%</td></tr>";
+    var table =
+      '<div class="ptable-wrap"><table class="ptable fcftable"><thead><tr>' +
+        "<th>" + ui("colItem") + "</th><th class='fnum'>" + ui("colAmount") + "</th><th class='fnum'>" + ui("ofRentShort") + "</th>" +
+      "</tr></thead><tbody>" + tableBody + "</tbody></table></div>";
+
+    /* plain-language money in -> out -> keep (always-on summary) */
     var inout =
       '<div class="fio">' +
         '<div class="fio__item fio__item--in">' +
@@ -395,10 +429,30 @@
           '<span class="fio__s">' + keepPct + "% " + ui("ofRent") + "</span></div>" +
       "</div>";
 
+    /* view toggle — investor picks donut / bars / table; choice persists */
+    var fv = "donut";
+    try { fv = (window.localStorage && localStorage.getItem("kamir_fin_view")) || "donut"; } catch (e) {}
+    if (fv !== "donut" && fv !== "bars" && fv !== "table") fv = "donut";
+    var segBtn = function (id, label) {
+      return '<button type="button" class="finseg' + (fv === id ? " is-active" : "") +
+        '" role="tab" aria-selected="' + (fv === id ? "true" : "false") + '" data-finview="' + id + '">' + esc(label) + "</button>";
+    };
+    var toggle =
+      '<div class="finview-toggle" role="tablist" aria-label="' + esc(ui("finViewLabel")) + '">' +
+        segBtn("donut", ui("finViewDonut")) + segBtn("bars", ui("finViewBars")) + segBtn("table", ui("finViewTable")) +
+      "</div>";
+    var viewWrap = function (id, inner) {
+      return '<div class="finview' + (fv === id ? " is-active" : "") + '" data-finview="' + id + '">' + inner + "</div>";
+    };
+    var views =
+      '<div class="finviews">' +
+        viewWrap("donut", donut) + viewWrap("bars", bars) + viewWrap("table", table) +
+      "</div>";
+
     var monthlyCard =
       '<div class="pcard fmonthly">' +
-        '<h3 class="pcard__title">' + ui("finMonthlyFlow") + "</h3>" +
-        donut + inout +
+        '<div class="fmonthly__head"><h3 class="pcard__title">' + ui("finMonthlyFlow") + "</h3>" + toggle + "</div>" +
+        inout + views +
       "</div>";
 
     /* ---- 4. full purchase + renovation ledger ---- */
@@ -732,6 +786,22 @@
         renderDashboard(app);
         var sec = app.querySelector(".ptabs");
         if (sec) sec.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    });
+
+    /* financials view toggle (donut / bars / table) — swap views in place */
+    app.querySelectorAll(".finseg").forEach(function (seg) {
+      seg.addEventListener("click", function () {
+        var id = seg.getAttribute("data-finview");
+        try { if (window.localStorage) localStorage.setItem("kamir_fin_view", id); } catch (e) {}
+        app.querySelectorAll(".finseg").forEach(function (b) {
+          var on = b === seg;
+          b.classList.toggle("is-active", on);
+          b.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        app.querySelectorAll(".finview").forEach(function (v) {
+          v.classList.toggle("is-active", v.getAttribute("data-finview") === id);
+        });
       });
     });
 
