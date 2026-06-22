@@ -1135,6 +1135,40 @@ html[dir="ltr"] .addr-ltr { text-align: left; }
 .portal__signup { text-align: center; margin-top: 1.2rem; font-size: 0.92rem; color: var(--ink-soft); }
 .portal__signup a { font-weight: 600; color: var(--clay); }
 .portal__signup a:hover { text-decoration: underline; }
+
+/* Google sign-in */
+.portal__google { text-align: center; }
+.btn-google {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.7rem;
+  background: #fff; color: #3c4043; border: 1px solid #dadce0;
+  font-weight: 600; font-size: 1rem; padding: 0.85rem 1.2rem; border-radius: 10px;
+  cursor: pointer; transition: background .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.btn-google:hover { background: #f7f8f8; box-shadow: 0 1px 4px rgba(60,64,67,0.18); }
+.btn-google:active { background: #f1f3f4; }
+.btn-google:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-google__g { flex-shrink: 0; }
+.portal__noaccess {
+  margin-top: 1.4rem; padding: 1.1rem 1.2rem; text-align: start;
+  background: var(--cream, #f6f1e7); border: 1px solid var(--line); border-radius: 12px;
+}
+.portal__noaccess b { display: block; margin-bottom: 0.4rem; color: var(--ink); }
+.portal__noaccess p { margin: 0 0 1rem; font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; }
+.portal__noaccess-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+.portal__noaccess-actions .btn { flex: 1 1 auto; }
+
+/* Dashboard loading / error state */
+.pstate {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; min-height: 50vh; text-align: center; color: var(--ink-soft);
+}
+.pstate__spinner {
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 3px solid var(--line); border-top-color: var(--clay);
+  animation: pspin 0.8s linear infinite;
+}
+@keyframes pspin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .pstate__spinner { animation-duration: 2s; } }
 @media (max-width: 860px) {
   .portal__inner { grid-template-columns: 1fr; gap: 2.5rem; }
   .portal__aside { text-align: center; }

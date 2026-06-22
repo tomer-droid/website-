@@ -1,0 +1,61 @@
+rules_version = '2';
+
+// ============================================================
+// Kamir Group — Investor Portal Firestore security rules
+// ------------------------------------------------------------
+// Model:
+//   config/{doc}            -> shared data (contacts, media).
+//                              Readable by any signed-in investor.
+//   investors/{email}       -> one doc per investor, doc ID = the
+//                              investor's lowercase email address.
+//     properties/{propId}   -> that investor's per-property data
+//                              (financials, distributions, photos, docs).
+//
+// Access:
+//   - An investor can read ONLY their own investors/{email} doc and
+//     its properties subcollection, matched against their verified
+//     Google email.
+//   - Shared config is readable by any signed-in (verified) user that
+//     has an investor record is NOT required for config — any signed-in
+//     user may read config; sensitive data lives under investors/.
+//   - All client writes are denied. Data is managed by you via the
+//     Firebase console or the admin seed script (Admin SDK bypasses
+//     these rules).
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true;
+    }
+
+    function myEmail() {
+      return request.auth.token.email.lower();
+    }
+
+    // Shared, non-sensitive data (support contacts, explainer videos).
+    match /config/{doc} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // Per-investor private data — only the matching investor may read.
+    match /investors/{email} {
+      allow read: if signedIn() && email == myEmail();
+      allow write: if false;
+
+      match /properties/{propId} {
+        allow read: if signedIn() && email == myEmail();
+        allow write: if false;
+      }
+    }
+
+    // Everything else: denied by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -13,3 +13,17 @@ Thumbs.db
 # Logs / temp
 *.log
 .cache/
+
+# Node / Firebase
+node_modules/
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Secrets — NEVER commit a service account key
+serviceAccountKey.json
+**/serviceAccountKey.json
+*serviceAccount*.json
+.env
+.env.*

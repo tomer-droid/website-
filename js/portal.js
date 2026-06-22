@@ -1,22 +1,36 @@
 /* ============================================================
-   Kamir Group — Investor Portal logic (DEMO prototype)
+   Kamir Group — Investor Portal logic
    ------------------------------------------------------------
-   Handles the demo login on portal.html and renders the
-   session-gated dashboard on portal-dashboard.html.
+   Real authentication via Firebase Google Sign-In, with per-
+   investor data loaded from Cloud Firestore. Access is enforced
+   by Firestore security rules (firestore.rules): a signed-in
+   investor can only read their own investors/{email} document
+   and its properties, plus the shared config/* data.
 
-   NOTE: This is a front-end DEMO only. "Authentication" here is
-   a simple client-side credential check against public demo
-   credentials, with a sessionStorage flag. It is NOT secure and
-   must NOT be used to protect real data. A production portal
-   needs a real backend (server-side auth + database + access
-   control). Everything here is for look-and-feel.
+   - portal.html         -> Google sign-in, then redirect to the
+                            dashboard if the account is authorized.
+   - portal-dashboard.html -> auth-gated; loads data from Firestore
+                            and renders the existing dashboard UI.
    ============================================================ */
 (function () {
   "use strict";
 
   var PD = window.KamirPortalData;
   if (!PD) return;
-  var SESSION_KEY = "kamir_portal_session";
+
+  /* ---- Firebase bootstrap ---- */
+  function configReady() {
+    var c = window.KAMIR_FIREBASE_CONFIG;
+    return c && c.apiKey && c.apiKey.indexOf("REPLACE_") !== 0 &&
+      c.projectId && c.projectId.indexOf("REPLACE_") !== 0;
+  }
+  function initFirebase() {
+    if (typeof firebase === "undefined" || !configReady()) return false;
+    if (!firebase.apps || !firebase.apps.length) {
+      firebase.initializeApp(window.KAMIR_FIREBASE_CONFIG);
+    }
+    return true;
+  }
 
   /* ---- helpers ---- */
   function lang() {
@@ -37,46 +51,116 @@
     });
   }
 
+  /* ---- Firestore data loading ---- */
+  function emailKey(user) {
+    return (user.email || "").toLowerCase();
+  }
+  /* Load the signed-in investor's data + shared config from Firestore.
+     Resolves with a DATA object (same shape the dashboard renders), or
+     null if this account has no investor record (not authorized). */
+  function loadPortalData(user) {
+    var db = firebase.firestore();
+    var ref = db.collection("investors").doc(emailKey(user));
+    return ref.get().then(function (inv) {
+      if (!inv.exists) return null;
+      var info = inv.data() || {};
+      return Promise.all([
+        ref.collection("properties").get(),
+        db.collection("config").doc("contacts").get(),
+        db.collection("config").doc("media").get()
+      ]).then(function (res) {
+        var props = res[0].docs.map(function (d) {
+          var data = d.data();
+          if (data.id == null) data.id = d.id;
+          return data;
+        });
+        props.sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+        var contacts = res[1].exists ? (res[1].data().items || []) : [];
+        var media = res[2].exists ? (res[2].data().items || []) : [];
+        return {
+          investor: { name: info.name, since: info.since },
+          properties: props,
+          shared: { contacts: contacts, media: media }
+        };
+      });
+    });
+  }
+
   /* ============================================================
      LOGIN  (portal.html)
      ============================================================ */
-  function initLogin(form) {
-    var result = form.querySelector(".form-result");
-    var btn = form.querySelector('button[type="submit"]');
+  function setMsg(el, text, kind) {
+    if (!el) return;
+    el.textContent = text || "";
+    el.style.color = kind === "error" ? "var(--brick, #b4452f)"
+      : kind === "ok" ? "var(--sage)" : "";
+  }
 
-    /* If already logged in, jump straight to the dashboard. */
-    try {
-      if (sessionStorage.getItem(SESSION_KEY) === "1") {
-        window.location.replace("portal-dashboard.html");
+  function setupLogin(root) {
+    var btn = document.getElementById("google-signin");
+    var result = root.querySelector(".form-result");
+    var extra = document.getElementById("portal-google-extra");
+
+    if (!initFirebase()) {
+      if (btn) btn.disabled = true;
+      setMsg(result, ui("configMissing"), "error");
+      return;
+    }
+
+    var auth = firebase.auth();
+    auth.useDeviceLanguage();
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    function showNoAccess(user) {
+      setMsg(result, "", "");
+      if (!extra) return;
+      var msg = ui("noAccessMsg").replace("{email}", user.email || "");
+      extra.innerHTML =
+        '<div class="portal__noaccess">' +
+          "<b>" + esc(ui("noAccessTitle")) + "</b>" +
+          "<p>" + esc(msg) + "</p>" +
+          '<div class="portal__noaccess-actions">' +
+            '<button type="button" class="btn btn-ghost" id="switch-account">' + esc(ui("switchAccount")) + "</button>" +
+            '<a class="btn btn-primary" href="contact.html">' + esc(ui("contactUs")) + "</a>" +
+          "</div>" +
+        "</div>";
+      var sw = document.getElementById("switch-account");
+      if (sw) sw.addEventListener("click", function () {
+        auth.signOut().then(function () {
+          extra.innerHTML = "";
+          auth.signInWithPopup(provider).catch(handleSignInError);
+        });
+      });
+    }
+
+    function handleSignInError(e) {
+      if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) {
+        setMsg(result, "", "");
         return;
       }
-    } catch (e) {}
-
-    /* Demo-credentials hint (this is a public demo). */
-    var hint = document.getElementById("portal-demo-hint");
-    function paintHint() {
-      if (!hint) return;
-      var he = lang() === "he";
-      hint.innerHTML =
-        '<span class="portal__demo-tag">' + (he ? "מצב הדגמה" : "Demo mode") + "</span>" +
-        '<span class="portal__demo-text">' +
-          (he ? "לחצו על “כניסה לחשבון” כדי לראות את הדשבורד לדוגמה."
-              : "Click “Sign in” to view the sample dashboard.") + "</span>";
+      setMsg(result, ui("signinError"), "error");
     }
-    paintHint();
-    window.addEventListener("langchange", paintHint);
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      /* DEMO mode: any submit opens the dashboard. No real credential
-         check yet — a production portal needs server-side auth. */
-      if (result) {
-        result.style.color = "var(--sage)";
-        result.textContent = lang() === "he" ? "התחברתם בהצלחה — טוען את הפורטל…" : "Signed in — loading your portal…";
-      }
-      if (btn) btn.disabled = true;
-      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch (e) {}
-      setTimeout(function () { window.location.href = "portal-dashboard.html"; }, 650);
+    /* React to auth state: if signed in & authorized -> dashboard. */
+    auth.onAuthStateChanged(function (user) {
+      if (!user) return;
+      setMsg(result, ui("signedIn"), "ok");
+      loadPortalData(user).then(function (data) {
+        if (data) {
+          window.location.replace("portal-dashboard.html");
+        } else {
+          showNoAccess(user);
+        }
+      }).catch(function () {
+        setMsg(result, ui("loadError"), "error");
+      });
+    });
+
+    if (btn) btn.addEventListener("click", function () {
+      if (extra) extra.innerHTML = "";
+      setMsg(result, ui("signingIn"), "");
+      auth.signInWithPopup(provider).catch(handleSignInError);
     });
   }
 
@@ -101,16 +185,6 @@
     play: svg('<circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none"/>'),
     doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>')
   };
-
-  function guard() {
-    try {
-      if (sessionStorage.getItem(SESSION_KEY) !== "1") {
-        window.location.replace("portal.html");
-        return false;
-      }
-    } catch (e) {}
-    return true;
-  }
 
   var activeTab = "overview";
   var activePropIdx = 0;
@@ -329,13 +403,11 @@
             '<div><span class="pdash__hello">' + ui("welcome") + ", <b>" + esc(L(d.investor.name)) + "</b></span>" +
               '<span class="pdash__since">' + ui("investorSince") + " " + esc(L(d.investor.since)) + "</span></div>" +
             '<div class="pdash__topactions">' +
-              '<span class="pchip pchip--demo">' + ui("demoBadge") + "</span>" +
               '<button class="pbtn pbtn--ghost" id="portal-logout">' +
                 svg('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>') +
                 "<span>" + ui("logout") + "</span></button>" +
             "</div>" +
           "</div>" +
-          '<p class="pdemo-note">' + ui("demoNote") + "</p>" +
 
           '<div class="psummary">' +
             sumCard(ui("totalInvested"), money(totInvest)) +
@@ -364,8 +436,14 @@
     /* logout */
     var lo = app.querySelector("#portal-logout");
     if (lo) lo.addEventListener("click", function () {
-      try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
-      window.location.href = "portal.html";
+      var done = function () { window.location.replace("portal.html"); };
+      try {
+        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length) {
+          firebase.auth().signOut().then(done, done);
+          return;
+        }
+      } catch (e) {}
+      done();
     });
 
     /* property selector */
@@ -465,16 +543,39 @@
     toastTimer = setTimeout(function () { t.classList.remove("is-on"); }, 3200);
   }
 
+  /* Centered status block for the dashboard page (loading / error). */
+  function stateBlock(message, spinner) {
+    return '<section class="pdash"><div class="container">' +
+      '<div class="pstate">' +
+        (spinner ? '<span class="pstate__spinner" aria-hidden="true"></span>' : "") +
+        "<p>" + esc(message) + "</p>" +
+      "</div></div></section>";
+  }
+
   /* ---- boot ---- */
   document.addEventListener("DOMContentLoaded", function () {
-    var loginForm = document.getElementById("portal-login");
-    if (loginForm) { initLogin(loginForm); return; }
+    var loginRoot = document.getElementById("portal-login");
+    if (loginRoot) { setupLogin(loginRoot); return; }
 
     var app = document.getElementById("portal-app");
-    if (app) {
-      if (!guard()) return;
-      renderDashboard(app);
-      window.addEventListener("langchange", function () { renderDashboard(app); });
+    if (!app) return;
+
+    if (!initFirebase()) {
+      app.innerHTML = stateBlock(ui("configMissing"));
+      return;
     }
+
+    app.innerHTML = stateBlock(ui("loading"), true);
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (!user) { window.location.replace("portal.html"); return; }
+      loadPortalData(user).then(function (data) {
+        if (!data) { window.location.replace("portal.html"); return; }
+        PD.DATA = data;
+        renderDashboard(app);
+      }).catch(function () {
+        app.innerHTML = stateBlock(ui("loadError"));
+      });
+    });
+    window.addEventListener("langchange", function () { if (PD.DATA) renderDashboard(app); });
   });
 })();

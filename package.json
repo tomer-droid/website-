@@ -1,0 +1,19 @@
+{
+  "name": "kamir-group-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kamir Group corporate website + investor portal (Firebase Hosting + Firestore + Google Auth)",
+  "scripts": {
+    "dev": "firebase emulators:start",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "seed": "node scripts/seed.js"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
