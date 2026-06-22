@@ -215,7 +215,7 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
 }
 .brand__logo {
   display: block;
-  height: 40px;
+  height: 54px;
   width: auto;
 }
 .brand__logo--light { display: none; }
@@ -316,8 +316,8 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
   inset: 0;
   z-index: 2;
   background:
-    linear-gradient(105deg, rgba(20,22,27,0.95) 0%, rgba(20,22,27,0.7) 42%, rgba(20,22,27,0.4) 100%),
-    linear-gradient(0deg, rgba(20,22,27,0.72), rgba(20,22,27,0) 55%);
+    linear-gradient(105deg, rgba(20,22,27,0.86) 0%, rgba(20,22,27,0.55) 44%, rgba(20,22,27,0.22) 100%),
+    linear-gradient(0deg, rgba(20,22,27,0.62), rgba(20,22,27,0) 58%);
 }
 .hero__media img,
 .hero__photo {
@@ -1390,6 +1390,7 @@ html[dir="ltr"] .addr-ltr { text-align: left; }
   body { font-size: 16px; }
   .nav__links, .nav__cta .btn { display: none; }
   .nav-toggle { display: flex; }
+  .brand__logo { height: 44px; }
   .split { grid-template-columns: 1fr; gap: 2rem; }
   .split--media-right .split__media { order: 0; }
   .cards-grid { grid-template-columns: 1fr; }
@@ -1484,8 +1485,8 @@ html[lang="he"] .project__status { letter-spacing: 0.02em; }
    ============================================================ */
 html[dir="rtl"] .hero__media::after {
   background:
-    linear-gradient(255deg, rgba(20,22,27,0.95) 0%, rgba(20,22,27,0.7) 42%, rgba(20,22,27,0.4) 100%),
-    linear-gradient(0deg, rgba(20,22,27,0.72), rgba(20,22,27,0) 55%);
+    linear-gradient(255deg, rgba(20,22,27,0.86) 0%, rgba(20,22,27,0.55) 44%, rgba(20,22,27,0.22) 100%),
+    linear-gradient(0deg, rgba(20,22,27,0.62), rgba(20,22,27,0) 58%);
 }
 html[dir="rtl"] .split__media .badge-float { left: auto; right: 1.2rem; }
 html[dir="rtl"] .project__status { left: auto; right: 1rem; }

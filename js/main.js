@@ -105,24 +105,44 @@
     }
   }
 
-  /* ---------- Subtle hero parallax ---------- */
-  const heroPhoto = document.querySelector(".hero__media");
-  if (heroPhoto && !prefersReduced) {
+  /* ---------- Hero parallax: scroll depth + subtle pointer-tracked tilt ---------- */
+  const heroMedia = document.querySelector(".hero__media");
+  const heroSection = document.querySelector(".hero");
+  if (heroMedia && heroSection && !prefersReduced) {
+    const BASE_SCALE = 1.06; // overflow room so pointer shift never reveals an edge
+    const MAX = 14;          // max pointer-driven shift (px)
+    let scrollY = window.scrollY;
+    let targetX = 0, targetY = 0; // pointer target offsets
+    let curX = 0, curY = 0;       // eased current offsets
     let raf = null;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (raf) return;
-        raf = requestAnimationFrame(() => {
-          const y = window.scrollY;
-          if (y < window.innerHeight) {
-            heroPhoto.style.transform = "translateY(" + y * 0.18 + "px)";
-          }
-          raf = null;
-        });
-      },
-      { passive: true }
-    );
+
+    const render = () => {
+      raf = null;
+      curX += (targetX - curX) * 0.08;
+      curY += (targetY - curY) * 0.08;
+      const cap = window.innerHeight;
+      const sy = (scrollY < cap ? scrollY : cap) * 0.18;
+      heroMedia.style.transform =
+        "translate3d(" + curX.toFixed(2) + "px," + (sy + curY).toFixed(2) + "px,0) scale(" + BASE_SCALE + ")";
+      if (Math.abs(targetX - curX) > 0.2 || Math.abs(targetY - curY) > 0.2) schedule();
+    };
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(render); };
+
+    window.addEventListener("scroll", () => { scrollY = window.scrollY; schedule(); }, { passive: true });
+
+    // pointer tilt only on devices with a precise pointer (skip touch)
+    if (window.matchMedia("(pointer: fine)").matches) {
+      heroSection.addEventListener("pointermove", (e) => {
+        const r = heroSection.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width - 0.5;  // -0.5 .. 0.5
+        const ny = (e.clientY - r.top) / r.height - 0.5;
+        targetX = -nx * MAX * 2;
+        targetY = -ny * MAX;
+        schedule();
+      });
+      heroSection.addEventListener("pointerleave", () => { targetX = 0; targetY = 0; schedule(); });
+    }
+    schedule();
   }
 
   /* ---------- Hero cinematic slideshow (auto crossfade) ---------- */

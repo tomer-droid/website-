@@ -44,9 +44,9 @@
       /* ---- Index: hero ---- */
       "idx.pill1": "סאות' בנד · משוואקה · גריינג'ר",
       "idx.pill2": "אינדיאנה, ארה\"ב",
-      "idx.pill3": "נדל\"ן למגורים",
+      "idx.pill3": "נדל\"ן בארה\"ב",
       "idx.hero.eyebrow": "Kamir Group · חברת השקעות נדל\"ן",
-      "idx.hero.title": "השקעות נדל\"ן למגורים <span class=\"serif-accent\">בצפון אינדיאנה, ארה\"ב.</span>",
+      "idx.hero.title": "השקעות נדל\"ן <span class=\"serif-accent\">בצפון אינדיאנה, ארה\"ב.</span>",
       "idx.hero.desc": "Kamir Group היא חברת השקעות נדל\"ן הפועלת בארה\"ב — בסאות' בנד, משוואקה וגריינג'ר שבאינדיאנה. אנחנו רוכשים בתים, משפצים אותם מהיסוד ומשכירים לטווח ארוך, ומשקיעים את ההון שלנו לצד השותפים בכל עסקה.",
       "idx.hero.cta1": "לצפייה בפרויקטים",
       "idx.hero.cta2": "להשקיע איתנו",
@@ -471,9 +471,9 @@
 
       "idx.pill1": "South Bend · Mishawaka · Granger",
       "idx.pill2": "Indiana, USA",
-      "idx.pill3": "Residential Real Estate",
+      "idx.pill3": "U.S. Real Estate",
       "idx.hero.eyebrow": "Kamir Group · Real Estate Investment",
-      "idx.hero.title": "Residential real estate investment <span class=\"serif-accent\">in Northern Indiana, USA.</span>",
+      "idx.hero.title": "Real estate investment <span class=\"serif-accent\">in Northern Indiana, USA.</span>",
       "idx.hero.desc": "Kamir Group is a U.S. real estate investment company operating in South Bend, Mishawaka and Granger, Indiana. We acquire homes, renovate them from the ground up and rent them long-term — investing our own capital alongside our partners in every deal.",
       "idx.hero.cta1": "View Our Projects",
       "idx.hero.cta2": "Invest With Us",
