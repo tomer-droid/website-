@@ -130,7 +130,7 @@
       "idx.s3.loc": "משוואקה, IN 46545",
       "idx.s3.title": "1216 E Jefferson Blvd",
       "idx.s3.text": "נכס מושכר במיקום מבוקש — נכס מניב יציב המספק שכ\"ד חודשי קבוע.",
-      "idx.s3.rent": "$1,650",
+      "idx.s3.rent": "$1,600",
       "idx.s3.status": "מושכר ומניב",
 
       /* ---- Current deals / live (index) ---- */
@@ -551,7 +551,7 @@
       "idx.s3.loc": "Mishawaka, IN 46545",
       "idx.s3.title": "1216 E Jefferson Blvd",
       "idx.s3.text": "A rented home in a sought-after location — a stable income property delivering steady monthly rent.",
-      "idx.s3.rent": "$1,650",
+      "idx.s3.rent": "$1,600",
       "idx.s3.status": "Rented & income-producing",
 
       "idx.deals.eyebrow": "Happening Now",

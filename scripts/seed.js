@@ -120,75 +120,67 @@ const media = [
    SAMPLE INVESTOR — copy this block per real investor
    ============================================================ */
 const sampleInvestor = {
-  /* doc ID = lowercased email. Change to the investor's real
-     Google account email. */
-  email: "investor@example.com",
+  /* doc ID = lowercased email. */
+  email: "tomer@shaykes.com",
   doc: {
-    name:  { he: "ישראל ישראלי", en: "Israel Israeli" },
-    since: { he: "ינואר 2026",    en: "January 2026" }
+    name:  { he: "תומר קמיר", en: "Tomer Kamir" },
+    since: { he: "2026",       en: "2026" }
   },
   properties: [
+    /* ----------------------------------------------------------
+       PROPERTY 1 — 1216 E Jefferson Blvd, Mishawaka, IN 46545
+       Cash purchase (no loan).
+         purchase $82,000 + renovation $57,000  => $139,000 invested
+         current value $200,000 (all equity)
+         rent $1,600/mo  −  property tax $150  −  insurance $90
+                         => net cashflow $1,360/mo
+         cash-on-cash = 1,360*12 / 139,000 = 11.7%
+       ---------------------------------------------------------- */
     {
-      id: "rerick",
+      id: "jefferson",
       order: 1,
-      name:    { he: "רריק דרايב", en: "Rerick Drive" },
-      address: "Rerick Dr",
-      city:    { he: "סאות' בנד, אינדיאנה", en: "South Bend, Indiana" },
+      name:    { he: "1216 E Jefferson Blvd", en: "1216 E Jefferson Blvd" },
+      address: "1216 E Jefferson Blvd",
+      city:    { he: "משוואקה, אינדיאנה 46545", en: "Mishawaka, Indiana 46545" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
-      hero: "assets/portal/rerick-exterior.jpg",
+      hero: "assets/properties/jefferson.jpg",
       specs: {
-        beds: 4, baths: "1.5", sqft: "1,462", year: 1955,
+        beds: 3, baths: 2, sqft: "1,100", year: "—",
         type: { he: "בית פרטי", en: "Single-family home" }
       },
       financials: {
-        investment: 71000,
-        downPayment: 65000,
-        closingReno: 6000,
-        purchasePrice: 215000,
-        currentValue: 232000,
-        loanAmount: 150000,
-        leveragePct: 70,
-        mortgageBalance: 147800,
-        equity: 84200,
-        grossRent: 2150,
-        monthlyMortgage: 950,
-        monthlyInsurance: 95,
-        monthlyOperating: 555,
-        netCashflow: 550,
-        cashOnCash: 9.3
+        investment: 139000,
+        downPayment: 139000,
+        closingReno: 57000,
+        purchasePrice: 82000,
+        currentValue: 200000,
+        loanAmount: 0,
+        leveragePct: 0,
+        mortgageBalance: 0,
+        equity: 200000,
+        grossRent: 1600,
+        monthlyMortgage: 0,
+        monthlyInsurance: 90,
+        monthlyOperating: 150,
+        netCashflow: 1360,
+        cashOnCash: 11.7
       },
-      distributions: [
-        { period: { he: "ינואר 2026", en: "Jan 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "paid" },
-        { period: { he: "פברואר 2026", en: "Feb 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "paid" },
-        { period: { he: "מרץ 2026", en: "Mar 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "paid" },
-        { period: { he: "אפריל 2026", en: "Apr 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "paid" },
-        { period: { he: "מאי 2026", en: "May 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "paid" },
-        { period: { he: "יוני 2026", en: "Jun 2026" }, gross: 2150, mortgage: 950, insurance: 95, operating: 555, net: 550, status: "scheduled" }
-      ],
+      distributions: [],
       photos: {
         exterior: [
-          { src: "assets/portal/rerick-exterior.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
+          { src: "assets/properties/jefferson.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
         ],
-        interior: [
-          { src: "assets/portal/rerick-living.jpg", caption: { he: "סלון", en: "Living room" } },
-          { src: "assets/portal/rerick-kitchen.jpg", caption: { he: "מטבח", en: "Kitchen" } },
-          { src: "assets/portal/rerick-bedroom.jpg", caption: { he: "חדר שינה", en: "Bedroom" } }
-        ]
+        interior: []
       },
-      documents: [
-        { name: { he: "חוזה רכישה", en: "Purchase Agreement" }, cat: "catPurchase", size: "1.4 MB" },
-        { name: { he: "דוח סגירה (HUD-1)", en: "Closing Statement (HUD-1)" }, cat: "catPurchase", size: "820 KB" },
-        { name: { he: "שטר בעלות (Warranty Deed)", en: "Warranty Deed" }, cat: "catPurchase", size: "540 KB" },
-        { name: { he: "ביטוח כותרת (Title Insurance)", en: "Title Insurance Policy" }, cat: "catPurchase", size: "1.1 MB" },
-        { name: { he: "דוח בדיקת נכס (Inspection)", en: "Inspection Report" }, cat: "catPurchase", size: "3.2 MB" },
-        { name: { he: "מסמכי הקמת חברה (LLC)", en: "LLC Articles of Organization" }, cat: "catCompany", size: "680 KB" },
-        { name: { he: "אישור מספר חברה (EIN)", en: "EIN Confirmation Letter" }, cat: "catCompany", size: "210 KB" },
-        { name: { he: "הסכם תפעול (Operating Agreement)", en: "Operating Agreement" }, cat: "catCompany", size: "950 KB" },
-        { name: { he: "פוליסת ביטוח נכס", en: "Property Insurance Policy" }, cat: "catInsurance", size: "1.0 MB" },
-        { name: { he: "קבלות שיפוץ ושדרוג", en: "Renovation Receipts" }, cat: "catReceipts", size: "2.6 MB" },
-        { name: { he: "הסכם שכירות מול הדייר", en: "Tenant Lease Agreement" }, cat: "catLease", size: "760 KB" }
-      ]
+      documents: []
     }
+    /* ----------------------------------------------------------
+       PROPERTY 2 — 636 S 25th St, South Bend, IN 46615  (4/2, 1,800 sqft)
+       purchase $117,500 + reno $32,000 = $149,500; loan $130,000
+       (ends Feb 2056) => cash invested $19,500; value $200,000;
+       equity $70,000; PITI $1,034/mo all-in.
+       PENDING: monthly rent (needed for net cashflow) — add once known.
+       ---------------------------------------------------------- */
   ]
 };
 
