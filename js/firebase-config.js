@@ -12,10 +12,11 @@
    3. Paste the values below, replacing every "REPLACE_..." string.
    ============================================================ */
 window.KAMIR_FIREBASE_CONFIG = {
-  apiKey: "REPLACE_API_KEY",
-  authDomain: "REPLACE_PROJECT_ID.firebaseapp.com",
-  projectId: "REPLACE_PROJECT_ID",
-  storageBucket: "REPLACE_PROJECT_ID.appspot.com",
-  messagingSenderId: "REPLACE_SENDER_ID",
-  appId: "REPLACE_APP_ID"
+  apiKey: "AIzaSyBnN8TgYMMFUCOs_8BxB_9YE4aAdeZQUbo",
+  authDomain: "kamir---website.firebaseapp.com",
+  projectId: "kamir---website",
+  storageBucket: "kamir---website.firebasestorage.app",
+  messagingSenderId: "1090262029329",
+  appId: "1:1090262029329:web:3c46ac0d2193fe1f794db0",
+  measurementId: "G-N9NJR8QS0L"
 };
