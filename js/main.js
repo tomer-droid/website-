@@ -125,37 +125,22 @@
     );
   }
 
-  /* ---------- Hero scroll-reactive slideshow ---------- */
+  /* ---------- Hero cinematic slideshow (auto crossfade) ---------- */
   const heroSlides = document.querySelectorAll(".hero__slide");
-  if (heroSlides.length > 1) {
+  if (heroSlides.length > 1 && !prefersReduced) {
     let current = 0;
-    const setActive = (i) => {
-      if (i === current || !heroSlides[i]) return;
+    const advance = () => {
+      const next = (current + 1) % heroSlides.length;
+      heroSlides[next].classList.add("is-active");
       heroSlides[current].classList.remove("is-active");
-      heroSlides[i].classList.add("is-active");
-      current = i;
+      current = next;
     };
-    // Map scroll progress through the first viewport to the active slide.
-    let ticking = false;
-    const updateHero = () => {
-      const vh = window.innerHeight || 1;
-      const p = Math.min(Math.max(window.scrollY / vh, 0), 0.999);
-      setActive(Math.floor(p * heroSlides.length));
-      ticking = false;
-    };
-    const onHeroScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(updateHero);
-    };
-    updateHero();
-    window.addEventListener("scroll", onHeroScroll, { passive: true });
-    // Gentle auto-advance while the visitor is still at the very top.
-    if (!prefersReduced) {
-      setInterval(() => {
-        if (window.scrollY < 40) setActive((current + 1) % heroSlides.length);
-      }, 4500);
-    }
+    // Pause rotation when the tab is hidden; resume on return.
+    let timer = setInterval(advance, 5500);
+    document.addEventListener("visibilitychange", () => {
+      clearInterval(timer);
+      if (!document.hidden) timer = setInterval(advance, 5500);
+    });
   }
 
   /* ---------- Project filters ---------- */
