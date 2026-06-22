@@ -132,9 +132,9 @@ const sampleInvestor = {
        Cash purchase (no loan).
          purchase $82,000 + renovation $57,000  => $139,000 invested
          current value $200,000 (all equity)
-         rent $1,600/mo  −  property tax $150  −  insurance $90
-                         => net cashflow $1,360/mo
-         cash-on-cash = 1,360*12 / 139,000 = 11.7%
+         rent $1,650/mo  −  property tax $150  −  insurance $90
+                         => net cashflow $1,410/mo
+         cash-on-cash = 1,410*12 / 139,000 = 12.2%
        ---------------------------------------------------------- */
     {
       id: "jefferson",
@@ -158,12 +158,12 @@ const sampleInvestor = {
         leveragePct: 0,
         mortgageBalance: 0,
         equity: 200000,
-        grossRent: 1600,
+        grossRent: 1650,
         monthlyMortgage: 0,
         monthlyInsurance: 90,
         monthlyOperating: 150,
-        netCashflow: 1360,
-        cashOnCash: 11.7
+        netCashflow: 1410,
+        cashOnCash: 12.2
       },
       distributions: [],
       photos: {
