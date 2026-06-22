@@ -598,7 +598,7 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
   margin: 2.6rem 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 .fit-card {
