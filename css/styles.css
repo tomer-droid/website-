@@ -1843,6 +1843,11 @@ html[dir="rtl"] .link-arrow svg { transform: scaleX(-1); }
 .pupload__title { font-weight: 600; color: var(--ink); font-size: 1rem; }
 .pupload__hint { font-size: 0.82rem; color: var(--ink-soft); }
 .pupload__list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+/* disabled "coming soon" state (free plan — uploads not yet active) */
+.pupload__zone--soon { cursor: default; border-style: dashed; opacity: 0.72; }
+.pupload__zone--soon:hover { border-color: var(--line); background: transparent; }
+.pupload.is-disabled .pupload__icon { background: rgba(110,114,87,0.12); color: var(--sage); }
+.pupload__zone--soon .pupload__hint { font-weight: 600; color: var(--sage); }
 .puprow { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.6rem 0.85rem; border-radius: 10px; background: var(--cream); font-size: 0.88rem; }
 .puprow__name { display: flex; align-items: center; gap: 0.5rem; min-width: 0; color: var(--ink); }
 .puprow__name svg { width: 16px; height: 16px; flex: 0 0 auto; color: var(--ink-soft); }

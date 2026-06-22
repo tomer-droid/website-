@@ -18,6 +18,13 @@
   var PD = window.KamirPortalData;
   if (!PD) return;
 
+  /* ---- Feature flags ----
+     Investor self-upload writes to Cloud Storage, which requires the
+     Firebase Blaze plan. While the project is on the free Spark plan we
+     keep this OFF so the portal shows a tidy "coming soon" state instead
+     of a failing upload. Flip to true once Storage is enabled on Blaze. */
+  var UPLOADS_ENABLED = false;
+
   /* ---- Firebase bootstrap ---- */
   function configReady() {
     var c = window.KAMIR_FIREBASE_CONFIG;
@@ -391,18 +398,27 @@
       ? '<div class="pcard pdocs">' + items + "</div>"
       : '<div class="pcard pempty">' + ICONS.docs + "<p>" + ui("docsEmpty") + "</p></div>";
 
-    /* upload zone — lets the investor add their own documents */
-    var uploader =
-      '<div class="pcard pupload" id="pupload" data-prop="' + esc(p.id) + '">' +
-        '<label class="pupload__zone" for="pupload-input">' +
-          '<span class="pupload__icon">' + ICONS.upload + "</span>" +
-          '<span class="pupload__title">' + ui("uploadTitle") + "</span>" +
-          '<span class="pupload__hint">' + ui("uploadHint") + "</span>" +
-          '<input type="file" id="pupload-input" multiple ' +
-            'accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" hidden />' +
-        "</label>" +
-        '<div class="pupload__list" id="pupload-list" hidden></div>' +
-      "</div>";
+    /* upload zone — lets the investor add their own documents.
+       When uploads are disabled (Spark plan) we render a non-interactive
+       "coming soon" card rather than a control that would fail. */
+    var uploader = UPLOADS_ENABLED
+      ? '<div class="pcard pupload" id="pupload" data-prop="' + esc(p.id) + '">' +
+          '<label class="pupload__zone" for="pupload-input">' +
+            '<span class="pupload__icon">' + ICONS.upload + "</span>" +
+            '<span class="pupload__title">' + ui("uploadTitle") + "</span>" +
+            '<span class="pupload__hint">' + ui("uploadHint") + "</span>" +
+            '<input type="file" id="pupload-input" multiple ' +
+              'accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" hidden />' +
+          "</label>" +
+          '<div class="pupload__list" id="pupload-list" hidden></div>' +
+        "</div>"
+      : '<div class="pcard pupload is-disabled">' +
+          '<div class="pupload__zone pupload__zone--soon">' +
+            '<span class="pupload__icon">' + ICONS.upload + "</span>" +
+            '<span class="pupload__title">' + ui("uploadTitle") + "</span>" +
+            '<span class="pupload__hint">' + ui("uploadUnavailable") + "</span>" +
+          "</div>" +
+        "</div>";
 
     return '<p class="psection__intro">' + ui("docsIntro") + "</p>" + uploader + list;
   }
