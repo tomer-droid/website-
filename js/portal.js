@@ -185,7 +185,8 @@
     play: svg('<circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none"/>'),
     doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'),
     sheet: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'),
-    upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>')
+    upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>'),
+    ext: svg('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>')
   };
 
   var activeTab = "overview";
@@ -204,7 +205,9 @@
       specRow(ui("baths"), p.specs.baths) +
       specRow(ui("sqft"), p.specs.sqft) +
       specRow(ui("year"), p.specs.year) +
-      specRow(ui("type"), L(p.specs.type));
+      specRow(ui("type"), L(p.specs.type)) +
+      (p.leaseStart ? specRow(ui("leaseStart"), L(p.leaseStart)) : "") +
+      (p.leaseEnd ? specRow(ui("leaseEnd"), L(p.leaseEnd)) : "");
 
     var metrics =
       metricCard(ui("investment"), money(f.investment)) +
@@ -220,6 +223,10 @@
           '<span class="pchip pchip--ok">' + esc(L(p.status)) + "</span>" +
           "<h2>" + esc(L(p.name)) + "</h2>" +
           '<p class="muted">' + esc(p.address) + " · " + esc(L(p.city)) + "</p>" +
+          (p.zillowUrl
+            ? '<a class="pzillow" href="' + esc(p.zillowUrl) + '" target="_blank" rel="noopener">' +
+                ICONS.ext + "<span>" + ui("viewOnZillow") + "</span></a>"
+            : "") +
         "</div>" +
       "</div>" +
       '<div class="pgrid pgrid--2">' +
@@ -263,7 +270,8 @@
         (f.mortgageBalance > 0
           ? '<span class="flegend__item"><i class="fdot fdot--loan"></i>' + esc(ui("mortgageBalance")) + " · <b>" + money(f.mortgageBalance) + "</b></span>"
           : '<span class="flegend__item"><i class="fdot fdot--equity"></i>' + esc(ui("noLoan")) + "</span>") +
-      "</div>";
+      "</div>" +
+      (f.interestRate ? '<p class="fnote">' + esc(ui("interestRate")) + ': <b>' + f.interestRate + "%</b></p>" : "");
 
     /* ---- 3. monthly cashflow waterfall ---- */
     var gross = f.grossRent || 0;
@@ -452,11 +460,12 @@
     var p = props[activePropIdx] || props[0];
 
     /* portfolio summary across all properties */
-    var totInvest = 0, totValue = 0, totCash = 0, yieldSum = 0;
+    var totInvest = 0, totValue = 0, totCash = 0, totEquity = 0, yieldSum = 0;
     props.forEach(function (pr) {
       totInvest += pr.financials.investment;
       totValue += pr.financials.currentValue;
       totCash += pr.financials.netCashflow;
+      totEquity += pr.financials.equity;
       yieldSum += pr.financials.cashOnCash;
     });
     var avgYield = props.length ? (yieldSum / props.length).toFixed(1) : 0;
@@ -497,6 +506,7 @@
           '<div class="psummary">' +
             sumCard(ui("totalInvested"), money(totInvest)) +
             sumCard(ui("portfolioValue"), money(totValue)) +
+            sumCard(ui("totalEquity"), money(totEquity), "accent") +
             sumCard(ui("monthlyCashflow"), money(totCash) + " " + ui("perMonth")) +
             sumCard(ui("avgYield"), avgYield + "%") +
           "</div>" +
@@ -519,8 +529,9 @@
 
     attach(app);
   }
-  function sumCard(label, value) {
-    return '<div class="psum"><span class="psum__label">' + esc(label) + '</span><span class="psum__value">' + value + "</span></div>";
+  function sumCard(label, value, tone) {
+    return '<div class="psum' + (tone ? " psum--" + tone : "") + '"><span class="psum__label">' + esc(label) +
+      '</span><span class="psum__value">' + value + "</span></div>";
   }
 
   function attach(app) {

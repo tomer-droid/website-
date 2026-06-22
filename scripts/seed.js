@@ -124,7 +124,7 @@ const sampleInvestor = {
   email: "tomer@shaykes.com",
   doc: {
     name:  { he: "תומר קמיר", en: "Tomer Kamir" },
-    since: { he: "2026",       en: "2026" }
+    since: { he: "יוני 2025",  en: "June 2025" }
   },
   properties: [
     /* ----------------------------------------------------------
@@ -142,6 +142,9 @@ const sampleInvestor = {
       city:    { he: "משוואקה, אינדיאנה 46545", en: "Mishawaka, Indiana 46545" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
       tenant:  { he: "מאוכלס", en: "Occupied" },
+      leaseStart: { he: "16 ביוני 2025", en: "June 16, 2025" },
+      leaseEnd:   { he: "סוף אפריל 2027", en: "End of April 2027" },
+      zillowUrl: "https://www.zillow.com/homes/1216-E-Jefferson-Blvd-Mishawaka-IN-46545_rb/",
       hero: "assets/properties/jefferson.jpg",
       specs: {
         beds: 3, baths: 2, sqft: "1,100", year: "—",
@@ -162,7 +165,8 @@ const sampleInvestor = {
         monthlyInsurance: 90,
         monthlyOperating: 150,
         netCashflow: 1410,
-        cashOnCash: 11.8
+        cashOnCash: 11.8,
+        interestRate: 0
       },
       /* full purchase + renovation ledger — mirrors the Google Sheet */
       sheetUrl: "https://docs.google.com/spreadsheets/d/17SodrlOAY7DZDBGSSgNYYCP1MAiO06CuxBm9GDnIbKI/edit",
@@ -217,6 +221,10 @@ const sampleInvestor = {
       city:    { he: "סאות' בנד, אינדיאנה 46615", en: "South Bend, Indiana 46615" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
       tenant:  { he: "מאוכלס", en: "Occupied" },
+      /* TODO: lease dates for 636 — fill once confirmed by the owner */
+      leaseStart: null,
+      leaseEnd:   null,
+      zillowUrl: "https://www.zillow.com/homes/636-S-25th-St-South-Bend-IN-46615_rb/",
       hero: "assets/properties/s25th.jpg",
       specs: {
         beds: 4, baths: 2, sqft: "1,800", year: "1907",
@@ -237,7 +245,8 @@ const sampleInvestor = {
         monthlyInsurance: 0,
         monthlyOperating: 200,
         netCashflow: 766,
-        cashOnCash: 12.6
+        cashOnCash: 12.6,
+        interestRate: 6.425
       },
       sheetUrl: "https://docs.google.com/spreadsheets/d/16675HgsH2P3Emge-IcIqY2u3pQkripUZwHDh0euBMtI/edit",
       expenses: [
