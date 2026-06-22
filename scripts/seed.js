@@ -129,12 +129,10 @@ const sampleInvestor = {
   properties: [
     /* ----------------------------------------------------------
        PROPERTY 1 — 1216 E Jefferson Blvd, Mishawaka, IN 46545
-       Cash purchase (no loan).
-         purchase $82,000 + renovation $57,000  => $139,000 invested
-         current value $200,000 (all equity)
-         rent $1,650/mo  −  property tax $150  −  insurance $90
-                         => net cashflow $1,410/mo
-         cash-on-cash = 1,410*12 / 139,000 = 12.2%
+       Cash purchase (no loan). Total cash deployed (from the
+       expense ledger) = $142,940. Current value $200,000 (all equity).
+       Steady-state rent $1,650/mo; net cashflow ~$1,410/mo.
+       Expenses + sheetUrl mirror the investor's Google Sheet.
        ---------------------------------------------------------- */
     {
       id: "jefferson",
@@ -143,15 +141,16 @@ const sampleInvestor = {
       address: "1216 E Jefferson Blvd",
       city:    { he: "משוואקה, אינדיאנה 46545", en: "Mishawaka, Indiana 46545" },
       status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
+      tenant:  { he: "מאוכלס", en: "Occupied" },
       hero: "assets/properties/jefferson.jpg",
       specs: {
         beds: 3, baths: 2, sqft: "1,100", year: "—",
         type: { he: "בית פרטי", en: "Single-family home" }
       },
       financials: {
-        investment: 139000,
-        downPayment: 139000,
-        closingReno: 57000,
+        investment: 142940,
+        downPayment: 142940,
+        closingReno: 60940,
         purchasePrice: 82000,
         currentValue: 200000,
         loanAmount: 0,
@@ -163,9 +162,38 @@ const sampleInvestor = {
         monthlyInsurance: 90,
         monthlyOperating: 150,
         netCashflow: 1410,
-        cashOnCash: 12.2
+        cashOnCash: 11.8
       },
-      distributions: [],
+      /* full purchase + renovation ledger — mirrors the Google Sheet */
+      sheetUrl: "https://docs.google.com/spreadsheets/d/17SodrlOAY7DZDBGSSgNYYCP1MAiO06CuxBm9GDnIbKI/edit",
+      expenses: [
+        { label: { he: "פיקדון רציני (EMD)",        en: "Earnest money deposit (EMD)" }, vendor: "Michiana Title",        amount: 1025 },
+        { label: { he: "בדיקת טרמיטים",              en: "Termite inspection" },          vendor: "J&J Termites",          amount: 40 },
+        { label: { he: "בדיקת ביוב",                 en: "Sewer inspection" },            vendor: "Roto-Rooter",           amount: 248 },
+        { label: { he: "הצעת מחיר (קבלן)",           en: "Contractor estimate" },         vendor: "Cody",                  amount: 150 },
+        { label: { he: "סגירת עסקה (Closing)",       en: "Closing" },                     vendor: "Michiana Title",        amount: 80748 },
+        { label: { he: "ביטוח — תשלום 1",            en: "Insurance — payment 1" },       vendor: "Foremost Insurance",    amount: 155 },
+        { label: { he: "פיקדון תשתיות (יוטיליטיס)",  en: "Utilities deposit" },           vendor: "Mishawaka Utilities",   amount: 150 },
+        { label: { he: "שיפוץ — תשלום 1",            en: "Renovation — payment 1" },      vendor: "Gvan Inc",              amount: 14500 },
+        { label: { he: "קריאת שרברב (דליפת גז)",     en: "Plumber call (gas leak)" },     vendor: "JD Plumbing & Heating", amount: 75 },
+        { label: { he: "תיקון דליפת גז",             en: "Gas leak repair" },             vendor: "Abe's Plumbing",        amount: 950 },
+        { label: { he: "ביטוח — תשלום 2",            en: "Insurance — payment 2" },       vendor: "Foremost Insurance",    amount: 148 },
+        { label: { he: "שיפוץ — תשלום 2",            en: "Renovation — payment 2" },      vendor: "Gvan Inc",              amount: 14500 },
+        { label: { he: "ביטוח — תשלום 3",            en: "Insurance — payment 3" },       vendor: "Foremost Insurance",    amount: 147 },
+        { label: { he: "תשתיות (יוטיליטיס)",         en: "Utilities" },                   vendor: "Mishawaka Utilities",   amount: 190 },
+        { label: { he: "ארנונה (Property tax)",      en: "Property tax" },                vendor: "St. Joseph County",     amount: 473 },
+        { label: { he: "טיפול נגד טרמיטים",          en: "Termite treatment" },           vendor: "J&J Termites",          amount: 900 },
+        { label: { he: "ביטוח — תשלום 4",            en: "Insurance — payment 4" },       vendor: "Foremost Insurance",    amount: 147 },
+        { label: { he: "שיפוץ — תשלום 3",            en: "Renovation — payment 3" },      vendor: "Slone Rehab LLC",       amount: 14000 },
+        { label: { he: "תשתיות (יוטיליטיס)",         en: "Utilities" },                   vendor: "Mishawaka Utilities",   amount: 118 },
+        { label: { he: "צילום וידאו לנכס",           en: "Property video" },              vendor: "Magen Williamson",      amount: 280 },
+        { label: { he: "שיפוץ — תשלום אחרון",        en: "Renovation — final payment" },  vendor: "Slone Rehab LLC",       amount: 13500 },
+        { label: { he: "ארנונה (Property tax)",      en: "Property tax" },                vendor: "St. Joseph County",     amount: 496 }
+      ],
+      distributions: [
+        { period: { he: "מרץ 2026", en: "March 2026" }, gross: 1950, mortgage: 0, insurance: 0, operating: 300.50, net: 1649.50, status: { he: "שולם", en: "Paid" } },
+        { period: { he: "אפריל 2026", en: "April 2026" }, gross: 1375, mortgage: 0, insurance: 0, operating: 337.25, net: 1037.75, status: { he: "שולם", en: "Paid" } }
+      ],
       photos: {
         exterior: [
           { src: "assets/properties/jefferson.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
@@ -173,14 +201,79 @@ const sampleInvestor = {
         interior: []
       },
       documents: []
-    }
+    },
     /* ----------------------------------------------------------
        PROPERTY 2 — 636 S 25th St, South Bend, IN 46615  (4/2, 1,800 sqft)
-       purchase $117,500 + reno $32,000 = $149,500; loan $130,000
-       (ends Feb 2056) => cash invested $19,500; value $200,000;
-       equity $70,000; PITI $1,034/mo all-in.
-       PENDING: monthly rent (needed for net cashflow) — add once known.
+       Purchase $117,500 + renovation, financed with a $130,000 private
+       loan (FCI). Total out-of-pocket cash (from the expense ledger) =
+       $72,968. Current value $200,000; equity ~$70,000.
+       Steady-state rent $2,000/mo; debt service ~$1,034/mo.
        ---------------------------------------------------------- */
+    {
+      id: "twentyfifth",
+      order: 2,
+      name:    { he: "636 S 25th St", en: "636 S 25th St" },
+      address: "636 S 25th St",
+      city:    { he: "סאות' בנד, אינדיאנה 46615", en: "South Bend, Indiana 46615" },
+      status:  { he: "מושכר ומניב", en: "Leased & income-producing" },
+      tenant:  { he: "מאוכלס", en: "Occupied" },
+      hero: "assets/properties/s25th.jpg",
+      specs: {
+        beds: 4, baths: 2, sqft: "1,800", year: "1907",
+        type: { he: "בית פרטי", en: "Single-family home" }
+      },
+      financials: {
+        investment: 72968,
+        downPayment: 72968,
+        closingReno: 32000,
+        purchasePrice: 117500,
+        currentValue: 200000,
+        loanAmount: 130000,
+        leveragePct: 65,
+        mortgageBalance: 130000,
+        equity: 70000,
+        grossRent: 2000,
+        monthlyMortgage: 1034,
+        monthlyInsurance: 0,
+        monthlyOperating: 200,
+        netCashflow: 766,
+        cashOnCash: 12.6
+      },
+      sheetUrl: "https://docs.google.com/spreadsheets/d/16675HgsH2P3Emge-IcIqY2u3pQkripUZwHDh0euBMtI/edit",
+      expenses: [
+        { label: { he: "פיקדון רציני (EMD)",          en: "Earnest money deposit (EMD)" }, vendor: "Michiana Title LLC",       amount: 1000 },
+        { label: { he: "בדיקת מבנה (Inspection)",     en: "Home inspection" },             vendor: "Gold Key Inspections",     amount: 718 },
+        { label: { he: "סגירת עסקה (Closing)",        en: "Closing" },                     vendor: "Michiana Title LLC",       amount: 28046 },
+        { label: { he: "ביטוח שנתי",                  en: "Annual insurance" },            vendor: "Foremost Insurance",       amount: 2099 },
+        { label: { he: "משלוח מסמכי סגירה (DHL)",     en: "Closing docs shipping (DHL)" }, vendor: "DHL",                      amount: 138 },
+        { label: { he: "שיפוץ — תשלום 1",             en: "Renovation — payment 1" },      vendor: "AC Hill Design LLC",       amount: 9500 },
+        { label: { he: "תשלום ריבית 1 (משכנתא)",      en: "Interest payment 1" },          vendor: "FCI Lender Services",      amount: 977 },
+        { label: { he: "שיפוץ — תשלום 2",             en: "Renovation — payment 2" },      vendor: "AC Hill Design LLC",       amount: 9500 },
+        { label: { he: "תיקון ביוב",                  en: "Sewer repair" },                vendor: "Abe's Plumbing",           amount: 3434 },
+        { label: { he: "תשלום ריבית 2",               en: "Interest payment 2" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "צילום וידאו לשיפוץ",          en: "Renovation video" },            vendor: "MWP",                      amount: 380 },
+        { label: { he: "שיפוץ — תשלום 3",             en: "Renovation — payment 3" },      vendor: "AC Hill Design LLC",       amount: 9715 },
+        { label: { he: "תשלום ריבית 3",               en: "Interest payment 3" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "תשלום ריבית 4",               en: "Interest payment 4" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "תשלום ריבית 5",               en: "Interest payment 5" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "מרזבים חדשים",                en: "New gutters" },                 vendor: "Lipnal Construction LLC",  amount: 650 },
+        { label: { he: "שמאות (Appraisal)",           en: "Appraisal" },                   vendor: "Lending Specialty LLC",    amount: 725 },
+        { label: { he: "תשלום ריבית 6",               en: "Interest payment 6" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "תשלום ריבית 7",               en: "Interest payment 7" },          vendor: "FCI Lender Services",      amount: 966 },
+        { label: { he: "העברת שמאות",                 en: "Appraisal transfer" },          vendor: "Appraisal Nation",         amount: 290 }
+      ],
+      distributions: [
+        { period: { he: "מרץ 2026", en: "March 2026" }, gross: 2000, mortgage: 1034, insurance: 0, operating: 257.97, net: 708.03, status: { he: "שולם", en: "Paid" } },
+        { period: { he: "אפריל 2026", en: "April 2026" }, gross: 1419.35, mortgage: 1034, insurance: 0, operating: 99.35, net: 286.00, status: { he: "שולם", en: "Paid" } }
+      ],
+      photos: {
+        exterior: [
+          { src: "assets/properties/s25th.jpg", caption: { he: "חזית הנכס", en: "Front exterior" } }
+        ],
+        interior: []
+      },
+      documents: []
+    }
   ]
 };
 

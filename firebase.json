@@ -12,6 +12,7 @@
       "scripts/**",
       "firestore.rules",
       "firestore.indexes.json",
+      "storage.rules",
       "סרטונים/**",
       "**/*.md"
     ],
@@ -29,5 +30,8 @@
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

@@ -1701,10 +1701,110 @@ html[dir="rtl"] .link-arrow svg { transform: scaleX(-1); }
 }
 .ptoast.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ---- property switcher (pills) + portfolio count ---- */
+.pdash__bar { display: block; }
+.pdash__barhead { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.7rem; }
+.pdash__barlabel { font-size: 0.92rem; font-weight: 600; color: var(--ink); }
+.pcount { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; color: var(--clay); background: rgba(180,95,60,0.1); padding: 0.3rem 0.7rem; border-radius: 999px; }
+.pcount svg { width: 14px; height: 14px; }
+.ppills { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.ppill {
+  flex: 1 1 220px; min-width: 0; text-align: start; cursor: pointer;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 14px;
+  padding: 0.85rem 1.05rem; transition: all 0.2s var(--ease);
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.ppill:hover { border-color: var(--clay); transform: translateY(-2px); box-shadow: var(--shadow); }
+.ppill.is-active { border-color: var(--clay); background: linear-gradient(135deg, rgba(180,95,60,0.07), rgba(200,149,74,0.05)); box-shadow: var(--shadow); }
+.ppill__name { font-family: var(--font-display); font-size: 1.08rem; color: var(--ink); line-height: 1.15; }
+.ppill.is-active .ppill__name { color: var(--clay); }
+.ppill__meta { font-size: 0.78rem; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- financials: headline tiles ---- */
+.fhead { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
+.ftile { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.1rem 1.2rem; position: relative; overflow: hidden; }
+.ftile::before { content: ""; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--clay); }
+.ftile--value::before { background: var(--ink); }
+.ftile--equity::before { background: var(--sage); }
+.ftile--invest::before { background: var(--ochre); }
+.ftile--yield::before { background: var(--clay); }
+.ftile__label { display: block; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 0.4rem; }
+.ftile__value { display: block; font-family: var(--font-display); font-size: 1.55rem; color: var(--ink); line-height: 1.1; }
+
+/* ---- value composition bar ---- */
+.fbar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; background: var(--cream); margin: 0.4rem 0 1rem; }
+.fbar__seg { height: 100%; transition: width 0.6s var(--ease); }
+.fbar__seg--equity { background: var(--sage); }
+.fbar__seg--loan { background: var(--ochre); opacity: 0.55; }
+.flegend { display: flex; flex-direction: column; gap: 0.55rem; }
+.flegend__item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--ink-soft); }
+.flegend__item b { color: var(--ink); }
+.fdot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+.fdot--equity { background: var(--sage); }
+.fdot--loan { background: var(--ochre); opacity: 0.6; }
+
+/* ---- monthly cashflow waterfall ---- */
+.fflow { margin-bottom: 0.9rem; }
+.fflow__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem; font-size: 0.92rem; }
+.fflow__head span { color: var(--ink-soft); }
+.fflow__head b { color: var(--ink); }
+.fflow__head b.neg { color: var(--clay); }
+.fflow__head b.pos { color: var(--sage); }
+.fflow__track { height: 9px; border-radius: 999px; background: var(--cream); overflow: hidden; }
+.fflow__fill { display: block; height: 100%; border-radius: 999px; transition: width 0.6s var(--ease); }
+.fflow__fill--pos { background: var(--sage); }
+.fflow__fill--neg { background: var(--clay); opacity: 0.7; }
+.fflow__fill--net { background: linear-gradient(90deg, var(--clay), var(--ochre)); }
+.fnet { margin-top: 1.1rem; padding-top: 1rem; border-top: 2px solid var(--ink); }
+.fnet__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.45rem; }
+.fnet__head span { font-weight: 600; color: var(--ink); }
+.fnet__head b { font-family: var(--font-display); font-size: 1.5rem; color: var(--ink); }
+.fnet__head b small { font-family: var(--font-body); font-size: 0.72rem; color: var(--ink-soft); font-weight: 500; }
+.fnet__yield { margin: 0.7rem 0 0; font-size: 0.92rem; color: var(--ink-soft); }
+.fnet__yield b { color: var(--sage); font-weight: 700; }
+
+/* ---- expense ledger ---- */
+.fledger { margin-top: 1.4rem; }
+.fledger__head { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+.fledger__head .pcard__title { margin: 0; padding: 0; border: 0; }
+.ftable td.fnum, .ftable th.fnum { text-align: end; font-variant-numeric: tabular-nums; }
+.ftable td.fmuted { color: var(--ink-soft); font-size: 0.85rem; }
+.ftable__total td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; color: var(--ink); background: var(--cream); }
+.ftable__total td.fnum { font-family: var(--font-display); font-size: 1.05rem; }
+
+/* ---- empty state ---- */
+.pempty { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; text-align: center; padding: 2.4rem 1.5rem; color: var(--ink-soft); }
+.pempty svg { width: 34px; height: 34px; opacity: 0.5; }
+.pempty p { margin: 0; font-size: 0.95rem; max-width: 44ch; }
+
+/* ---- document upload ---- */
+.pupload { margin-bottom: 1.2rem; }
+.pupload__zone {
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center;
+  border: 2px dashed var(--line); border-radius: 14px; padding: 1.8rem 1.5rem; cursor: pointer;
+  transition: all 0.2s var(--ease);
+}
+.pupload__zone:hover, .pupload.is-drag .pupload__zone { border-color: var(--clay); background: rgba(180,95,60,0.04); }
+.pupload__icon { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 12px; background: rgba(180,95,60,0.1); color: var(--clay); }
+.pupload__icon svg { width: 22px; height: 22px; }
+.pupload__title { font-weight: 600; color: var(--ink); font-size: 1rem; }
+.pupload__hint { font-size: 0.82rem; color: var(--ink-soft); }
+.pupload__list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.puprow { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.6rem 0.85rem; border-radius: 10px; background: var(--cream); font-size: 0.88rem; }
+.puprow__name { display: flex; align-items: center; gap: 0.5rem; min-width: 0; color: var(--ink); }
+.puprow__name svg { width: 16px; height: 16px; flex: 0 0 auto; color: var(--ink-soft); }
+.puprow__name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.puprow__status { flex: 0 0 auto; font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
+.puprow.is-uploading .puprow__status { color: var(--ochre); }
+.puprow.is-done .puprow__status { color: var(--sage); }
+.puprow.is-error .puprow__status { color: var(--clay); }
+.puprow.is-pending .puprow__status { color: var(--ink-soft); }
+
 /* portal responsive */
 @media (max-width: 900px) {
   .psummary { grid-template-columns: repeat(2, 1fr); }
   .pgrid--3 { grid-template-columns: repeat(2, 1fr); }
+  .fhead { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 680px) {
   .pdash { padding-top: 6.5rem; }
@@ -1715,8 +1815,10 @@ html[dir="rtl"] .link-arrow svg { transform: scaleX(-1); }
   .ptab span { white-space: nowrap; }
   .pcard--hero img { height: 220px; }
   .pbanner__amount { margin-inline-start: 0; }
+  .ppill { flex: 1 1 100%; }
 }
 @media (max-width: 420px) {
   .psummary { grid-template-columns: 1fr; }
   .pgallery { grid-template-columns: 1fr; }
+  .fhead { grid-template-columns: 1fr; }
 }

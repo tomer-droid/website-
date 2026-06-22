@@ -1,0 +1,57 @@
+rules_version = '2';
+
+// ============================================================
+// Kamir Group — Cloud Storage security rules
+// ------------------------------------------------------------
+// Investor document uploads. Each signed-in investor can read and
+// write ONLY files under their own folder:
+//
+//     investor-docs/{email}/{propId}/{fileName}
+//
+// where {email} is the investor's own (lowercased) Google email.
+// Nobody can read or write another investor's files.
+//
+// HOW TO PUBLISH (one-time):
+//   Firebase console -> Build -> Storage. If Storage is not yet
+//   enabled, click "Get started" and accept the default bucket.
+//   Then open the "Rules" tab, paste this file's contents, Publish.
+// ============================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // the signed-in user's verified, lowercased email
+    function myEmail() {
+      return request.auth != null
+        ? request.auth.token.email.lower()
+        : "";
+    }
+
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // per-investor document area
+    match /investor-docs/{email}/{propId}/{fileName} {
+      // read your own files only
+      allow read: if signedIn() && email == myEmail();
+
+      // upload your own files only — max 25MB, common doc/image types
+      allow write: if signedIn()
+        && email == myEmail()
+        && request.resource.size < 25 * 1024 * 1024
+        && (
+          request.resource.contentType.matches('application/pdf')
+          || request.resource.contentType.matches('image/.*')
+          || request.resource.contentType.matches('application/msword')
+          || request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*')
+          || request.resource.contentType.matches('application/vnd.ms-excel')
+        );
+    }
+
+    // everything else: denied
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

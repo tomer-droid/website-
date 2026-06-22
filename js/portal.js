@@ -183,7 +183,9 @@
     mail: svg('<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>'),
     download: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/>'),
     play: svg('<circle cx="12" cy="12" r="10"/><path d="m10 8 6 4-6 4z" fill="currentColor" stroke="none"/>'),
-    doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>')
+    doc: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'),
+    sheet: svg('<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/>'),
+    upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>')
   };
 
   var activeTab = "overview";
@@ -231,43 +233,103 @@
     return "<div><dt>" + esc(k) + "</dt><dd>" + esc(v) + "</dd></div>";
   }
 
+  function finTile(label, value, tone) {
+    return '<div class="ftile' + (tone ? " ftile--" + tone : "") + '">' +
+      '<span class="ftile__label">' + esc(label) + "</span>" +
+      '<span class="ftile__value">' + value + "</span></div>";
+  }
+
   function renderFinancials(p) {
     var f = p.financials;
-    var rows = [
-      [ui("purchasePrice"), money(f.purchasePrice)],
-      [ui("currentValue"), money(f.currentValue)],
-      [ui("downPayment"), money(f.downPayment)],
-      [ui("closingReno"), money(f.closingReno)],
-      [ui("investment"), money(f.investment)],
-      [ui("loanAmount"), money(f.loanAmount)],
-      [ui("leverage"), f.leveragePct + "%"],
-      [ui("mortgageBalance"), money(f.mortgageBalance)],
-      [ui("equity"), money(f.equity)]
-    ].map(function (r) {
-      return '<div class="prow"><span>' + esc(r[0]) + "</span><b>" + r[1] + "</b></div>";
-    }).join("");
 
-    var monthly = [
-      [ui("grossRent"), money(f.grossRent), "pos"],
-      [ui("mortgagePay"), "−" + money(f.monthlyMortgage), "neg"],
-      [ui("insurance"), "−" + money(f.monthlyInsurance), "neg"],
-      [ui("operating"), "−" + money(f.monthlyOperating), "neg"]
-    ].map(function (r) {
-      return '<div class="prow"><span>' + esc(r[0]) + '</span><b class="' + r[2] + '">' + r[1] + "</b></div>";
-    }).join("");
-    monthly += '<div class="prow prow--total"><span>' + ui("netCashflow") + "</span><b>" + money(f.netCashflow) + "</b></div>";
+    /* ---- 1. headline tiles ---- */
+    var tiles =
+      finTile(ui("currentValue"), money(f.currentValue), "value") +
+      finTile(ui("equity"), money(f.equity), "equity") +
+      finTile(ui("investment"), money(f.investment), "invest") +
+      finTile(ui("cashOnCash"), f.cashOnCash + "%", "yield");
 
-    return '<div class="pgrid pgrid--2">' +
-        '<div class="pcard"><h3 class="pcard__title">' + ui("keyMetrics") + "</h3>" + rows + "</div>" +
-        '<div class="pcard"><h3 class="pcard__title">' + ui("monthlyTable") + "</h3>" + monthly +
-          '<p class="pcard__foot">' + ui("cashOnCash") + ": <b>" + f.cashOnCash + "%</b></p></div>" +
+    /* ---- 2. value composition bar (equity vs loan) ---- */
+    var val = f.currentValue || 0;
+    var eqPct = val > 0 ? Math.round((f.equity / val) * 100) : 100;
+    var loanPct = Math.max(0, 100 - eqPct);
+    var compBar =
+      '<div class="fbar" role="img" aria-label="' + esc(ui("equity")) + " " + eqPct + '%">' +
+        '<span class="fbar__seg fbar__seg--equity" style="width:' + eqPct + '%"></span>' +
+        (loanPct > 0 ? '<span class="fbar__seg fbar__seg--loan" style="width:' + loanPct + '%"></span>' : "") +
+      "</div>" +
+      '<div class="flegend">' +
+        '<span class="flegend__item"><i class="fdot fdot--equity"></i>' + esc(ui("equity")) + " · <b>" + money(f.equity) + "</b> (" + eqPct + "%)</span>" +
+        (f.mortgageBalance > 0
+          ? '<span class="flegend__item"><i class="fdot fdot--loan"></i>' + esc(ui("mortgageBalance")) + " · <b>" + money(f.mortgageBalance) + "</b></span>"
+          : '<span class="flegend__item"><i class="fdot fdot--equity"></i>' + esc(ui("noLoan")) + "</span>") +
       "</div>";
+
+    /* ---- 3. monthly cashflow waterfall ---- */
+    var gross = f.grossRent || 0;
+    function flowRow(label, amt, tone) {
+      var pct = gross > 0 ? Math.min(100, Math.round((Math.abs(amt) / gross) * 100)) : 0;
+      var sign = tone === "neg" ? "−" : "";
+      return '<div class="fflow">' +
+        '<div class="fflow__head"><span>' + esc(label) + '</span><b class="' + (tone || "") + '">' + sign + money(Math.abs(amt)) + "</b></div>" +
+        '<div class="fflow__track"><span class="fflow__fill fflow__fill--' + (tone || "pos") + '" style="width:' + pct + '%"></span></div>' +
+      "</div>";
+    }
+    var flow =
+      flowRow(ui("grossRent"), gross, "pos") +
+      (f.monthlyMortgage > 0 ? flowRow(ui("mortgagePay"), f.monthlyMortgage, "neg") : "") +
+      (f.monthlyInsurance > 0 ? flowRow(ui("insurance"), f.monthlyInsurance, "neg") : "") +
+      (f.monthlyOperating > 0 ? flowRow(ui("operating"), f.monthlyOperating, "neg") : "");
+    var netPct = gross > 0 ? Math.min(100, Math.round((f.netCashflow / gross) * 100)) : 0;
+    var netBlock =
+      '<div class="fnet">' +
+        '<div class="fnet__head"><span>' + esc(ui("netCashflow")) + '</span><b>' + money(f.netCashflow) + " <small>" + ui("perMonth") + "</small></b></div>" +
+        '<div class="fflow__track"><span class="fflow__fill fflow__fill--net" style="width:' + netPct + '%"></span></div>' +
+        '<p class="fnet__yield">' + esc(ui("cashOnCash")) + ': <b>' + f.cashOnCash + "%</b></p>" +
+      "</div>";
+
+    /* ---- 4. full purchase + renovation ledger ---- */
+    var ledger = "";
+    if (p.expenses && p.expenses.length) {
+      var total = 0;
+      var body = p.expenses.map(function (e) {
+        total += Number(e.amount) || 0;
+        return "<tr><td>" + esc(L(e.label)) + "</td><td class='fmuted'>" + esc(e.vendor || "") + "</td>" +
+          "<td class='fnum'>" + money(e.amount) + "</td></tr>";
+      }).join("");
+      var sheetBtn = p.sheetUrl
+        ? '<a class="pbtn pbtn--ghost fledger__sheet" href="' + esc(p.sheetUrl) + '" target="_blank" rel="noopener">' +
+            ICONS.sheet + "<span>" + ui("openSheet") + "</span></a>"
+        : "";
+      ledger =
+        '<div class="pcard fledger">' +
+          '<div class="fledger__head"><h3 class="pcard__title">' + ui("finLedger") + "</h3>" + sheetBtn + "</div>" +
+          '<div class="ptable-wrap"><table class="ptable ftable"><thead><tr>' +
+            "<th>" + ui("colItem") + "</th><th>" + ui("colVendor") + "</th><th class='fnum'>" + ui("colAmount") + "</th>" +
+          "</tr></thead><tbody>" + body +
+          "<tr class='ftable__total'><td colspan='2'>" + ui("totalSpent") + "</td><td class='fnum'>" + money(total) + "</td></tr>" +
+          "</tbody></table></div>" +
+        "</div>";
+    }
+
+    return '<div class="fhead">' + tiles + "</div>" +
+      '<div class="pgrid pgrid--2">' +
+        '<div class="pcard"><h3 class="pcard__title">' + ui("finValueEquity") + "</h3>" + compBar + "</div>" +
+        '<div class="pcard"><h3 class="pcard__title">' + ui("finMonthlyFlow") + "</h3>" + flow + netBlock + "</div>" +
+      "</div>" + ledger;
   }
 
   function renderDistributions(p) {
     var next = null;
-    var body = p.distributions.map(function (d) {
-      var paid = d.status === "paid";
+    var dists = p.distributions || [];
+    if (!dists.length) {
+      return '<p class="psection__intro">' + ui("distIntro") + "</p>" +
+        '<div class="pcard pempty">' + ICONS.dist +
+        "<p>" + ui("distEmpty") + "</p></div>";
+    }
+    var body = dists.map(function (d) {
+      var paid = d.status === "paid" ||
+        (d.status && (d.status.en === "Paid" || d.status.he === "שולם"));
       if (!paid && !next) next = d;
       return "<tr>" +
         "<td>" + esc(L(d.period)) + "</td>" +
@@ -307,7 +369,8 @@
   }
 
   function renderDocuments(p) {
-    var items = p.documents.map(function (d) {
+    var docs = p.documents || [];
+    var items = docs.map(function (d) {
       return '<div class="pdoc" data-demo-doc>' +
         '<span class="pdoc__icon">' + ICONS.doc + "</span>" +
         '<span class="pdoc__body"><b>' + esc(L(d.name)) + "</b>" +
@@ -315,7 +378,25 @@
         '<button class="pdoc__dl" type="button" aria-label="' + ui("download") + '">' + ICONS.download + "</button>" +
         "</div>";
     }).join("");
-    return '<p class="psection__intro">' + ui("docsIntro") + '</p><div class="pcard pdocs">' + items + "</div>";
+
+    var list = docs.length
+      ? '<div class="pcard pdocs">' + items + "</div>"
+      : '<div class="pcard pempty">' + ICONS.docs + "<p>" + ui("docsEmpty") + "</p></div>";
+
+    /* upload zone — lets the investor add their own documents */
+    var uploader =
+      '<div class="pcard pupload" id="pupload" data-prop="' + esc(p.id) + '">' +
+        '<label class="pupload__zone" for="pupload-input">' +
+          '<span class="pupload__icon">' + ICONS.upload + "</span>" +
+          '<span class="pupload__title">' + ui("uploadTitle") + "</span>" +
+          '<span class="pupload__hint">' + ui("uploadHint") + "</span>" +
+          '<input type="file" id="pupload-input" multiple ' +
+            'accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" hidden />' +
+        "</label>" +
+        '<div class="pupload__list" id="pupload-list" hidden></div>' +
+      "</div>";
+
+    return '<p class="psection__intro">' + ui("docsIntro") + "</p>" + uploader + list;
   }
 
   function renderContacts() {
@@ -380,14 +461,18 @@
     });
     var avgYield = props.length ? (yieldSum / props.length).toFixed(1) : 0;
 
-    var propSelector;
-    if (props.length > 1) {
-      propSelector = '<select class="pselect" id="prop-select">' + props.map(function (pr, i) {
-        return '<option value="' + i + '"' + (i === activePropIdx ? " selected" : "") + ">" + esc(L(pr.name)) + "</option>";
-      }).join("") + "</select>";
-    } else {
-      propSelector = '<span class="pchip pchip--cat">' + esc(L(p.name)) + "</span>";
-    }
+    var countTxt = props.length === 1
+      ? ui("portfolioCountOne")
+      : ui("portfolioCountMany").replace("{n}", props.length);
+
+    var propPills = props.map(function (pr, i) {
+      var meta = [L(pr.city), L(pr.status)].filter(Boolean).join(" · ");
+      return '<button class="ppill' + (i === activePropIdx ? " is-active" : "") + '" type="button" data-prop="' + i + '"' +
+          (i === activePropIdx ? ' aria-current="true"' : "") + ">" +
+        '<span class="ppill__name">' + esc(L(pr.name)) + "</span>" +
+        '<span class="ppill__meta">' + esc(meta) + "</span>" +
+        "</button>";
+    }).join("");
 
     var tabsNav = TABS.map(function (t) {
       return '<button class="ptab' + (t.id === activeTab ? " is-active" : "") + '" data-tab="' + t.id + '">' +
@@ -416,7 +501,13 @@
             sumCard(ui("avgYield"), avgYield + "%") +
           "</div>" +
 
-          '<div class="pdash__bar"><span class="pdash__barlabel">' + ui("selectProperty") + ":</span> " + propSelector + "</div>" +
+          '<div class="pdash__bar">' +
+            '<div class="pdash__barhead">' +
+              '<span class="pdash__barlabel">' + ui("yourProperties") + "</span>" +
+              '<span class="pcount">' + ICONS.overview + "<span>" + esc(countTxt) + "</span></span>" +
+            "</div>" +
+            '<div class="ppills">' + propPills + "</div>" +
+          "</div>" +
 
           '<nav class="ptabs" aria-label="' + ui("portfolio") + '">' + tabsNav + "</nav>" +
 
@@ -446,11 +537,14 @@
       done();
     });
 
-    /* property selector */
-    var sel = app.querySelector("#prop-select");
-    if (sel) sel.addEventListener("change", function () {
-      activePropIdx = parseInt(sel.value, 10) || 0;
-      renderDashboard(app);
+    /* property switcher (pills) */
+    app.querySelectorAll(".ppill").forEach(function (pill) {
+      pill.addEventListener("click", function () {
+        var i = parseInt(pill.getAttribute("data-prop"), 10) || 0;
+        if (i === activePropIdx) return;
+        activePropIdx = i;
+        renderDashboard(app);
+      });
     });
 
     /* tabs */
@@ -490,6 +584,30 @@
       el.addEventListener("click", function () { toast(ui("docDemoMsg")); });
     });
 
+    /* document upload */
+    var upInput = app.querySelector("#pupload-input");
+    var upZone = app.querySelector("#pupload");
+    if (upInput && upZone) {
+      var propId = upZone.getAttribute("data-prop");
+      upInput.addEventListener("change", function () {
+        if (upInput.files && upInput.files.length) {
+          handleUpload(upInput.files, propId, upZone);
+          upInput.value = "";
+        }
+      });
+      /* drag & drop */
+      ["dragenter", "dragover"].forEach(function (ev) {
+        upZone.addEventListener(ev, function (e) { e.preventDefault(); upZone.classList.add("is-drag"); });
+      });
+      ["dragleave", "drop"].forEach(function (ev) {
+        upZone.addEventListener(ev, function (e) { e.preventDefault(); upZone.classList.remove("is-drag"); });
+      });
+      upZone.addEventListener("drop", function (e) {
+        var files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files.length) handleUpload(files, propId, upZone);
+      });
+    }
+
     /* media: play Google Drive videos in an embedded modal */
     var vb = app.querySelector("#pvideobox");
     var vbFrame = vb ? vb.querySelector("iframe") : null;
@@ -524,6 +642,51 @@
       });
       document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeVideo(); });
     }
+  }
+
+  function uploadPath(propId, name) {
+    var user = (typeof firebase !== "undefined" && firebase.auth) ? firebase.auth().currentUser : null;
+    var email = ((user && user.email) || "unknown").toLowerCase();
+    var safe = name.replace(/[^\w.\-]+/g, "_");
+    return "investor-docs/" + email + "/" + (propId || "general") + "/" + Date.now() + "_" + safe;
+  }
+
+  function handleUpload(files, propId, zone) {
+    var list = zone.querySelector("#pupload-list");
+    if (list) list.hidden = false;
+    var hasStorage = typeof firebase !== "undefined" && typeof firebase.storage === "function";
+
+    Array.prototype.forEach.call(files, function (file) {
+      var row = document.createElement("div");
+      row.className = "puprow";
+      row.innerHTML = '<span class="puprow__name">' + ICONS.doc + "<span>" + esc(file.name) + "</span></span>" +
+        '<span class="puprow__status"></span>';
+      if (list) list.appendChild(row);
+      var status = row.querySelector(".puprow__status");
+      function setStatus(cls, txt) {
+        row.className = "puprow " + cls;
+        if (status) status.textContent = txt;
+      }
+
+      if (!hasStorage) { setStatus("is-pending", ui("uploadUnavailable")); return; }
+      if (file.size > 25 * 1024 * 1024) { setStatus("is-error", ui("uploadTooBig")); return; }
+
+      try {
+        var ref = firebase.storage().ref(uploadPath(propId, file.name));
+        var t = ref.put(file);
+        setStatus("is-uploading", "0%");
+        t.on("state_changed",
+          function (snap) {
+            var pct = snap.totalBytes ? Math.round((snap.bytesTransferred / snap.totalBytes) * 100) : 0;
+            if (status) status.textContent = pct + "%";
+          },
+          function () { setStatus("is-error", ui("uploadFailed")); },
+          function () { setStatus("is-done", ui("uploadDone")); }
+        );
+      } catch (e) {
+        setStatus("is-error", ui("uploadFailed"));
+      }
+    });
   }
 
   var toastTimer;
