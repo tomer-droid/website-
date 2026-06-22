@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="icon" type="image/png" sizes="180x180" href="assets/favicon-180.png" />
   <link rel="apple-touch-icon" href="assets/favicon-180.png" />
-  <link rel="stylesheet" href="css/styles.css?v=22" />
+  <link rel="stylesheet" href="css/styles.css?v=23" />
 </head>
 <body class="home">
 
@@ -344,40 +344,62 @@
         </div>
 
         <div class="peek__device reveal" data-delay="1">
-          <div class="peek-ui">
-            <div class="peek-ui__bar"><span></span><span></span><span></span></div>
-            <div class="peek-ui__body">
-              <div class="peek-ui__head">
-                <div class="peek-ui__id">
-                  <span class="peek-ui__avatar">K</span>
-                  <span class="peek-ui__who">
-                    <strong data-i18n="idx.peek.hello">שלום, שותף</strong>
-                    <small data-i18n="idx.peek.sub">תיק הנכסים שלך</small>
-                  </span>
+          <div class="peek-frame" role="img" aria-label="תצוגה מקדימה של פורטל המשקיעים">
+            <div class="peek-frame__bar">
+              <span></span><span></span><span></span>
+              <em class="peek-frame__url">portal.kamirgroup.com</em>
+            </div>
+            <div class="peek-frame__screen">
+              <div class="pdash peek-pdash">
+                <div class="pdash__top">
+                  <div>
+                    <span class="pdash__hello" data-i18n="idx.peek.hello">שלום, <b>שותף</b></span>
+                    <span class="pdash__since" data-i18n="idx.peek.sub">משקיע מאז 2024</span>
+                  </div>
+                  <span class="pchip pchip--demo" data-i18n="idx.peek.demo">תצוגה מקדימה</span>
                 </div>
-                <span class="peek-ui__chip" data-i18n="idx.peek.demo">תצוגה מקדימה</span>
-              </div>
-              <div class="peek-ui__stats">
-                <div class="peek-tile"><span data-i18n="idx.peek.t1">שכ"ד חודשי</span><strong>$1,700</strong></div>
-                <div class="peek-tile"><span data-i18n="idx.peek.t2">תזרים נטו</span><strong class="up">$437</strong></div>
-                <div class="peek-tile"><span data-i18n="idx.peek.t3">נכסים בתיק</span><strong>2</strong></div>
-              </div>
-              <div class="peek-prop">
-                <img src="assets/properties/grove.jpg" alt="" loading="lazy" />
-                <div class="peek-prop__txt">
-                  <strong class="addr-ltr">302 E Grove St</strong>
-                  <small data-i18n="idx.peek.propsub">Mishawaka, IN · מושכר ומניב</small>
+
+                <div class="psummary peek-psummary">
+                  <div class="psum"><span class="psum__label" data-i18n="idx.peek.s1">הון שהושקע</span><span class="psum__value" dir="ltr">$120,000</span></div>
+                  <div class="psum"><span class="psum__label" data-i18n="idx.peek.s2">שווי תיק</span><span class="psum__value" dir="ltr">$164,000</span></div>
+                  <div class="psum psum--accent"><span class="psum__label" data-i18n="idx.peek.s3">הון עצמי</span><span class="psum__value" dir="ltr">$96,000</span></div>
+                  <div class="psum"><span class="psum__label" data-i18n="idx.peek.s4">תזרים חודשי</span><span class="psum__value" dir="ltr">$1,150</span></div>
+                  <div class="psum"><span class="psum__label" data-i18n="idx.peek.s5">תשואה ממוצעת</span><span class="psum__value" dir="ltr">8.4%</span></div>
                 </div>
-                <span class="peek-prop__pill up" dir="ltr">+$437</span>
-              </div>
-              <div class="peek-docs">
-                <div class="peek-doc">
-                  <span class="peek-doc__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
-                  <span data-i18n="idx.peek.doc1">דוח תשואה, Q1 2026</span>
+
+                <div class="pdash__bar">
+                  <div class="pdash__barhead">
+                    <span class="pdash__barlabel" data-i18n="idx.peek.props">הנכסים שלך</span>
+                  </div>
+                  <div class="ppills">
+                    <button class="ppill is-active" type="button" tabindex="-1">
+                      <span class="ppill__name addr-ltr">302 E Grove St</span>
+                      <span class="ppill__meta">Mishawaka · <span data-i18n="idx.s3.status">מושכר ומניב</span></span>
+                    </button>
+                    <button class="ppill" type="button" tabindex="-1">
+                      <span class="ppill__name addr-ltr">405 E Woodside St</span>
+                      <span class="ppill__meta">South Bend · <span data-i18n="idx.s3.status">מושכר ומניב</span></span>
+                    </button>
+                  </div>
                 </div>
-                <div class="peek-doc">
-                  <span class="peek-doc__ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
-                  <span data-i18n="idx.peek.doc2">הסכם השקעה</span>
+
+                <nav class="ptabs peek-ptabs" aria-hidden="true">
+                  <span class="ptab is-active"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg><span data-i18n="idx.peek.tab1">סקירה</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg><span data-i18n="idx.peek.tab2">פיננסים</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span data-i18n="idx.peek.tab3">חלוקות</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span data-i18n="idx.peek.tab4">תמונות</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg><span data-i18n="idx.peek.tab5">מסמכים</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg><span data-i18n="idx.peek.tab6">אנשי קשר</span></span>
+                  <span class="ptab"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m10 8 5 3-5 3z" fill="currentColor" stroke="none"/><path d="M8 21h8"/></svg><span data-i18n="idx.peek.tab7">מדיה</span></span>
+                </nav>
+
+                <div class="pcard pcard--hero peek-hero">
+                  <img src="assets/properties/grove.jpg" alt="" loading="lazy" />
+                  <div class="pcard--hero__body">
+                    <span class="pchip pchip--ok" data-i18n="idx.s3.status">מושכר ומניב</span>
+                    <h2 class="addr-ltr">302 E Grove St</h2>
+                    <p class="muted addr-ltr">Mishawaka, IN 46545</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -446,7 +468,7 @@
   </footer>
 
   <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
-  <script src="js/i18n.js?v=22"></script>
-  <script src="js/main.js?v=22"></script>
+  <script src="js/i18n.js?v=23"></script>
+  <script src="js/main.js?v=23"></script>
 </body>
 </html>
