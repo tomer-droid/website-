@@ -30,6 +30,11 @@
   --gain:      #1AA06D;
   --gain-deep: #0E7A55;
   --gain-soft: rgba(26,160,109,0.12);
+  /* cool complementary accent — mortgage / loan in financials */
+  --denim:      #3F6B86;
+  --denim-soft: rgba(63,107,134,0.12);
+  /* secondary warm accent — plum for richer data palette */
+  --plum:       #8A5A7A;
 
   /* Type */
   --font-display: "Spectral", "Georgia", serif;
@@ -663,13 +668,13 @@ h3 { font-size: clamp(1.3rem, 2vw, 1.6rem); }
   letter-spacing: 0.01em; direction: ltr;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.peek-frame__screen { background: var(--cream); padding: 1.25rem 1.25rem 1.4rem; }
+.peek-frame__screen { background: var(--cream); padding: 1rem 1.25rem 1.4rem; }
 
 /* scoped overrides so the real .pdash markup fits the small frame */
-.peek-pdash { padding: 0; min-height: 0; background: transparent; }
-.peek-pdash .pdash__top { margin-bottom: 1rem; align-items: center; }
-.peek-pdash .pdash__hello { font-size: 1.1rem; }
-.peek-pdash .pdash__since { font-size: 0.72rem; }
+.peek-frame .peek-pdash { padding: 0; min-height: 0; background: transparent; }
+.peek-pdash .pdash__top { margin-bottom: 0.9rem; align-items: flex-start; gap: 0.6rem; }
+.peek-pdash .pdash__hello { font-size: 1.1rem; line-height: 1.15; }
+.peek-pdash .pdash__since { font-size: 0.72rem; margin-top: 0.1rem; }
 
 .peek-frame .peek-psummary { grid-template-columns: repeat(5, 1fr); gap: 0.45rem; margin-bottom: 1.1rem; }
 .peek-pdash .psum { padding: 0.6rem 0.55rem; border-radius: 11px; }
@@ -2098,14 +2103,14 @@ html[dir="rtl"] .padminbar__pick select {
   transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease);
 }
 .ftile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-.ftile::before { content: ""; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--clay); }
-.ftile--value  { background: linear-gradient(160deg, #fff 30%, rgba(53,58,66,0.07)); }
-.ftile--value::before { background: var(--ink); }
-.ftile--equity { background: linear-gradient(160deg, #fff 30%, rgba(110,114,87,0.10)); }
-.ftile--equity::before { background: var(--sage); }
-.ftile--invest { background: linear-gradient(160deg, #fff 30%, rgba(200,149,74,0.12)); }
+.ftile::before { content: ""; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 5px; background: var(--clay); }
+.ftile--value  { background: linear-gradient(155deg, #fff 18%, rgba(63,107,134,0.18)); }
+.ftile--value::before { background: var(--denim); }
+.ftile--equity { background: linear-gradient(155deg, #fff 18%, rgba(26,160,109,0.20)); }
+.ftile--equity::before { background: var(--gain); }
+.ftile--invest { background: linear-gradient(155deg, #fff 18%, rgba(200,149,74,0.26)); }
 .ftile--invest::before { background: var(--ochre); }
-.ftile--yield  { background: linear-gradient(160deg, #fff 30%, rgba(180,95,60,0.11)); }
+.ftile--yield  { background: linear-gradient(155deg, #fff 18%, rgba(180,95,60,0.24)); }
 .ftile--yield::before { background: var(--clay); }
 .ftile__label { display: block; font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 0.4rem; }
 .ftile__value { display: block; font-family: var(--font-display); font-size: 1.7rem; color: var(--ink); line-height: 1.1; }
@@ -2113,8 +2118,8 @@ html[dir="rtl"] .padminbar__pick select {
 /* ---- value composition bar ---- */
 .fbar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; background: var(--cream); margin: 0.4rem 0 1rem; }
 .fbar__seg { height: 100%; transition: width 0.6s var(--ease); }
-.fbar__seg--equity { background: var(--sage); }
-.fbar__seg--loan { background: var(--ochre); opacity: 0.55; }
+.fbar__seg--equity { background: linear-gradient(90deg, var(--sage), #828766); }
+.fbar__seg--loan { background: var(--denim); opacity: 0.85; }
 .flegend { display: flex; flex-direction: column; gap: 0.55rem; }
 .flegend__item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--ink-soft); }
 .flegend__item b { color: var(--ink); }
@@ -2154,7 +2159,7 @@ html[dir="rtl"] .padminbar__pick select {
 .fdonut__track { fill: none; stroke: var(--cream); stroke-width: 16; }
 .fdonut__seg { fill: none; stroke-width: 16; stroke-linecap: butt; }
 .fdonut__seg--net  { stroke: var(--gain); }
-.fdonut__seg--loan { stroke: var(--ink); }
+.fdonut__seg--loan { stroke: var(--denim); }
 .fdonut__seg--ins  { stroke: var(--ochre); }
 .fdonut__seg--op   { stroke: var(--clay); }
 .fdonut__top { font-family: var(--font-display); font-size: 19px; font-weight: 700; fill: var(--ink); transition: fill 0.2s var(--ease); }
@@ -2174,7 +2179,7 @@ html[dir="rtl"] .padminbar__pick select {
 .fleg:focus-visible { box-shadow: inset 0 0 0 1.5px var(--clay); }
 .fleg__dot { width: 12px; height: 12px; border-radius: 4px; flex: 0 0 auto; }
 .fleg__dot--net  { background: var(--gain); }
-.fleg__dot--loan { background: var(--ink); }
+.fleg__dot--loan { background: var(--denim); }
 .fleg__dot--ins  { background: var(--ochre); }
 .fleg__dot--op   { background: var(--clay); }
 .fleg__label { color: var(--ink); }
@@ -2186,8 +2191,9 @@ html[dir="rtl"] .padminbar__pick select {
   gap: 0.6rem; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px dashed var(--line);
 }
 .fio__item { background: var(--cream); border-radius: 14px; padding: 0.9rem 1rem; text-align: center; border: 1px solid var(--line); }
-.fio__item--in   { border-color: rgba(110,114,87,0.35); }
-.fio__item--out  { border-color: rgba(178,69,47,0.30); }
+.fio__item--in   { background: linear-gradient(160deg, #fff, rgba(110,114,87,0.16)); border-color: rgba(110,114,87,0.40); }
+.fio__item--in .fio__v { color: var(--sage); }
+.fio__item--out  { background: linear-gradient(160deg, #fff, rgba(178,69,47,0.14)); border-color: rgba(178,69,47,0.34); }
 .fio__item--keep { background: var(--gain-deep); border-color: var(--gain-deep); box-shadow: 0 8px 22px rgba(14,122,85,0.28); }
 .fio__k { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 0.25rem; }
 .fio__item--keep .fio__k { color: rgba(255,255,255,0.85); }
@@ -2222,8 +2228,8 @@ html[dir="rtl"] .padminbar__pick select {
 .fbars__track { height: 13px; background: var(--cream); border-radius: 999px; overflow: hidden; }
 .fbars__fill { display: block; height: 100%; border-radius: 999px; }
 .fbars__fill--rent { background: var(--ink); opacity: 0.18; }
-.fbars__fill--net  { background: var(--gain); }
-.fbars__fill--loan { background: var(--ink); }
+.fbars__fill--net  { background: linear-gradient(90deg, var(--gain), var(--gain-deep)); }
+.fbars__fill--loan { background: var(--denim); }
 .fbars__fill--ins  { background: var(--ochre); }
 .fbars__fill--op   { background: var(--clay); }
 .fbars__row--ref { opacity: 0.9; }
