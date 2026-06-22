@@ -108,7 +108,7 @@
     /* documents */
     docsIntro:    { he: "כל מסמכי הקנייה, הקבלות ומסמכי החברה — במקום אחד. אפשר גם להעלות מסמכים משלכם.", en: "All purchase documents, receipts and company papers — in one place. You can also upload your own." },
     driveFoldersTitle: { he: "תיקיות הנכס ב-Drive",            en: "Property folders on Drive" },
-    driveFoldersIntro: { he: "המסמכים נשמרים ב-Google Drive. לחצו לפתיחת התיקייה בכרטיסייה חדשה.", en: "The files live in Google Drive. Click to open the folder in a new tab." },
+    driveFoldersIntro: { he: "המסמכים נשמרים ב-Google Drive. לחצו לצפייה בתיקייה כאן בפורטל.", en: "The files live in Google Drive. Click to view the folder right here in the portal." },
     download:     { he: "הורדה",                              en: "Download" },
     docDemoMsg:   { he: "המסמך יהיה זמין להורדה בקרוב. בינתיים נשמח לשלוח עותק — פנו אלינו.", en: "This document will be downloadable soon. In the meantime we're happy to send a copy — just reach out." },
     docsEmpty:    { he: "עדיין לא הועלו מסמכים לנכס זה.",       en: "No documents have been added for this property yet." },
@@ -128,6 +128,13 @@
     whenToContact:{ he: "מתי לפנות",                          en: "When to contact" },
     call:         { he: "התקשרו",                             en: "Call" },
     email:        { he: "אימייל",                             en: "Email" },
+    toolsTitle:   { he: "מערכות וקישורים",                    en: "Systems & links" },
+    toolsIntro:   { he: "הכלים שבהם אנו מנהלים את הכספים והשכירות של הנכס — לכניסה ישירה.", en: "The systems we use to manage the property's banking and rentals — for direct access." },
+    mercuryName:  { he: "Mercury — הבנק",                      en: "Mercury — Banking" },
+    mercuryDesc:  { he: "חשבון הבנק של החברה: יתרות, העברות ותנועות.", en: "The company's bank account: balances, transfers and activity." },
+    tenantcloudName:{ he: "TenantCloud — ניהול נכס",          en: "TenantCloud — Property management" },
+    tenantcloudDesc:{ he: "מערכת ניהול השכירות: דיירים, תשלומים וקריאות שירות.", en: "Rental management: tenants, payments and service requests." },
+    openLink:     { he: "פתיחה ↗",                            en: "Open ↗" },
     /* media */
     mediaIntro:   { he: "סרטוני הסבר ועדכונים שהכנו עבורכם — זהים לכל המשקיעים.", en: "Explainer videos and updates we've prepared for you — the same for every investor." },
     watch:        { he: "צפייה",                              en: "Watch" },

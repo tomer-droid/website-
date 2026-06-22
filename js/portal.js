@@ -57,6 +57,13 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
+  /* Pull the Google Drive folder ID out of a share URL so we can embed it. */
+  function driveFolderId(url) {
+    if (!url) return "";
+    var m = String(url).match(/\/folders\/([A-Za-z0-9_-]+)/) ||
+            String(url).match(/[?&]id=([A-Za-z0-9_-]+)/);
+    return m ? m[1] : "";
+  }
 
   /* ---- Admin (manager preview) state ----
      An admin account (listed in config/admins) can view ANY investor's
@@ -247,7 +254,9 @@
     upload: svg('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/>'),
     ext: svg('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/>'),
     shield: svg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
-    folder: svg('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>')
+    folder: svg('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'),
+    bank: svg('<path d="M3 21h18"/><path d="M3 10h18"/><path d="M5 6l7-3 7 3"/><path d="M4 10v11"/><path d="M20 10v11"/><path d="M8 14v3"/><path d="M12 14v3"/><path d="M16 14v3"/>'),
+    keys: svg('<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.5 12.5 8-8"/><path d="m17 6 2 2"/><path d="m14 9 2 2"/>')
   };
 
   var activeTab = "overview";
@@ -530,7 +539,7 @@
 
   function photoFigure(ph) {
     var cap = L(ph.caption);
-    return '<figure class="pphoto" data-full="' + esc(ph.src) + '" tabindex="0" role="button" aria-label="' + esc(cap || ui("tabPhotos")) + '">' +
+    return '<figure class="pphoto" data-full="' + esc(ph.src) + '" data-cap="' + esc(cap) + '" tabindex="0" role="button" aria-label="' + esc(cap || ui("tabPhotos")) + '">' +
       '<img src="' + esc(ph.src) + '" alt="' + esc(cap) + '" loading="lazy" />' +
       (cap ? "<figcaption>" + esc(cap) + "</figcaption>" : "") + "</figure>";
   }
@@ -557,12 +566,25 @@
        Shared rendering; the folder links themselves are per-property data. */
     var folders = p.driveFolders || [];
     var folderCards = folders.map(function (fo) {
-      return '<a class="pcard pdrivefolder" href="' + esc(fo.url) + '" target="_blank" rel="noopener" aria-label="' + esc(L(fo.title)) + '">' +
+      var fid = driveFolderId(fo.url);
+      var body =
         '<span class="pdrivefolder__icon">' + ICONS.folder + "</span>" +
         '<span class="pdrivefolder__body">' +
           "<b>" + esc(L(fo.title)) + "</b>" +
           (L(fo.desc) ? "<p>" + esc(L(fo.desc)) + "</p>" : "") +
-        "</span>" +
+        "</span>";
+      /* If we can read the folder ID we open it INSIDE the portal (like the
+         media videos). Otherwise fall back to a plain link to Drive. */
+      if (fid) {
+        return '<div class="pcard pdrivefolder" role="button" tabindex="0"' +
+          ' data-folder-id="' + esc(fid) + '" data-folder-title="' + esc(L(fo.title)) +
+          '" data-folder-url="' + esc(fo.url) + '" aria-label="' + esc(L(fo.title)) + '">' +
+          body +
+          '<a class="pdrivefolder__ext" href="' + esc(fo.url) + '" target="_blank" rel="noopener">' + ICONS.ext + "<span>" + ui("openDrive") + "</span></a>" +
+          "</div>";
+      }
+      return '<a class="pcard pdrivefolder" href="' + esc(fo.url) + '" target="_blank" rel="noopener" aria-label="' + esc(L(fo.title)) + '">' +
+        body +
         '<span class="pdrivefolder__ext">' + ICONS.ext + "<span>" + ui("openDrive") + "</span></span>" +
         "</a>";
     }).join("");
@@ -623,7 +645,26 @@
           '<a class="pbtn pbtn--ghost" href="mailto:' + esc(c.email) + '">' + ICONS.mail + "<span>" + esc(c.email) + "</span></a>" +
         "</div></div>";
     }).join("");
-    return '<p class="psection__intro">' + ui("contactsIntro") + '</p><div class="pgrid pgrid--2">' + items + "</div>";
+    /* Essential systems — Mercury (bank) & TenantCloud (property mgmt).
+       These are links to external systems, not people, so they live in their
+       own block. Banks/login portals can't be embedded, so they open in a
+       new tab. Shared across every investor. */
+    var tools = [
+      { icon: ICONS.bank, name: ui("mercuryName"), desc: ui("mercuryDesc"), url: "https://mercury.com" },
+      { icon: ICONS.keys, name: ui("tenantcloudName"), desc: ui("tenantcloudDesc"), url: "https://www.tenantcloud.com" }
+    ];
+    var toolCards = tools.map(function (t) {
+      return '<a class="pcard pdrivefolder" href="' + esc(t.url) + '" target="_blank" rel="noopener" aria-label="' + esc(t.name) + '">' +
+        '<span class="pdrivefolder__icon">' + t.icon + "</span>" +
+        '<span class="pdrivefolder__body"><b>' + esc(t.name) + "</b><p>" + esc(t.desc) + "</p></span>" +
+        '<span class="pdrivefolder__ext">' + ICONS.ext + "<span>" + ui("openLink") + "</span></span>" +
+        "</a>";
+    }).join("");
+    var toolsBlock = '<div class="pcard" style="margin-top:1.2rem"><h3 class="pcard__title">' + ui("toolsTitle") + "</h3>" +
+      '<p class="pcard__sub">' + ui("toolsIntro") + "</p>" +
+      '<div class="pdrivefolders">' + toolCards + "</div></div>";
+
+    return '<p class="psection__intro">' + ui("contactsIntro") + '</p><div class="pgrid pgrid--2">' + items + "</div>" + toolsBlock;
   }
 
   function renderMedia() {
@@ -753,8 +794,9 @@
           '<div class="psection" id="psection">' + activeDef.render(p) + "</div>" +
         "</div>" +
       "</section>" +
-      '<div class="plightbox" id="plightbox" hidden><button class="plightbox__close" aria-label="close">&times;</button><img alt="" /></div>' +
-      '<div class="pvideobox" id="pvideobox" hidden><button class="pvideobox__close" aria-label="close">&times;</button><div class="pvideobox__frame"><iframe title="video" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div></div>';
+      '<div class="plightbox" id="plightbox" hidden><button class="plightbox__close" aria-label="close">&times;</button><button class="plightbox__nav plightbox__nav--prev" type="button" aria-label="previous">&#8249;</button><figure class="plightbox__fig"><img alt="" /><figcaption class="plightbox__cap"></figcaption></figure><button class="plightbox__nav plightbox__nav--next" type="button" aria-label="next">&#8250;</button></div>' +
+      '<div class="pvideobox" id="pvideobox" hidden><button class="pvideobox__close" aria-label="close">&times;</button><div class="pvideobox__frame"><iframe title="video" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div></div>' +
+      '<div class="pfolderbox" id="pfolderbox" hidden><div class="pfolderbox__panel"><div class="pfolderbox__bar"><b class="pfolderbox__title"></b><a class="pfolderbox__ext" href="#" target="_blank" rel="noopener">' + ui("openDrive") + '</a><button class="pfolderbox__close" aria-label="close">&times;</button></div><div class="pfolderbox__frame"><iframe title="folder"></iframe></div></div></div>';
 
     attach(app);
   }
@@ -820,26 +862,48 @@
       });
     });
 
-    /* photo lightbox */
+    /* photo lightbox — with prev/next (arrow keys + on-screen buttons) */
     var lb = app.querySelector("#plightbox");
     var lbImg = lb ? lb.querySelector("img") : null;
-    function openLb(src) {
-      if (!lb) return;
-      lbImg.src = src; lb.hidden = false;
-      document.body.style.overflow = "hidden";
+    var lbCap = lb ? lb.querySelector(".plightbox__cap") : null;
+    var lbPrev = lb ? lb.querySelector(".plightbox__nav--prev") : null;
+    var lbNext = lb ? lb.querySelector(".plightbox__nav--next") : null;
+    var photoFigs = Array.prototype.slice.call(app.querySelectorAll(".pphoto"));
+    var lbIndex = -1;
+    function showLb(i) {
+      if (!lb || !photoFigs.length) return;
+      lbIndex = (i + photoFigs.length) % photoFigs.length;
+      var fig = photoFigs[lbIndex];
+      lbImg.src = fig.getAttribute("data-full");
+      var cap = fig.getAttribute("data-cap") || "";
+      if (lbCap) { lbCap.textContent = cap; lbCap.style.display = cap ? "" : "none"; }
+      var multi = photoFigs.length > 1;
+      if (lbPrev) lbPrev.style.display = multi ? "" : "none";
+      if (lbNext) lbNext.style.display = multi ? "" : "none";
     }
-    function closeLb() { if (lb) { lb.hidden = true; lbImg.src = ""; document.body.style.overflow = ""; } }
-    app.querySelectorAll(".pphoto").forEach(function (fig) {
-      fig.addEventListener("click", function () { openLb(fig.getAttribute("data-full")); });
+    function openLb(i) { if (!lb) return; showLb(i); lb.hidden = false; document.body.style.overflow = "hidden"; }
+    function closeLb() { if (lb) { lb.hidden = true; lbImg.src = ""; lbIndex = -1; document.body.style.overflow = ""; } }
+    function lbStep(delta) { if (lbIndex >= 0) showLb(lbIndex + delta); }
+    photoFigs.forEach(function (fig, i) {
+      fig.addEventListener("click", function () { openLb(i); });
       fig.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLb(fig.getAttribute("data-full")); }
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLb(i); }
       });
     });
+    if (lbPrev) lbPrev.addEventListener("click", function (e) { e.stopPropagation(); lbStep(-1); });
+    if (lbNext) lbNext.addEventListener("click", function (e) { e.stopPropagation(); lbStep(1); });
     if (lb) {
       lb.addEventListener("click", function (e) {
-        if (e.target === lb || e.target.classList.contains("plightbox__close")) closeLb();
+        if (e.target === lb || e.target.classList.contains("plightbox__close") ||
+            e.target.classList.contains("plightbox__fig")) closeLb();
       });
-      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
+      var rtl = lang() === "he";
+      document.addEventListener("keydown", function (e) {
+        if (lb.hidden) return;
+        if (e.key === "Escape") { closeLb(); return; }
+        if (e.key === "ArrowRight") { e.preventDefault(); lbStep(rtl ? -1 : 1); }
+        else if (e.key === "ArrowLeft") { e.preventDefault(); lbStep(rtl ? 1 : -1); }
+      });
     }
 
     /* demo notice for documents (no real files in demo) */
@@ -904,6 +968,47 @@
         if (e.target === vb || e.target.classList.contains("pvideobox__close")) closeVideo();
       });
       document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeVideo(); });
+    }
+
+    /* documents: open Google Drive folders in an embedded modal (in-portal) */
+    var fb = app.querySelector("#pfolderbox");
+    var fbFrame = fb ? fb.querySelector("iframe") : null;
+    var fbTitle = fb ? fb.querySelector(".pfolderbox__title") : null;
+    var fbExt = fb ? fb.querySelector(".pfolderbox__ext") : null;
+    function openFolder(id, title, url) {
+      if (!fb || !fbFrame || !id) return;
+      fbFrame.src = "https://drive.google.com/embeddedfolderview?id=" + id + "#grid";
+      if (fbTitle) fbTitle.textContent = title || "";
+      if (fbExt) fbExt.href = url || ("https://drive.google.com/drive/folders/" + id);
+      fb.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+    function closeFolder() {
+      if (!fb || !fbFrame) return;
+      fbFrame.src = "";
+      fb.hidden = true;
+      document.body.style.overflow = "";
+    }
+    app.querySelectorAll(".pdrivefolder[data-folder-id]").forEach(function (card) {
+      var id = card.getAttribute("data-folder-id");
+      var title = card.getAttribute("data-folder-title");
+      var url = card.getAttribute("data-folder-url");
+      function go(e) {
+        /* let the "open in Drive" link behave normally */
+        if (e.target.closest && e.target.closest(".pdrivefolder__ext")) return;
+        e.preventDefault();
+        openFolder(id, title, url);
+      }
+      card.addEventListener("click", go);
+      card.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { go(e); }
+      });
+    });
+    if (fb) {
+      fb.addEventListener("click", function (e) {
+        if (e.target === fb || e.target.classList.contains("pfolderbox__close")) closeFolder();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeFolder(); });
     }
   }
 
