@@ -94,8 +94,9 @@
     call:         { he: "התקשרו",                             en: "Call" },
     email:        { he: "אימייל",                             en: "Email" },
     /* media */
-    mediaIntro:   { he: "סרטונים ועדכונים שהעלינו עבורכם.",   en: "Videos and updates we've uploaded for you." },
+    mediaIntro:   { he: "סרטוני הסבר ועדכונים שהכנו עבורכם — זהים לכל המשקיעים.", en: "Explainer videos and updates we've prepared for you — the same for every investor." },
     watch:        { he: "צפייה",                              en: "Watch" },
+    openDrive:    { he: "פתיחה ב-Drive ↗",                    en: "Open in Drive ↗" },
     mediaDemoMsg: { he: "במצב הדגמה הסרטונים אינם זמינים לצפייה.", en: "In demo mode videos are not available for playback." }
   };
 
@@ -165,52 +166,79 @@
           { name: { he: "פוליסת ביטוח נכס", en: "Property Insurance Policy" }, cat: "catInsurance", size: "1.0 MB" },
           { name: { he: "קבלות שיפוץ ושדרוג", en: "Renovation Receipts" }, cat: "catReceipts", size: "2.6 MB" },
           { name: { he: "הסכם שכירות מול הדייר", en: "Tenant Lease Agreement" }, cat: "catLease", size: "760 KB" }
-        ],
-        contacts: [
-          {
-            name: { he: "Kamir Group — מנהל תיק", en: "Kamir Group — Account Manager" },
-            role: { he: "איש הקשר הראשי שלכם", en: "Your primary point of contact" },
-            phone: "+972528022296", phoneLabel: "+972 52-802-2296", email: "tomer@shaykes.com",
-            when: { he: "שאלות על ההשקעה, דוחות, חלוקות ועסקאות עתידיות.", en: "Investment questions, reports, distributions and future deals." }
-          },
-          {
-            name: { he: "חברת ניהול הנכס", en: "Property Management Co." },
-            role: { he: "ניהול שוטף ותחזוקה", en: "Day-to-day management & maintenance" },
-            phone: "+15740000000", phoneLabel: "+1 (574) 000-0000", email: "manager@example.com",
-            when: { he: "תקלות תחזוקה, ענייני דייר, מצב ההשכרה.", en: "Maintenance issues, tenant matters, leasing status." }
-          },
-          {
-            name: { he: "רואה חשבון / הנהלת חשבונות", en: "Accountant / Bookkeeper" },
-            role: { he: "מיסוי ודיווח", en: "Tax & reporting" },
-            phone: "+15740000001", phoneLabel: "+1 (574) 000-0001", email: "cpa@example.com",
-            when: { he: "מסמכי מס, דוחות שנתיים ותכנון מס.", en: "Tax documents, annual reports and tax planning." }
-          },
-          {
-            name: { he: "סוכן ביטוח", en: "Insurance Agent" },
-            role: { he: "פוליסות ותביעות", en: "Policies & claims" },
-            phone: "+15740000002", phoneLabel: "+1 (574) 000-0002", email: "insurance@example.com",
-            when: { he: "חידוש פוליסה, הגשת תביעה או נזק לנכס.", en: "Policy renewal, filing a claim or property damage." }
-          }
-        ],
-        media: [
-          {
-            title: { he: "סרטון פתיחה — ברוכים הבאים", en: "Welcome video" },
-            desc:  { he: "הסבר קצר על הפורטל ועל מה שתמצאו כאן.", en: "A short walkthrough of the portal and what you'll find here." },
-            duration: "2:40", thumb: "assets/portal/rerick-exterior.jpg"
-          },
-          {
-            title: { he: "סיור וידאו בנכס", en: "Property video tour" },
-            desc:  { he: "סיור מלא בנכס לאחר השיפוץ.", en: "A full walkthrough of the property after renovation." },
-            duration: "5:12", thumb: "assets/portal/rerick-living.jpg"
-          },
-          {
-            title: { he: "עדכון רבעוני — Q1 2026", en: "Quarterly update — Q1 2026" },
-            desc:  { he: "סיכום ביצועים והתקדמות לרבעון הראשון.", en: "Performance summary and progress for the first quarter." },
-            duration: "3:55", thumb: "assets/portal/rerick-kitchen.jpg"
-          }
         ]
       }
-    ]
+    ],
+
+    /* ----------------------------------------------------------
+       SHARED across every investor (same for all accounts):
+       the people who support the portfolio, and the explainer
+       videos. Per-investor data (financials, payments, photos,
+       documents) lives on each property above.
+       ---------------------------------------------------------- */
+    shared: {
+      contacts: [
+        {
+          name: { he: "תומר קמיר — Kamir Group", en: "Tomer Kamir — Kamir Group" },
+          role: { he: "איש הקשר הראשי שלכם", en: "Your primary point of contact" },
+          phone: "+972528022296", phoneLabel: "+972 52-802-2296", email: "tomer@shaykes.com",
+          when: { he: "שאלות על ההשקעה, דוחות, חלוקות ועסקאות עתידיות.", en: "Investment questions, reports, distributions and future deals." }
+        },
+        {
+          name: { he: "South Bend Management Co. — Louis Hiza", en: "South Bend Management Co. — Louis Hiza" },
+          role: { he: "ניהול הנכס — בעלים ומנהל", en: "Property management — Owner & Manager" },
+          phone: "+15745660202", phoneLabel: "+1 (574) 566-0202", email: "louis@southbendmanagementco.com",
+          when: { he: "ניהול שוטף, ענייני דייר, הסכמי שכירות ומצב ההשכרה.", en: "Day-to-day management, tenant matters, leases and leasing status." }
+        },
+        {
+          name: { he: "תחזוקה — Luna Coleman", en: "Maintenance — Luna Coleman" },
+          role: { he: "תחזוקה ותיאום שוטף", en: "Maintenance & coordination" },
+          phone: "+15745660202", phoneLabel: "+1 (574) 566-0202", email: "admin@southbendmanagementco.com",
+          when: { he: "תקלות תחזוקה, הערכות שיפוץ ותיאום ביקורות בנכס.", en: "Maintenance issues, rent-ready estimates and property inspections." }
+        },
+        {
+          name: { he: "Aldridge Insurance — Gregory Aldridge", en: "Aldridge Insurance — Gregory Aldridge" },
+          role: { he: "סוכן ביטוח — פוליסות ותביעות", en: "Insurance agent — Policies & claims" },
+          phone: "+15742329999", phoneLabel: "+1 (574) 232-9999 ext. 2109", email: "grussell@aldins.com",
+          when: { he: "חידוש פוליסה, הצעות מחיר, הגשת תביעה או נזק לנכס.", en: "Policy renewal, quotes, filing a claim or property damage." }
+        }
+      ],
+      /* Explainer videos hosted on Google Drive (linked, not uploaded).
+         Each file is shared "anyone with the link". thumb/embed use
+         Drive's public endpoints. */
+      media: [
+        {
+          title: { he: "ניווט במידע שלכם", en: "Navigating your information" },
+          desc:  { he: "סיור קצר בפורטל — איפה כל דבר נמצא ואיך לקרוא אותו.", en: "A short tour of the portal — where everything is and how to read it." },
+          driveId: "14GQ5C63Vk9vRmG450qSfentdaHX6tXbL"
+        },
+        {
+          title: { he: "פורטל הניהול (מחשב)", en: "The management portal (desktop)" },
+          desc:  { he: "סקירה של פורטל הניהול במחשב.", en: "A walkthrough of the management portal on desktop." },
+          driveId: "1n7SWgueXfWQfArLYhljivYzPuqTCQtyJ"
+        },
+        {
+          title: { he: "לאן הכסף הולך ומתי", en: "Where the money goes and when" },
+          desc:  { he: "הסבר על מסלול התשלומים — ממה שמתקבל ועד לתשלום נטו אליכם.", en: "How the cash flows — from rent collected to your net payout." },
+          driveId: "1UT45C4i1hQ7QEa56Mqfjhq9kBbs-wOd9"
+        },
+        {
+          title: { he: "הוצאות שוטפות", en: "Operating expenses" },
+          desc:  { he: "מה כוללות ההוצאות החודשיות על הנכס.", en: "What the monthly property expenses include." },
+          driveId: "1mw3emopyKSrv3aMK_IKyqjSArMVp3PIk"
+        },
+        {
+          title: { he: "עליית ערך ושחיקת משכנתא — הסבר", en: "Appreciation & mortgage paydown — explained" },
+          desc:  { he: "שני המנועים שבונים לכם הון לאורך זמן.", en: "The two engines that build your equity over time." },
+          driveId: "13wSl76xH3nGMi4G_x1hgKQMQUXUVpC--"
+        },
+        {
+          title: { he: "דוח CMA", en: "The CMA report" },
+          desc:  { he: "איך אנחנו מעריכים שווי נכס מול עסקאות דומות באזור.", en: "How we value a property against comparable local sales." },
+          driveId: "1S2vzBq9EXPMRFdymWvOEY_xVrIbLBSOQ"
+        }
+      ]
+    }
   };
 
   window.KamirPortalData = { CREDS: CREDS, UI: UI, DATA: DATA };

@@ -1643,6 +1643,19 @@ html[dir="rtl"] .link-arrow svg { transform: scaleX(-1); }
 .pmedia__body { padding: 1rem 1.1rem 1.2rem; }
 .pmedia__body b { display: block; font-size: 1rem; margin-bottom: 0.3rem; }
 .pmedia__body p { font-size: 0.86rem; color: var(--ink-soft); margin: 0 0 0.9rem; line-height: 1.5; }
+.pmedia[role="button"] { cursor: pointer; }
+.pmedia__thumb--video { background: linear-gradient(135deg, #2a2f25, #4a3f2d); }
+.pmedia__thumb--video img { height: 170px; }
+.pmedia__actions { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.pmedia__ext { font-size: 0.82rem; font-weight: 600; color: var(--ochre); text-decoration: none; white-space: nowrap; }
+.pmedia__ext:hover { text-decoration: underline; }
+
+/* video modal (Google Drive embed) */
+.pvideobox { position: fixed; inset: 0; z-index: 2000; background: rgba(20,20,20,0.92); display: grid; place-items: center; padding: 4vw; }
+.pvideobox[hidden] { display: none; }
+.pvideobox__frame { width: min(960px, 92vw); aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-lg); background: #000; }
+.pvideobox__frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.pvideobox__close { position: absolute; top: 1rem; inset-inline-end: 1.4rem; background: transparent; border: 0; color: #fff; font-size: 2.6rem; line-height: 1; cursor: pointer; }
 
 /* toast */
 .ptoast {

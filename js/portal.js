@@ -244,8 +244,9 @@
     return '<p class="psection__intro">' + ui("docsIntro") + '</p><div class="pcard pdocs">' + items + "</div>";
   }
 
-  function renderContacts(p) {
-    var items = p.contacts.map(function (c) {
+  function renderContacts() {
+    var contacts = (PD.DATA.shared && PD.DATA.shared.contacts) || [];
+    var items = contacts.map(function (c) {
       return '<div class="pcard pcontact">' +
         "<h3>" + esc(L(c.name)) + "</h3>" +
         '<p class="pcontact__role">' + esc(L(c.role)) + "</p>" +
@@ -258,14 +259,23 @@
     return '<p class="psection__intro">' + ui("contactsIntro") + '</p><div class="pgrid pgrid--2">' + items + "</div>";
   }
 
-  function renderMedia(p) {
-    var items = p.media.map(function (m) {
-      return '<div class="pcard pmedia" data-demo-media>' +
-        '<div class="pmedia__thumb"><img src="' + esc(m.thumb) + '" alt="' + esc(L(m.title)) + '" loading="lazy" />' +
-          '<span class="pmedia__play">' + ICONS.play + "</span>" +
-          '<span class="pmedia__dur">' + esc(m.duration) + "</span></div>" +
+  function renderMedia() {
+    var media = (PD.DATA.shared && PD.DATA.shared.media) || [];
+    var items = media.map(function (m) {
+      var thumb = m.driveId
+        ? "https://drive.google.com/thumbnail?id=" + encodeURIComponent(m.driveId) + "&sz=w800"
+        : (m.thumb || "");
+      var driveAttr = m.driveId ? ' data-drive-id="' + esc(m.driveId) + '"' : "";
+      var driveUrl = m.driveId ? "https://drive.google.com/file/d/" + m.driveId + "/view" : "#";
+      return '<div class="pcard pmedia" role="button" tabindex="0"' + driveAttr + ' aria-label="' + esc(L(m.title)) + '">' +
+        '<div class="pmedia__thumb pmedia__thumb--video">' +
+          (thumb ? '<img src="' + esc(thumb) + '" alt="' + esc(L(m.title)) + '" loading="lazy" referrerpolicy="no-referrer" />' : "") +
+          '<span class="pmedia__play">' + ICONS.play + "</span></div>" +
         '<div class="pmedia__body"><b>' + esc(L(m.title)) + "</b><p>" + esc(L(m.desc)) + "</p>" +
-          '<button class="pbtn pbtn--ghost" type="button">' + ICONS.play + "<span>" + ui("watch") + "</span></button></div>" +
+          '<span class="pmedia__actions">' +
+            '<button class="pbtn pbtn--ghost" type="button" data-media-watch>' + ICONS.play + "<span>" + ui("watch") + "</span></button>" +
+            '<a class="pmedia__ext" href="' + driveUrl + '" target="_blank" rel="noopener">' + ui("openDrive") + "</a>" +
+          "</span></div>" +
         "</div>";
     }).join("");
     return '<p class="psection__intro">' + ui("mediaIntro") + '</p><div class="pgrid pgrid--3">' + items + "</div>";
@@ -341,7 +351,8 @@
           '<div class="psection" id="psection">' + activeDef.render(p) + "</div>" +
         "</div>" +
       "</section>" +
-      '<div class="plightbox" id="plightbox" hidden><button class="plightbox__close" aria-label="close">&times;</button><img alt="" /></div>';
+      '<div class="plightbox" id="plightbox" hidden><button class="plightbox__close" aria-label="close">&times;</button><img alt="" /></div>' +
+      '<div class="pvideobox" id="pvideobox" hidden><button class="pvideobox__close" aria-label="close">&times;</button><div class="pvideobox__frame"><iframe title="video" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div></div>';
 
     attach(app);
   }
@@ -396,13 +407,45 @@
       document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLb(); });
     }
 
-    /* demo notices for docs/media */
+    /* demo notice for documents (no real files in demo) */
     app.querySelectorAll("[data-demo-doc]").forEach(function (el) {
       el.addEventListener("click", function () { toast(ui("docDemoMsg")); });
     });
-    app.querySelectorAll("[data-demo-media]").forEach(function (el) {
-      el.addEventListener("click", function () { toast(ui("mediaDemoMsg")); });
+
+    /* media: play Google Drive videos in an embedded modal */
+    var vb = app.querySelector("#pvideobox");
+    var vbFrame = vb ? vb.querySelector("iframe") : null;
+    function openVideo(id) {
+      if (!vb || !vbFrame || !id) return;
+      vbFrame.src = "https://drive.google.com/file/d/" + id + "/preview";
+      vb.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+    function closeVideo() {
+      if (!vb || !vbFrame) return;
+      vbFrame.src = "";
+      vb.hidden = true;
+      document.body.style.overflow = "";
+    }
+    app.querySelectorAll(".pmedia[data-drive-id]").forEach(function (card) {
+      var id = card.getAttribute("data-drive-id");
+      function go(e) {
+        /* let the "open in Drive" link behave normally */
+        if (e.target.closest && e.target.closest(".pmedia__ext")) return;
+        e.preventDefault();
+        openVideo(id);
+      }
+      card.addEventListener("click", go);
+      card.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { go(e); }
+      });
     });
+    if (vb) {
+      vb.addEventListener("click", function (e) {
+        if (e.target === vb || e.target.classList.contains("pvideobox__close")) closeVideo();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeVideo(); });
+    }
   }
 
   var toastTimer;
