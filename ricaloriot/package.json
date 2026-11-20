@@ -1,0 +1,16 @@
+{
+  "name": "ricaloriot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Ricaloriot - how much is left to eat today (calories + protein), shared live between two phones",
+  "scripts": {
+    "dev": "node dev-server.mjs"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.9.0"
+  }
+}
