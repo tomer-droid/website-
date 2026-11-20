@@ -16,8 +16,10 @@ Both phones see the same data live (the app polls a tiny API).
 | `public/` | The app itself: plain HTML/CSS/ES modules, no build step |
 | `public/ops.js` | The shared-state logic, used by both the browser and the API |
 | `public/foods.js` | Built-in foods and meal ideas |
-| `api/state.js` | `GET`/`POST` the shared state (one JSON document in a private Vercel Blob) |
-| `api/manifest.js` | Web-app manifest |
+| `server/state.js` | `GET`/`POST` the shared state (one JSON document) |
+| `server/store.js` | Where that document lives: Netlify Blobs in the cloud, a JSON file locally |
+| `server/manifest.js` | Web-app manifest |
+| `netlify/functions/` | Thin Netlify wrappers that expose the two handlers at `/api/*` |
 | `dev-server.mjs` | Local preview against a local JSON file |
 
 ### Food data rule
@@ -36,10 +38,12 @@ npm run dev   # http://localhost:5173/?k=123456
 
 ## Hosting
 
-Deployed on Vercel as the project `ricaloriot` (root directory: `ricaloriot/`).
-It needs two things configured in the Vercel project, never in this repository:
+Deployed on Netlify as the site `ricaloriot` (https://ricaloriot.netlify.app), from this folder:
+static files from `public/`, the API as Netlify Functions, data in Netlify Blobs
+(store `ricaloriot`, key `state`).
 
-- a private Blob store connected to the project (provides `BLOB_READ_WRITE_TOKEN`)
-- the environment variable `RICALORIOT_CODE` – the access code both phones use
+One thing is configured on the Netlify site, never in this repository:
+
+- the environment variable `RICALORIOT_CODE` - the access code both phones use
 
 This folder is not part of the company website: `firebase.json` ignores it.

@@ -11,8 +11,8 @@ process.env.RICALORIOT_CODE ||= '123456';
 const PORT = Number(process.env.PORT || 5173);
 
 const api = {
-  '/api/state': (await import('./api/state.js')).default,
-  '/api/manifest': (await import('./api/manifest.js')).default,
+  '/api/state': (await import('./server/state.js')).default,
+  '/api/manifest': (await import('./server/manifest.js')).default,
 };
 const types = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',

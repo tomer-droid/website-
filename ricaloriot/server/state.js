@@ -3,7 +3,7 @@
 // Every request must carry the access code in the x-rk-code header.
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { applyOps, emptyState } from '../public/ops.js';
-import { readState, writeState, ConflictError } from './_store.js';
+import { readState, writeState, ConflictError } from './store.js';
 
 const sha = (s) => createHash('sha256').update(String(s)).digest();
 const noStore = { 'cache-control': 'no-store' };
@@ -18,13 +18,15 @@ const fails = new Map();
 const MAX_FAILS = 8;
 const WINDOW_MS = 10 * 60e3;
 
+const env = (key) => globalThis.Netlify?.env?.get(key) ?? process.env[key];
+
 export default {
-  async fetch(request) {
+  async fetch(request, context) {
     try {
-      const expected = process.env.RICALORIOT_CODE;
+      const expected = env('RICALORIOT_CODE');
       if (!expected) return json({ error: 'not_configured' }, 500);
 
-      const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+      const ip = context?.ip || (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
       const now = Date.now();
       const f = fails.get(ip);
       if (f && f.until > now && f.n >= MAX_FAILS) return json({ error: 'too_many_attempts' }, 429);
@@ -53,16 +55,23 @@ export default {
           return json({ error: 'bad_json' }, 400);
         }
         if (!Array.isArray(ops) || ops.length > 300) return json({ error: 'bad_ops' }, 400);
+        let force = false;
+        let lastRev = -1;
         for (let attempt = 0; attempt < 6; attempt++) {
           const { state, etag } = await readState(0);
+          const rev = state?.rev || 0;
           const next = applyOps(structuredClone(state || emptyState()), ops);
-          next.rev = (state?.rev || 0) + 1;
+          next.rev = rev + 1;
           next.updatedAt = Date.now();
           try {
-            await writeState(next, etag);
+            await writeState(next, { etag, existed: state !== null, force });
             return json(next);
           } catch (e) {
-            if (!(e instanceof ConflictError)) throw e; // someone else wrote first: re-read and retry
+            if (!(e instanceof ConflictError)) throw e;
+            // Someone else wrote first: re-read and retry. If the document did not actually
+            // move between two refused attempts, the refusal is not a real conflict - write anyway.
+            if (rev === lastRev) force = true;
+            lastRev = rev;
           }
         }
         return json({ error: 'busy' }, 503);

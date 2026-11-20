@@ -1,3 +1,4 @@
 .dev-state.json
-.vercel
+.netlify
 node_modules/
+deploy-*.zip
