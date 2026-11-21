@@ -30,7 +30,7 @@ export const app = {
   pending: ls.get(K.queue, []), // changes made here that the cloud has not confirmed yet
   state: emptyState(), // server + pending = what the screen shows
   tab: 'today',
-  filter: 'fit',
+  level: null, // calorie level picked in the suggestions tab (null = whatever fits what is left)
   search: '',
   cart: ls.get(K.cart, {}), // food id -> quantity, the meal being put together on this phone
   flags: ls.get(K.flags, {}),

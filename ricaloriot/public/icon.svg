@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#221A14"/>
-  <circle cx="256" cy="256" r="138" fill="none" stroke="#FFF7EC" stroke-opacity=".13" stroke-width="54"/>
-  <circle cx="256" cy="256" r="138" fill="none" stroke="#FF6A45" stroke-width="54" stroke-linecap="round" stroke-dasharray="620 867" transform="rotate(-90 256 256)"/>
-  <circle cx="256" cy="256" r="58" fill="none" stroke="#FFF7EC" stroke-opacity=".13" stroke-width="44"/>
-  <circle cx="256" cy="256" r="58" fill="none" stroke="#3CCDBF" stroke-width="44" stroke-linecap="round" stroke-dasharray="230 364" transform="rotate(-90 256 256)"/>
+  <rect width="512" height="512" fill="#1FA35C"/>
+  <circle cx="256" cy="256" r="138" fill="none" stroke="#FFFFFF" stroke-opacity=".24" stroke-width="54"/>
+  <circle cx="256" cy="256" r="138" fill="none" stroke="#FFFFFF" stroke-width="54" stroke-linecap="round" stroke-dasharray="620 867" transform="rotate(-90 256 256)"/>
+  <circle cx="256" cy="256" r="58" fill="none" stroke="#FFFFFF" stroke-opacity=".24" stroke-width="44"/>
+  <circle cx="256" cy="256" r="58" fill="none" stroke="#C9F7D9" stroke-width="44" stroke-linecap="round" stroke-dasharray="230 364" transform="rotate(-90 256 256)"/>
 </svg>

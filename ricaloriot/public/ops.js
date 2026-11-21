@@ -38,6 +38,7 @@ function cleanFood(d) {
     per: qty === 'gram' || d.per === '100g' ? '100g' : 'unit',
     kcal: num(d.kcal, 0, 2000, 1),
     protein: num(d.protein, 0, 500, 1),
+    fat: num(d.fat, 0, 500, 1),
   };
   if (qty === 'unit') {
     out.unit = str(d.unit, 20) || 'יחידה';

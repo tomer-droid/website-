@@ -51,12 +51,8 @@ const shake = (el) => {
 };
 
 // ---------- "I ate something"
-const NOTES = ['בוקר', 'צהריים', 'ערב', 'נשנוש'];
-
 function entrySheet(mode = app.flags.entryMode || 'add') {
   const t = totals();
-  const h = new Date().getHours();
-  const def = h < 5 ? 'נשנוש' : h < 11 ? 'בוקר' : h < 16 ? 'צהריים' : 'ערב';
   const total = mode === 'total';
   openSheet(`<form class="sheet-body" data-form="entry" data-mode="${mode}" novalidate>
     <h2>מה אכלת?</h2>
@@ -75,27 +71,22 @@ function entrySheet(mode = app.flags.entryMode || 'add') {
       <label class="field protein"><span>חלבון (גרם)</span>
         <input id="e-protein" inputmode="decimal" autocomplete="off" placeholder="0" value="${total && t.protein ? t.protein : ''}"></label>
     </div>
-    ${
-      total
-        ? ''
-        : `<div class="chips">${NOTES.map(
-            (n) => `<button type="button" class="chip${n === def ? ' on' : ''}" data-act="pick-chip" data-v="${n}">${n}</button>`,
-          ).join('')}</div>`
-    }
     <button type="submit" class="btn primary big">שמירה</button>
   </form>`);
   $('#e-kcal').focus();
   if (total) $('#e-kcal').select();
 }
 
+const mealOfDay = () => {
+  const h = new Date().getHours();
+  return h < 5 ? 'לילה' : h < 11 ? 'בוקר' : h < 16 ? 'צהריים' : 'ערב';
+};
+
 on({
   'add-entry': () => entrySheet(),
   'entry-mode'(el) {
     saveFlags({ entryMode: el.dataset.mode });
     entrySheet(el.dataset.mode);
-  },
-  'pick-chip'(el) {
-    el.parentElement.querySelectorAll('.chip').forEach((c) => c.classList.toggle('on', c === el));
   },
   'del-entry'(el) {
     const day = todayKey();
@@ -114,7 +105,7 @@ onForm({
     let kcal = parseNum(kRaw);
     let protein = parseNum(pRaw);
     if (kcal === null && protein === null) return shake($('#e-kcal').closest('.field'));
-    let note = form.querySelector('.chip.on')?.dataset.v || '';
+    let note = mealOfDay();
     if (form.dataset.mode === 'total') {
       const t = totals();
       kcal = kcal === null ? 0 : kcal - t.kcal;
@@ -230,9 +221,10 @@ function mealBody(title, c, buttons) {
   return `<div class="sheet-body">
     <h2>${esc(title)}</h2>
     <ul class="ing-list">${rows}</ul>
-    <div class="sum2">
+    <div class="sum3">
       <div class="kcal"><b>${ready ? fmt(c.kcal) : '?'}</b><span>קלוריות</span></div>
-      <div class="protein"><b>${ready ? fmt(c.protein) : '?'}</b><span>גרם חלבון</span></div>
+      <div class="protein"><b>${ready ? fmt(c.protein) : '?'}</b><span>חלבון (ג׳)</span></div>
+      <div class="fat"><b>${ready && c.fat !== null ? fmt(c.fat) : '—'}</b><span>שומן (ג׳)</span></div>
     </div>
     ${
       ready
@@ -369,11 +361,11 @@ function foodSheet(id, flow = false) {
     ? {
         id, flow, isNew: false, custom: !!f.custom, edited: !!f.edited, wasMissing: isMissing(f),
         name: f.name, cat: f.cat, qty: f.qty, unit: f.unit || 'יחידה', per: f.qty === 'gram' ? '100g' : f.per,
-        kcal: f.kcal ?? '', protein: f.protein ?? '', unitGrams: f.unitGrams ?? '', step: f.step || 50, note: f.note || '',
+        kcal: f.kcal ?? '', protein: f.protein ?? '', fat: f.fat ?? '', unitGrams: f.unitGrams ?? '', step: f.step || 50, note: f.note || '',
       }
     : {
         id: 'c_' + uid(), flow: false, isNew: true, custom: true, name: '', cat: 'other', qty: 'unit', unit: 'יחידה',
-        per: 'unit', kcal: '', protein: '', unitGrams: '', step: 50, note: '',
+        per: 'unit', kcal: '', protein: '', fat: '', unitGrams: '', step: 50, note: '',
       };
   openSheet(foodForm());
   if (draft.isNew) $('[data-d="name"]').focus();
@@ -405,22 +397,29 @@ function foodForm() {
     }
     ${
       unit
-        ? `<label class="field sm"><span>מה היחידה? (פרוסה, כפית, יחידה…)</span><input data-d="unit" type="text" maxlength="20" autocomplete="off" value="${esc(d.unit)}"></label>
+        ? `${
+            d.custom
+              ? `<label class="field sm"><span>מה היחידה? (פרוסה, כפית, יחידה…)</span><input data-d="unit" type="text" maxlength="20" autocomplete="off" value="${esc(d.unit)}"></label>`
+              : ''
+          }
       <div class="seg">
         <button type="button" class="${per100 ? 'on' : ''}" data-act="food-seg" data-key="per" data-v="100g">ערכים ל-100 גרם</button>
-        <button type="button" class="${per100 ? '' : 'on'}" data-act="food-seg" data-key="per" data-v="unit">ערכים ליחידה אחת</button>
+        <button type="button" class="${per100 ? '' : 'on'}" data-act="food-seg" data-key="per" data-v="unit">ערכים ל${esc(d.unit || 'יחידה')}</button>
       </div>`
         : ''
     }
-    <div class="fields2">
-      <label class="field kcal"><span>קלוריות ${per100 ? 'ל-100 ג׳' : 'ליחידה'}</span>
+    <p class="help">${per100 ? 'מהטבלה שעל האריזה, ל-100 גרם:' : `ל${esc(d.unit || 'יחידה')} אחת:`}</p>
+    <div class="fields3">
+      <label class="field kcal"><span>קלוריות</span>
         <input data-d="kcal" inputmode="decimal" autocomplete="off" placeholder="—" value="${esc(d.kcal)}"></label>
-      <label class="field protein"><span>חלבון ${per100 ? 'ל-100 ג׳' : 'ליחידה'}</span>
+      <label class="field protein"><span>חלבון</span>
         <input data-d="protein" inputmode="decimal" autocomplete="off" placeholder="—" value="${esc(d.protein)}"></label>
+      <label class="field fat"><span>שומן</span>
+        <input data-d="fat" inputmode="decimal" autocomplete="off" placeholder="—" value="${esc(d.fat)}"></label>
     </div>
     ${
       unit && per100
-        ? `<label class="field sm"><span>כמה גרם שוקלת יחידה אחת?</span>
+        ? `<label class="field sm"><span>כמה גרם שוקל/ת ${esc(d.unit || 'יחידה')}?</span>
         <input data-d="unitGrams" inputmode="decimal" autocomplete="off" placeholder="למשל 30" value="${esc(d.unitGrams)}"></label>`
         : ''
     }
@@ -445,14 +444,13 @@ function foodPreview() {
   const kcal = parseNum(d.kcal);
   if (kcal === null) return '';
   const prot = parseNum(d.protein) || 0;
-  if (d.qty === 'gram') return `50 ג׳ = <b>${fmt(kcal / 2)} קל׳</b> · ${fmt1(prot / 2)} ג׳ חלבון`;
-  let k = 1;
-  if (d.per === '100g') {
-    const g = parseNum(d.unitGrams);
-    if (!g) return 'חסר רק המשקל של יחידה אחת';
-    k = g / 100;
-  }
-  return `${esc(d.unit || 'יחידה')} = <b>${fmt(kcal * k)} קל׳</b> · ${fmt1(prot * k)} ג׳ חלבון`;
+  const fat = parseNum(d.fat);
+  const line = (k) => `<b>${fmt(kcal * k)} קל׳</b> · חלבון ${fmt1(prot * k)} · שומן ${fat === null ? '—' : fmt1(fat * k)}`;
+  if (d.qty === 'gram') return `50 ג׳ = ${line(0.5)}`;
+  if (d.per !== '100g') return '';
+  const g = parseNum(d.unitGrams);
+  if (!g) return 'חסר רק המשקל של יחידה אחת';
+  return `${esc(d.unit || 'יחידה')} = ${line(g / 100)}`;
 }
 
 const nextMissing = (afterId) => missingFoods().find((f) => f.id !== afterId && !skipped.has(f.id));
@@ -521,7 +519,7 @@ onForm({
       t: 'food',
       id: d.id,
       data: {
-        name, cat: d.cat, qty: d.qty, per, kcal, protein: parseNum(d.protein) ?? 0,
+        name, cat: d.cat, qty: d.qty, per, kcal, protein: parseNum(d.protein) ?? 0, fat: parseNum(d.fat),
         unit: d.unit, unitGrams: per === '100g' ? grams : null, step: builtin?.step || d.step,
         note: d.wasMissing ? '' : d.note,
       },

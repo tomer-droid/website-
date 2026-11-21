@@ -1,58 +1,54 @@
-// The three screens: today / ideas / foods.
+// The three screens: today / suggestions by calories / the food list.
 import { app, on, $, esc, fmt, fmt1, budget, render, saveCart } from './core.js';
 import { CATS, getFoods, getMeals, mealCalc, isMissing, perOne, qtyText } from './foods.js';
 
-const TOL = 25; // an idea may pass the remaining calories by this much and still count as fitting
+const TOL = 25; // a meal may pass the remaining calories by this much and still count as fitting
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ---------- ideas: what fits the remaining budget
+// ---------- calorie levels: 300 means "about 300" (251-350)
+export const LEVELS = [200, 300, 400, 500, 600, 700, 800];
+const levelOf = (kcal) => (kcal <= 250 ? 200 : Math.min(800, Math.round(kcal / 100) * 100));
+const levelName = (l) => (l === 200 ? 'עד 250' : l === 800 ? '800+' : String(l));
+const levelTop = (l) => (l === 200 ? 250 : l === 800 ? 800 : l + 50);
+
+/** The biggest level that surely fits in what is left today. */
+export function fitLevel(b = budget()) {
+  if (!b.hasGoal) return 400;
+  let best = 200;
+  for (const l of LEVELS) if (levelTop(l) <= b.left + TOL) best = l;
+  return best;
+}
+
 export function ideas() {
   const foods = getFoods(app.state);
-  const b = budget();
   const out = [];
   for (const m of getMeals(app.state)) {
     const c = mealCalc(m.items, foods);
     if (!c) continue;
     const ready = c.missing.length === 0;
-    const fits = ready && (!b.hasGoal || c.kcal <= b.left + TOL);
-    const dens = ready && c.kcal > 0 ? (c.protein / c.kcal) * 100 : 0; // g protein per 100 kcal
-    let score = 0;
-    if (fits && b.hasGoal && b.left > 0) {
-      const fill = Math.min(1, c.kcal / b.left);
-      const prot = b.pLeft > 0 ? Math.min(1, c.protein / b.pLeft) : 0.5;
-      score = fill * 0.45 + prot * 0.55 - (m.tag === 'sweet' ? 0.35 : 0);
-    }
-    out.push({ m, ...c, ready, fits, dens, score });
+    out.push({ m, ...c, ready, level: ready ? levelOf(c.kcal) : null });
   }
   return out;
 }
 
 export const missingFoods = () => [...getFoods(app.state).values()].filter(isMissing);
 
+/** "חלבון 12 ג׳ · שומן 5 ג׳" as two small labels */
+const macros = (protein, fat) =>
+  `<span class="tag p">חלבון ${fmt(protein)} ג׳</span><span class="tag f">שומן ${fat === null ? '—' : fmt(fat) + ' ג׳'}</span>`;
+
 function ideaCard(x, b) {
-  const tags = [];
-  if (!x.ready) {
-    tags.push(`<span class="tag w">חסר נתון: ${esc(x.missing.map((f) => f.name).join(', '))}</span>`);
-  } else {
-    if (b.hasGoal) {
-      if (!x.fits) tags.push(`<span class="tag over">חורג ב-${fmt(x.kcal - b.left)} קל׳</span>`);
-      else if (b.left - x.kcal >= TOL) tags.push(`<span class="tag">יישארו ${fmt(b.left - x.kcal)} קל׳</span>`);
-      else tags.push('<span class="tag">סוגר את היום</span>');
-    }
-    if (b.pLeft > 0 && x.protein >= b.pLeft) tags.push('<span class="tag p">סוגר את החלבון</span>');
-    else if (x.dens >= 7) tags.push('<span class="tag p">עשיר בחלבון</span>');
-  }
-  if (x.m.custom) tags.push('<span class="tag">שלנו</span>');
-  const nums = x.ready
-    ? `<b>${fmt(x.kcal)}</b><small>קל׳</small><span>${fmt(x.protein)} ג׳ חלבון</span>`
-    : '<b>?</b><small>קל׳</small>';
+  const over = x.ready && b.hasGoal && x.kcal > b.left + TOL;
+  const tags = x.ready
+    ? macros(x.protein, x.fat) + (over ? '<span class="tag over">יותר ממה שנשאר היום</span>' : '')
+    : `<span class="tag w">חסר נתון: ${esc(x.missing.map((f) => f.name).join(', '))}</span>`;
   return `<button type="button" class="idea${x.ready ? '' : ' wait'}" data-act="idea" data-id="${esc(x.m.id)}">
     <div class="idea-main">
       <h3>${esc(x.m.name)}</h3>
       <p class="ing">${esc(x.rows.map((r) => qtyText(r.f, r.q)).join(' · '))}</p>
-      <div class="tags">${tags.join('')}</div>
+      <div class="tags">${tags}</div>
     </div>
-    <div class="idea-nums">${nums}</div>
+    <div class="idea-nums"><b>${x.ready ? fmt(x.kcal) : '?'}</b><small>קל׳</small></div>
   </button>`;
 }
 
@@ -61,31 +57,24 @@ function fillBanner(n) {
   return `<button type="button" class="banner" data-act="fill-next">
     <span class="banner-n">${n}</span>
     <span class="banner-t"><b>${n === 1 ? 'מוצר אחד מחכה' : 'מוצרים מחכים'} לנתונים מהאריזה</b>
-    <small>ממלאים פעם אחת — נשמר לשניכם ופותח עוד רעיונות</small></span>
-    <span class="banner-go">השלמה</span>
+    <small>ממלאים פעם אחת, וזה נשמר לשניכם</small></span>
+    <span class="banner-go">למלא</span>
   </button>`;
 }
 
 // ---------- today
 function hint(b) {
-  const parts = [];
   if (b.left <= 0) {
-    parts.push('היעד היומי הושלם. אם רעבים — ירקות, או משהו ממש קטן.');
-    if (b.proteinGoal && b.pLeft > 0) parts.push(`חסרים עוד ${fmt(b.pLeft)} גרם חלבון.`);
-    return parts.join(' ');
+    return 'היעד להיום הושלם.' + (b.proteinGoal && b.pLeft > 0 ? ` חסרים עוד ${fmt(b.pLeft)} גרם חלבון.` : '');
   }
-  if (b.left < 150) parts.push('נשאר ממש מעט — מספיק לנשנוש קטן.');
-  else if (b.left < 350) parts.push('מספיק לארוחה קלה או לנשנוש.');
-  else if (b.left < 600) parts.push('מספיק לארוחת ערב רגילה.');
-  else if (b.left < 900) parts.push('מספיק לארוחה גדולה, או לארוחה רגילה וקינוח.');
-  else parts.push('יש הרבה מקום: ארוחה גדולה וגם קינוח.');
-  if (b.proteinGoal) {
-    if (b.pLeft <= 0) parts.push('החלבון להיום כבר סגור.');
-    else if ((b.pLeft / b.left) * 100 >= 8) parts.push('חשוב שתהיה עשירה בחלבון — ביצים, קוטג׳, עוף.');
-    else if (b.pLeft <= 60) parts.push(`כדאי שיהיו בה בערך ${fmt(b.pLeft)} גרם חלבון.`);
-    else parts.push(`נשארו עוד ${fmt(b.pLeft)} גרם חלבון להיום.`);
-  }
-  return parts.join(' ');
+  let text;
+  if (b.left < 150) text = 'נשאר ממש מעט — נשנוש קטן.';
+  else if (b.left < 350) text = 'מספיק לארוחה קלה.';
+  else if (b.left < 600) text = 'מספיק לארוחת ערב רגילה.';
+  else if (b.left < 900) text = 'מספיק לארוחה גדולה, או רגילה וקינוח.';
+  else text = 'יש הרבה מקום: ארוחה גדולה וגם קינוח.';
+  if (b.proteinGoal && b.pLeft > 0 && (b.pLeft / b.left) * 100 >= 8) text += ' כדאי משהו עשיר בחלבון.';
+  return text;
 }
 
 const hhmm = (ms) => {
@@ -118,14 +107,13 @@ function installCard() {
     : 'בתפריט הדפדפן <span class="kbd">⋮</span> ← ״התקנת האפליקציה״ או ״הוספה למסך הבית״.';
   const btn = window.rkInstall ? '<button type="button" class="btn primary sm" data-act="install">התקנה</button>' : '';
   return `<section class="install">
-    <div><b>רוצים את זה כאפליקציה בטלפון?</b><p>${how}</p>${btn}</div>
+    <div><b>להתקין כאפליקציה בטלפון</b><p>${how}</p>${btn}</div>
     <button type="button" class="log-x" data-act="install-dismiss" aria-label="סגירה">✕</button>
   </section>`;
 }
 
 function todayHTML() {
   const b = budget();
-  const missing = missingFoods().length;
   if (!b.hasGoal) {
     return `<section class="empty-card">
       <h2>עוד לא הוגדר יעד יומי</h2>
@@ -137,10 +125,6 @@ function todayHTML() {
   const kPct = Math.min(100, Math.max(0, (b.kcal / b.kcalGoal) * 100));
   const pPct = b.proteinGoal ? Math.min(100, Math.max(0, (b.protein / b.proteinGoal) * 100)) : 0;
   const pDone = b.proteinGoal && b.pLeft <= 0;
-  const top = ideas()
-    .filter((x) => x.fits && x.ready)
-    .sort((a, z) => z.score - a.score)
-    .slice(0, 3);
 
   return `<section class="hero${over ? ' over' : ''}">
     <div class="hero-label">${b.name ? `נשאר ל${esc(b.name)} היום` : 'נשאר להיום'}</div>
@@ -167,18 +151,8 @@ function todayHTML() {
 
   <div class="actions">
     <button type="button" class="btn primary" data-act="add-entry"><span class="plus">+</span> אכלתי משהו</button>
-    <button type="button" class="btn" data-act="tab" data-tab="foods">הרכבת ארוחה</button>
+    <button type="button" class="btn" data-act="go-ideas">מה להכין?</button>
   </div>
-
-  <section class="block">
-    <header><h2>מה אפשר להכין עכשיו</h2><button type="button" class="link" data-act="tab" data-tab="ideas">כל הרעיונות</button></header>
-    ${
-      top.length
-        ? top.map((x) => ideaCard(x, b)).join('')
-        : `<p class="muted pad">${over || b.left < 60 ? 'אין כרגע רעיון שנכנס במה שנשאר.' : 'עוד אין רעיונות עם נתונים מלאים שנכנסים במה שנשאר.'}</p>`
-    }
-    ${fillBanner(missing)}
-  </section>
 
   <section class="block">
     <header><h2>מה נאכל היום</h2></header>
@@ -212,61 +186,53 @@ function animate(root) {
   });
 }
 
-// ---------- ideas screen
-const FILTERS = [
-  ['fit', 'מתאים עכשיו'],
-  ['all', 'הכול'],
-  ['prot', 'עשיר בחלבון'],
-  ['sweet', 'מתוק'],
-];
-
+// ---------- suggestions by calories
 function ideasHTML() {
   const b = budget();
   const all = ideas();
-  const f = app.filter;
-  const pick = (x) =>
-    f === 'fit' ? x.fits : f === 'prot' ? x.dens >= 7 : f === 'sweet' ? x.m.tag === 'sweet' : true;
-  const ready = all
-    .filter((x) => x.ready && pick(x))
-    .sort((a, z) => (f === 'fit' ? z.score - a.score : Number(z.fits) - Number(a.fits) || z.kcal - a.kcal));
-  const wait = all.filter((x) => !x.ready && (f === 'sweet' ? x.m.tag === 'sweet' : f !== 'prot'));
+  const fit = fitLevel(b);
+  const level = app.level || fit;
+  const here = all.filter((x) => x.level === level).sort((a, z) => a.kcal - z.kcal);
+  const wait = all.filter((x) => !x.ready);
   const sub = !b.hasGoal
-    ? 'עוד לא הוגדר יעד יומי'
+    ? 'בוחרים כמה קלוריות — ורואים מה אפשר להכין'
     : b.left > 0
-      ? `נשארו ${fmt(b.left)} קל׳${b.proteinGoal && b.pLeft > 0 ? ` ו-${fmt(b.pLeft)} ג׳ חלבון` : ''}`
-      : 'היעד היומי הושלם';
-  return `<div class="page-head"><h1>רעיונות</h1><p>${sub}</p></div>
-    <div class="chips scroll">${FILTERS.map(
-      ([id, name]) =>
-        `<button type="button" class="chip${f === id ? ' on' : ''}" data-act="filter" data-f="${id}">${name}</button>`,
-    ).join('')}</div>
+      ? `נשארו ${fmt(b.left)} קלוריות להיום`
+      : 'היעד להיום הושלם';
+  const chips = LEVELS.map((l) => {
+    const cls = `lvl${l === level ? ' on' : ''}${b.hasGoal && l > fit ? ' far' : ''}`;
+    return `<button type="button" class="${cls}" data-act="level" data-l="${l}"><b>${levelName(l)}</b><small>קל׳</small></button>`;
+  }).join('');
+  return `<div class="page-head"><h1>הצעות</h1><p>${sub}</p></div>
+    <div class="levels" id="levels">${chips}</div>
     ${
-      ready.length
-        ? ready.map((x) => ideaCard(x, b)).join('')
-        : `<p class="muted pad">${f === 'fit' ? 'אין כרגע רעיון עם נתונים מלאים שנכנס במה שנשאר.' : 'אין כאן רעיונות עם נתונים מלאים.'}</p>`
+      here.length
+        ? here.map((x) => ideaCard(x, b)).join('')
+        : '<p class="muted pad">אין עדיין הצעה בגודל הזה. אפשר להרכיב אחת ב״רשימה״ ולשמור אותה.</p>'
     }
     ${
       wait.length
-        ? `<h2 class="sep">ייפתחו כשיושלמו הנתונים</h2>${fillBanner(missingFoods().length)}${wait.map((x) => ideaCard(x, b)).join('')}`
+        ? `<h2 class="sep">עוד הצעות — ייפתחו כשיושלמו הנתונים</h2>${fillBanner(missingFoods().length)}${wait.map((x) => ideaCard(x, b)).join('')}`
         : ''
     }`;
 }
 
-// ---------- foods screen (reference list + meal builder)
+// ---------- the list (how much is in everything + putting a meal together)
 function foodRow(f) {
   const q = app.cart[f.id] || 0;
   const p = perOne(f);
+  const line = (k, pr, fa) => `<b>${fmt(k)} קל׳</b> · חלבון ${fmt1(pr)} · שומן ${fa === null ? '—' : fmt1(fa)}`;
   let sub;
   if (!p) sub = '<small class="need">חסרים נתונים מהאריזה</small>';
   else if (q > 0) {
     const label = f.qty === 'gram' ? `${fmt(q)} ג׳` : `× ${fmt1(q)}`;
-    sub = `<small class="sum">${label} = ${fmt(p.kcal * q)} קל׳ · ${fmt1(p.protein * q)} ג׳ חלבון</small>`;
-  } else if (f.qty === 'gram') sub = `<small>${fmt1(f.kcal)} קל׳ · ${fmt1(f.protein || 0)} ג׳ חלבון · ל-100 ג׳</small>`;
-  else sub = `<small>${fmt(p.kcal)} קל׳ · ${fmt1(p.protein)} ג׳ חלבון · ל${esc(f.unit)}</small>`;
+    sub = `<small class="sum">${label} = ${line(p.kcal * q, p.protein * q, p.fat === null ? null : p.fat * q)}</small>`;
+  } else if (f.qty === 'gram') sub = `<small>${line(f.kcal, f.protein || 0, f.fat ?? null)} <i>ל-100 ג׳</i></small>`;
+  else sub = `<small>${line(p.kcal, p.protein, p.fat)} <i>ל${esc(f.unit)}</i></small>`;
   const note = f.note && !(q > 0) ? `<small class="note">${esc(f.note)}</small>` : '';
   const id = esc(f.id);
   const side = !p
-    ? `<button type="button" class="fill" data-act="food-edit" data-id="${id}">השלמה</button>`
+    ? `<button type="button" class="fill" data-act="food-edit" data-id="${id}">למלא</button>`
     : `<div class="stepper${q > 0 ? ' on' : ''}">
         <button type="button" data-act="qty" data-id="${id}" data-d="-1" aria-label="פחות">−</button>
         <output>${f.qty === 'gram' ? fmt(q) + ' ג׳' : fmt1(q)}</output>
@@ -292,7 +258,7 @@ function foodsListHTML() {
   return html;
 }
 
-const foodsShell = () => `<div class="page-head"><h1>מאכלים</h1><p>לוחצים + כדי להרכיב ארוחה ולראות כמה היא יוצאת</p></div>
+const foodsShell = () => `<div class="page-head"><h1>רשימה</h1><p>כמה יש בכל דבר. לוחצים + כדי להרכיב ארוחה.</p></div>
   <input id="food-search" class="search" type="search" placeholder="חיפוש מאכל" autocomplete="off" enterkeyhint="search" value="${esc(app.search)}">
   <div id="foods-banner"></div>
   <div id="foods-list"></div>
@@ -309,14 +275,13 @@ function cartHTML() {
   if (app.tab !== 'foods' || !c.items.length) return '';
   const b = budget();
   const after = b.left - c.kcal;
-  const sub = !b.hasGoal
-    ? `${c.items.length} פריטים`
-    : after >= 0
-      ? `יישארו ${fmt(after)} קל׳ להיום`
-      : `חורג ב-${fmt(-after)} קל׳`;
+  const sub = !b.hasGoal ? '' : after >= 0 ? `יישארו ${fmt(after)} קל׳ להיום` : `חורג ב-${fmt(-after)} קל׳`;
   return `<div class="cart${b.hasGoal && after < 0 ? ' over' : ''}">
     <button type="button" class="cart-x" data-act="cart-clear" aria-label="ניקוי">✕</button>
-    <button type="button" class="cart-txt" data-act="cart-open"><b>${fmt(c.kcal)} קל׳ · ${fmt1(c.protein)} ג׳ חלבון</b><small>${sub}</small></button>
+    <button type="button" class="cart-txt" data-act="cart-open">
+      <b>${fmt(c.kcal)} קל׳ · חלבון ${fmt(c.protein)} · שומן ${c.fat === null ? '—' : fmt(c.fat)}</b>
+      ${sub && `<small>${sub}</small>`}
+    </button>
     <button type="button" class="btn primary sm" data-act="cart-open">סיכום</button>
   </div>`;
 }
@@ -325,7 +290,8 @@ function cartHTML() {
 export function renderView() {
   const view = $('#view');
   const tab = app.tab;
-  if (view.dataset.tab !== tab) {
+  const fresh = view.dataset.tab !== tab;
+  if (fresh) {
     view.dataset.tab = tab;
     view.innerHTML = tab === 'foods' ? foodsShell() : '';
     window.scrollTo(0, 0);
@@ -334,7 +300,11 @@ export function renderView() {
     view.innerHTML = todayHTML();
     animate(view);
   } else if (tab === 'ideas') {
+    const left = $('#levels')?.scrollLeft;
     view.innerHTML = ideasHTML();
+    const row = $('#levels');
+    if (left !== undefined && !fresh) row.scrollLeft = left;
+    else row.querySelector('.on')?.scrollIntoView({ block: 'nearest', inline: 'center' });
   } else {
     $('#foods-banner').innerHTML = app.search ? '' : fillBanner(missingFoods().length);
     $('#foods-list').innerHTML = foodsListHTML();
@@ -355,8 +325,13 @@ on({
     app.tab = el.dataset.tab;
     render();
   },
-  filter(el) {
-    app.filter = el.dataset.f;
+  'go-ideas'() {
+    app.level = null; // start from the level that fits what is left
+    app.tab = 'ideas';
+    render();
+  },
+  level(el) {
+    app.level = Number(el.dataset.l);
     render();
   },
   qty(el) {

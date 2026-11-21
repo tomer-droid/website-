@@ -4,8 +4,8 @@ A small phone app (PWA, Hebrew) that answers one question for two people at once
 **how many calories and how much protein are left to eat today — and what could be cooked with that.**
 
 - **Today** – what is left (calories + protein), a plain-language hint, quick logging.
-- **Ideas** – meal ideas that fit the remaining budget.
-- **Foods** – a calorie reference list that doubles as a meal builder.
+- **Suggestions** – meal ideas grouped by calorie level (about 300 / 400 / 500 …), each with protein and fat.
+- **List** – how much is in every food (calories, protein, fat); tap + to put a meal together and see its total.
 
 Both phones see the same data live (the app polls a tiny API).
 
