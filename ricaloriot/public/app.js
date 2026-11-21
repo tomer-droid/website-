@@ -98,6 +98,12 @@ on({
   },
 });
 
+// Some hosts add their own badge in the bottom corner. When it is there, keep that strip free
+// so it never sits on top of a button.
+const markBadge = () => document.documentElement.classList.toggle('has-badge', !!document.getElementById('nl-badge-frame'));
+new MutationObserver(markBadge).observe(document.body, { childList: true });
+markBadge();
+
 // a new day starts on its own
 let day = todayKey();
 setInterval(() => {

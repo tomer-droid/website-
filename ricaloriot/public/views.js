@@ -203,7 +203,7 @@ function ideasHTML() {
     const cls = `lvl${l === level ? ' on' : ''}${b.hasGoal && l > fit ? ' far' : ''}`;
     return `<button type="button" class="${cls}" data-act="level" data-l="${l}"><b>${levelName(l)}</b><small>קל׳</small></button>`;
   }).join('');
-  return `<div class="page-head"><h1>הצעות</h1><p>${sub}</p></div>
+  return `<p class="lead">${sub}</p>
     <div class="levels" id="levels">${chips}</div>
     ${
       here.length
@@ -258,7 +258,7 @@ function foodsListHTML() {
   return html;
 }
 
-const foodsShell = () => `<div class="page-head"><h1>רשימה</h1><p>כמה יש בכל דבר. לוחצים + כדי להרכיב ארוחה.</p></div>
+const foodsShell = () => `<p class="lead">כמה יש בכל דבר. לוחצים + כדי להרכיב ארוחה.</p>
   <input id="food-search" class="search" type="search" placeholder="חיפוש מאכל" autocomplete="off" enterkeyhint="search" value="${esc(app.search)}">
   <div id="foods-banner"></div>
   <div id="foods-list"></div>
