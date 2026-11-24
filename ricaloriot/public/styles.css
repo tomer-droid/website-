@@ -139,7 +139,6 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 .cap { font-size: 12.5px; color: var(--hero-ink2); margin-top: 6px; font-variant-numeric: tabular-nums; }
 .hero.over .stat.kcal .big, .hero.over .stat.kcal .unit { color: var(--hero-over); }
 .hero.over .stat.kcal .bar i { background: var(--hero-over); }
-.hint { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--hero-track); font-size: 15px; line-height: 1.5; }
 
 /* ---------- goal line + weight card */
 .goal-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 44px; margin-top: 4px; padding: 6px 6px; border: 0; background: none; color: var(--ink2); font-size: 14px; text-align: start; }

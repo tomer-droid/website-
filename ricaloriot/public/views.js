@@ -63,20 +63,6 @@ function fillBanner(n) {
 }
 
 // ---------- today
-function hint(b) {
-  if (b.left <= 0) {
-    return 'היעד להיום הושלם.' + (b.proteinGoal && b.pLeft > 0 ? ` חסרים עוד ${fmt(b.pLeft)} גרם חלבון.` : '');
-  }
-  let text;
-  if (b.left < 150) text = 'נשאר ממש מעט — נשנוש קטן.';
-  else if (b.left < 350) text = 'מספיק לארוחה קלה.';
-  else if (b.left < 600) text = 'מספיק לארוחת ערב רגילה.';
-  else if (b.left < 900) text = 'מספיק לארוחה גדולה, או רגילה וקינוח.';
-  else text = 'יש הרבה מקום: ארוחה גדולה וגם קינוח.';
-  if (b.proteinGoal && b.pLeft > 0 && (b.pLeft / b.left) * 100 >= 8) text += ' כדאי משהו עשיר בחלבון.';
-  return text;
-}
-
 const hhmm = (ms) => {
   const d = new Date(ms);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
@@ -222,7 +208,6 @@ function todayHTML() {
         }
       </div>
     </div>
-    <p class="hint">${esc(hint(b))}</p>
   </section>
   <button type="button" class="goal-line" data-act="settings">
     <span>היעד היומי: ${fmt(b.kcalGoal)} קל׳${b.proteinGoal ? ` · ${fmt(b.proteinGoal)} ג׳ חלבון` : ''}</span><b>שינוי היעד</b>
