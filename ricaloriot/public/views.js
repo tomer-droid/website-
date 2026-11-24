@@ -305,7 +305,7 @@ function foodRow(f) {
       </div>`;
   return `<li class="food${q > 0 ? ' on' : ''}${p ? '' : ' missing'}">
     <button type="button" class="food-info" data-act="food-edit" data-id="${id}">
-      <span class="emo">${f.emoji || '🍽️'}</span>
+      <span class="emo">${f.emoji || '🍽️'}${f.pct ? `<i>${f.pct}</i>` : ''}</span>
       <span class="txt"><b>${esc(f.name)}</b>${sub}${note}</span>
     </button>${side}
   </li>`;
