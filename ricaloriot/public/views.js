@@ -127,6 +127,49 @@ export function dayText(day) {
   return `${date.toLocaleDateString('he-IL', { weekday: 'short' })} ${d}.${m}`;
 }
 
+const dayNum = (day) => {
+  const [y, m, d] = day.split('-').map(Number);
+  return Date.UTC(y, m - 1, d) / 864e5;
+};
+
+/**
+ * Smooths out the daily ups and downs. For every weigh-in:
+ *  avg  - moving average (each day pulls the average 10% of the way toward the new reading)
+ *  rate - how much that average moved over the last 7 days (null until there are two readings)
+ */
+export function weightTrend(list) {
+  const out = [];
+  for (const w of list) {
+    const n = dayNum(w.day);
+    const prev = out[out.length - 1];
+    const avg = prev ? prev.avg + (1 - 0.9 ** Math.max(1, n - prev.n)) * (w.kg - prev.avg) : w.kg;
+    let rate = null;
+    if (prev) {
+      const target = n - 7;
+      const first = out[0];
+      if (first.n >= target) rate = ((avg - first.avg) / (n - first.n)) * 7;
+      else {
+        let i = out.length - 1;
+        while (out[i].n > target) i--;
+        const a = out[i];
+        const b = out[i + 1] || { n, avg };
+        const at = a.avg + ((b.avg - a.avg) * (target - a.n)) / (b.n - a.n);
+        rate = avg - at;
+      }
+    }
+    out.push({ ...w, n, avg, rate });
+  }
+  return out;
+}
+
+/** "↓ 0.1" in a coloured pill; down is green */
+export function ratePill(rate) {
+  if (rate === null) return '<span class="rate">—</span>';
+  const r = Math.round(rate * 10) / 10;
+  if (!r) return '<span class="rate">0</span>';
+  return `<span class="rate ${r < 0 ? 'down' : 'up'}">${r < 0 ? '↓' : '↑'} ${Math.abs(r).toLocaleString('en-US')}</span>`;
+}
+
 function weightCard() {
   const list = weighIns();
   const last = list[list.length - 1];
@@ -135,7 +178,10 @@ function weightCard() {
   let sub;
   if (!last) sub = 'עוד לא נרשם משקל';
   else if (!done) sub = `עוד לא נרשם היום · אחרון: ${dayText(last.day)}`;
-  else sub = prev ? `נרשם היום · ${changeText(last.kg - prev.kg)}` : 'נרשם היום';
+  else {
+    const t = weightTrend(list).pop();
+    sub = prev ? `נרשם היום · ממוצע ${(Math.round(t.avg * 10) / 10).toLocaleString('en-US')} · קצב שבועי ${ratePill(t.rate)}` : 'נרשם היום';
+  }
   return `<button type="button" class="weight${done ? ' done' : ''}" data-act="weight">
     <span class="w-ico">⚖️</span>
     <span class="w-txt"><b>${last ? `${kgText(last.kg)} ק״ג` : 'משקל'}</b><small>${sub}</small></span>

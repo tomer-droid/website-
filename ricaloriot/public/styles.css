@@ -159,6 +159,19 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 .wlog small { flex: none; font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .wlog small.down { color: var(--kcal); }
 .wlog small.up { color: var(--warn); }
+.rate { display: inline-block; min-width: 46px; padding: 2px 8px; border-radius: 9px; background: var(--surface2); color: var(--ink2); font-weight: 600; font-size: 13px; text-align: center; font-variant-numeric: tabular-nums; direction: ltr; }
+.rate.down { background: var(--kcal-soft); color: var(--kcal); }
+.rate.up { background: var(--danger-soft); color: var(--danger); }
+.w-txt .rate { min-width: 0; padding: 0 6px; font-size: 12.5px; }
+.spark .raw { stroke-width: 1.2; opacity: 0.4; }
+.help.tiny { font-size: 12.5px; margin-top: 0; }
+.wt { margin-top: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.wt li { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.2fr 36px; align-items: center; gap: 4px; min-height: 48px; padding-inline: 14px 4px; border-bottom: 1px solid var(--line); font-size: 15.5px; font-variant-numeric: tabular-nums; text-align: center; }
+.wt li:last-child { border-bottom: 0; }
+.wt .wt-d { text-align: start; font-size: 14px; color: var(--ink2); }
+.wt-h { min-height: 38px !important; font-size: 12.5px !important; color: var(--ink2); background: var(--surface2); }
+.wt .log-x { width: 36px; }
+.field input[type='date'] { font-size: 16px; min-height: 37px; }
 .steps { list-style: none; counter-reset: step; margin-top: 6px; }
 .steps li { counter-increment: step; position: relative; padding-inline-start: 46px; margin-top: 16px; min-height: 34px; font-size: 16px; line-height: 1.5; }
 .steps li::before { content: counter(step); position: absolute; inset-inline-start: 0; top: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--kcal); color: #fff; font-weight: 700; display: grid; place-items: center; }

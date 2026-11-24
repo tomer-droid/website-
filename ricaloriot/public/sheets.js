@@ -4,7 +4,7 @@ import {
   dispatch, render, saveFlags, saveCart, toast, lock, weighIns,
 } from './core.js';
 import { CATS, FOODS, getFoods, getMeals, mealCalc, isMissing, qtyText } from './foods.js';
-import { cartCalc, missingFoods, kgText, changeText, dayText } from './views.js';
+import { cartCalc, missingFoods, kgText, changeText, dayText, weightTrend, ratePill } from './views.js';
 
 const root = $('#sheet-root');
 let closeTimer = 0;
@@ -198,52 +198,62 @@ export const openFirstRun = () => settingsSheet(true);
 
 // ---------- weight: one weigh-in a day, all of them are kept
 function weightHistory(list) {
-  if (!list.length) return '<p class="help">כל שקילה נשמרת, אחת ליום. המשקל לא מתאפס — ההיסטוריה נשארת כאן.</p>';
-  const recent = list.slice(-30);
+  if (!list.length) return '<p class="help">כל שקילה נשמרת, אחת ליום. המשקל לא מתאפס — ההיסטוריה נשארת כאן, עם ממוצע נע וקצב שבועי.</p>';
+  const all = weightTrend(list);
+  const recent = all.slice(-30);
+  const one = (n) => (Math.round(n * 10) / 10).toLocaleString('en-US', { minimumFractionDigits: 1 });
   const rows = recent
-    .map((w, i) => {
-      const prev = i ? recent[i - 1] : list[list.length - recent.length - 1];
-      const d = prev ? Math.round((w.kg - prev.kg) * 10) / 10 : 0;
-      const delta = !prev || !d ? '' : `<small class="${d < 0 ? 'down' : 'up'}">${d < 0 ? '↓' : '↑'} ${Math.abs(d).toLocaleString('en-US')}</small>`;
-      return `<li>
-        <span class="log-n">${dayText(w.day)}</span>${delta}
-        <span class="log-k"><b>${kgText(w.kg)}</b> ק״ג</span>
+    .map(
+      (w) => `<li>
+        <span class="wt-d">${dayText(w.day)}</span>
+        <span>${one(w.kg)}</span>
+        <b>${one(w.avg)}</b>
+        ${ratePill(w.rate)}
         <button type="button" class="log-x" data-act="weight-del" data-day="${w.day}" aria-label="מחיקה">✕</button>
-      </li>`;
-    })
+      </li>`,
+    )
     .reverse()
     .join('');
   let chart = '';
   if (recent.length > 1) {
-    const kgs = recent.map((w) => w.kg);
-    const min = Math.min(...kgs);
-    const span = Math.max(...kgs) - min || 1;
-    const pts = recent.map((w, i) => [(i / (recent.length - 1)) * 296 + 2, 58 - ((w.kg - min) / span) * 52]);
-    const [ex, ey] = pts[pts.length - 1];
+    const vals = recent.flatMap((w) => [w.kg, w.avg]);
+    const min = Math.min(...vals);
+    const span = Math.max(...vals) - min || 1;
+    const x0 = recent[0].n;
+    const xs = recent[recent.length - 1].n - x0 || 1;
+    const pt = (w, v) => `${(((w.n - x0) / xs) * 296 + 2).toFixed(1)},${(58 - ((v - min) / span) * 52).toFixed(1)}`;
     chart = `<svg class="spark" viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true">
-      <polyline points="${pts.map((p) => p.map((n) => n.toFixed(1)).join(',')).join(' ')}"/>
-      <circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="3.5"/>
-    </svg>`;
+      <polyline class="raw" points="${recent.map((w) => pt(w, w.kg)).join(' ')}"/>
+      <polyline points="${recent.map((w) => pt(w, w.avg)).join(' ')}"/>
+    </svg><p class="help tiny">קו עבה: הממוצע · קו דק: מה שנשקל בפועל</p>`;
   }
-  const first = list[0];
-  const last = list[list.length - 1];
+  const first = all[0];
+  const last = all[all.length - 1];
   return `<div class="settings">
     <h3>היסטוריה</h3>
-    ${list.length > 1 ? `<p class="help">מאז ${dayText(first.day)}: <b>${changeText(last.kg - first.kg)}</b></p>` : ''}
+    ${all.length > 1 ? `<p class="help">מאז ${dayText(first.day)}, לפי הממוצע: <b>${changeText(last.avg - first.avg)}</b></p>` : ''}
     ${chart}
-    <ul class="log wlog">${rows}</ul>
-    ${list.length > 30 ? `<p class="help">מוצגות 30 השקילות האחרונות מתוך ${list.length}.</p>` : ''}
+    <ul class="wt">
+      <li class="wt-h"><span class="wt-d">תאריך</span><span>נשקל</span><span>ממוצע</span><span>קצב שבועי</span><span></span></li>
+      ${rows}
+    </ul>
+    ${all.length > 30 ? `<p class="help">מוצגות 30 השקילות האחרונות מתוך ${all.length}.</p>` : ''}
   </div>`;
 }
 
 function weightSheet(focus = true) {
   const list = weighIns();
-  const todays = app.state.weights?.[todayKey()];
+  const today = todayKey();
+  const todays = app.state.weights?.[today];
   const last = list[list.length - 1];
   openSheet(`<form class="sheet-body" data-form="weight" novalidate>
-    <h2>המשקל של היום</h2>
-    <label class="field"><span>קילוגרם</span>
-      <input id="w-kg" inputmode="decimal" autocomplete="off" placeholder="${last ? kgText(last.kg) : '0.0'}" value="${todays ?? ''}"></label>
+    <h2>רישום משקל</h2>
+    <div class="fields2">
+      <label class="field"><span>קילוגרם</span>
+        <input id="w-kg" inputmode="decimal" autocomplete="off" placeholder="${last ? kgText(last.kg) : '0.0'}" value="${todays ?? ''}"></label>
+      <label class="field sm"><span>תאריך</span>
+        <input id="w-day" type="date" max="${today}" value="${today}"></label>
+    </div>
     <button type="submit" class="btn primary big">שמירה</button>
   </form>
   ${weightHistory(list)}`);
@@ -272,7 +282,13 @@ onForm({
   weight() {
     const kg = parseNum($('#w-kg').value);
     if (kg === null || kg < 20 || kg > 400) return shake($('#w-kg').closest('.field'));
-    dispatch({ t: 'weight', day: todayKey(), kg });
+    const picked = $('#w-day').value;
+    const day = /^\d{4}-\d{2}-\d{2}$/.test(picked) && picked <= todayKey() ? picked : todayKey();
+    dispatch({ t: 'weight', day, kg });
+    if (day !== todayKey()) {
+      toast('נשמר ✓ אפשר להוסיף עוד תאריך');
+      return weightSheet();
+    }
     closeSheet();
     toast('המשקל נשמר ✓');
   },
