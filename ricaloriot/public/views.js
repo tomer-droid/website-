@@ -100,10 +100,9 @@ function logHTML(b) {
 
 function installCard() {
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-  if (standalone || app.flags.installDismissed) return '';
+  if (standalone) return ''; // already installed
   return `<section class="install">
     <button type="button" class="install-go" data-act="install-help"><b>להתקין כאפליקציה בטלפון</b><span>לוחצים כאן להסבר קצר ←</span></button>
-    <button type="button" class="log-x" data-act="install-dismiss" aria-label="סגירה">✕</button>
   </section>`;
 }
 
