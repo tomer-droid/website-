@@ -1,10 +1,10 @@
 // Bottom sheets: add what was eaten, goals/settings, an idea, the built meal, a food's values.
 import {
   app, on, onForm, $, esc, fmt, fmt1, round1, uid, parseNum, budget, totals, todayKey,
-  dispatch, render, saveFlags, saveCart, toast, lock,
+  dispatch, render, saveFlags, saveCart, toast, lock, weighIns,
 } from './core.js';
 import { CATS, FOODS, getFoods, getMeals, mealCalc, isMissing, qtyText } from './foods.js';
-import { cartCalc, missingFoods } from './views.js';
+import { cartCalc, missingFoods, kgText, changeText, dayText } from './views.js';
 
 const root = $('#sheet-root');
 let closeTimer = 0;
@@ -154,7 +154,7 @@ function settingsSheet(first = false) {
     <button type="button" class="btn wide" data-act="share" data-link="${esc(link)}">שליחת הקישור</button>
     <p class="help">קוד הכניסה: <b class="code">${esc(app.code)}</b></p>
     <h3>התקנה בטלפון</h3>
-    <p class="help"><b>אייפון:</b> פותחים בספארי ← כפתור השיתוף ← ״הוספה למסך הבית״.<br><b>אנדרואיד:</b> בכרום ← תפריט ⋮ ← ״התקנת האפליקציה״.</p>
+    <button type="button" class="btn wide" data-act="install-help">איך מתקינים בטלפון?</button>
     <button type="button" class="btn ghost wide" data-act="logout">ניתוק המכשיר הזה</button>
   </div>`
   }`);
@@ -195,6 +195,132 @@ onForm({
 });
 
 export const openFirstRun = () => settingsSheet(true);
+
+// ---------- weight: one weigh-in a day, all of them are kept
+function weightHistory(list) {
+  if (!list.length) return '<p class="help">כל שקילה נשמרת, אחת ליום. המשקל לא מתאפס — ההיסטוריה נשארת כאן.</p>';
+  const recent = list.slice(-30);
+  const rows = recent
+    .map((w, i) => {
+      const prev = i ? recent[i - 1] : list[list.length - recent.length - 1];
+      const d = prev ? Math.round((w.kg - prev.kg) * 10) / 10 : 0;
+      const delta = !prev || !d ? '' : `<small class="${d < 0 ? 'down' : 'up'}">${d < 0 ? '↓' : '↑'} ${Math.abs(d).toLocaleString('en-US')}</small>`;
+      return `<li>
+        <span class="log-n">${dayText(w.day)}</span>${delta}
+        <span class="log-k"><b>${kgText(w.kg)}</b> ק״ג</span>
+        <button type="button" class="log-x" data-act="weight-del" data-day="${w.day}" aria-label="מחיקה">✕</button>
+      </li>`;
+    })
+    .reverse()
+    .join('');
+  let chart = '';
+  if (recent.length > 1) {
+    const kgs = recent.map((w) => w.kg);
+    const min = Math.min(...kgs);
+    const span = Math.max(...kgs) - min || 1;
+    const pts = recent.map((w, i) => [(i / (recent.length - 1)) * 296 + 2, 58 - ((w.kg - min) / span) * 52]);
+    const [ex, ey] = pts[pts.length - 1];
+    chart = `<svg class="spark" viewBox="0 0 300 64" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="${pts.map((p) => p.map((n) => n.toFixed(1)).join(',')).join(' ')}"/>
+      <circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="3.5"/>
+    </svg>`;
+  }
+  const first = list[0];
+  const last = list[list.length - 1];
+  return `<div class="settings">
+    <h3>היסטוריה</h3>
+    ${list.length > 1 ? `<p class="help">מאז ${dayText(first.day)}: <b>${changeText(last.kg - first.kg)}</b></p>` : ''}
+    ${chart}
+    <ul class="log wlog">${rows}</ul>
+    ${list.length > 30 ? `<p class="help">מוצגות 30 השקילות האחרונות מתוך ${list.length}.</p>` : ''}
+  </div>`;
+}
+
+function weightSheet(focus = true) {
+  const list = weighIns();
+  const todays = app.state.weights?.[todayKey()];
+  const last = list[list.length - 1];
+  openSheet(`<form class="sheet-body" data-form="weight" novalidate>
+    <h2>המשקל של היום</h2>
+    <label class="field"><span>קילוגרם</span>
+      <input id="w-kg" inputmode="decimal" autocomplete="off" placeholder="${last ? kgText(last.kg) : '0.0'}" value="${todays ?? ''}"></label>
+    <button type="submit" class="btn primary big">שמירה</button>
+  </form>
+  ${weightHistory(list)}`);
+  if (focus) $('#w-kg').focus();
+}
+
+on({
+  weight: () => weightSheet(),
+  'weight-del'(el) {
+    const day = el.dataset.day;
+    const kg = app.state.weights?.[day];
+    if (kg === undefined) return;
+    dispatch({ t: 'weight', day, kg: null });
+    weightSheet(false);
+    toast('השקילה נמחקה', {
+      action: 'ביטול',
+      onAction: () => {
+        dispatch({ t: 'weight', day, kg });
+        if (root.classList.contains('open')) weightSheet(false);
+      },
+    });
+  },
+});
+
+onForm({
+  weight() {
+    const kg = parseNum($('#w-kg').value);
+    if (kg === null || kg < 20 || kg > 400) return shake($('#w-kg').closest('.field'));
+    dispatch({ t: 'weight', day: todayKey(), kg });
+    closeSheet();
+    toast('המשקל נשמר ✓');
+  },
+});
+
+// ---------- how to put the app on the phone
+function installSheet(flip = false) {
+  const ua = navigator.userAgent;
+  const realIos = /iphone|ipad|ipod/i.test(ua);
+  const ios = flip ? !realIos : realIos;
+  const inApp = /FBAN|FBAV|Instagram|WhatsApp|Line\/|GSA\//i.test(ua) || (realIos && !/Safari\//.test(ua));
+  const link = `${location.origin}/?k=${encodeURIComponent(app.code)}`;
+  const copy = `<button type="button" class="btn wide" data-act="copy-link" data-link="${esc(link)}">העתקת הקישור</button>`;
+  const body = ios
+    ? `<h2>התקנה באייפון</h2>
+    ${inApp && !flip ? '<p class="help warn">הקישור נפתח עכשיו בתוך אפליקציה אחרת, ומשם אי אפשר להתקין. מעתיקים את הקישור ופותחים אותו בספארי.</p>' : ''}
+    <ol class="steps">
+      <li>פותחים את הקישור ב<b>ספארי</b> — הדפדפן עם המצפן הכחול.</li>
+      <li>לוחצים על כפתור השיתוף <span class="kbd">⬆︎</span> (ריבוע עם חץ למעלה).<br>לא רואים אותו? לוחצים קודם על <span class="kbd">⋯</span> ואז על ״שיתוף״.</li>
+      <li>גוללים למטה, בוחרים <b>״הוספה למסך הבית״</b> ואז <b>״הוסף״</b>.</li>
+    </ol>
+    <p class="help">זהו. האייקון הירוק של Ricaloriot מופיע על מסך הבית.</p>
+    ${copy}`
+    : `<h2>התקנה באנדרואיד</h2>
+    ${window.rkInstall ? '<button type="button" class="btn primary big" data-act="install">התקנה עכשיו</button><p class="help">ואם זה לא עבד:</p>' : ''}
+    <ol class="steps">
+      <li>פותחים את הקישור ב<b>כרום</b>.</li>
+      <li>לוחצים על שלוש הנקודות <span class="kbd">⋮</span> בפינה למעלה.</li>
+      <li>בוחרים <b>״התקנת האפליקציה״</b> או <b>״הוספה למסך הבית״</b>, ואז ״התקנה״.</li>
+    </ol>
+    <p class="help">זהו. האייקון הירוק של Ricaloriot מופיע על מסך הבית.</p>
+    ${copy}`;
+  openSheet(`<div class="sheet-body">${body}
+    <button type="button" class="btn ghost wide" data-act="install-help" data-flip="${flip ? '' : '1'}">${ios ? 'יש לי אנדרואיד' : 'יש לי אייפון'}</button>
+  </div>`);
+}
+
+on({
+  'install-help': (el) => installSheet(!!el.dataset.flip),
+  async 'copy-link'(el) {
+    try {
+      await navigator.clipboard.writeText(el.dataset.link);
+      toast('הקישור הועתק');
+    } catch {
+      toast('לא הצלחתי להעתיק. אפשר להעתיק מהשורה שלמעלה.');
+    }
+  },
+});
 
 // ---------- an idea / the built meal
 function mealBody(title, c, buttons) {

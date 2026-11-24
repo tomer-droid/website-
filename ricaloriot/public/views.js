@@ -1,5 +1,5 @@
 // The three screens: today / suggestions by calories / the food list.
-import { app, on, $, esc, fmt, fmt1, budget, render, saveCart } from './core.js';
+import { app, on, $, esc, fmt, fmt1, budget, render, saveCart, todayKey, weighIns } from './core.js';
 import { CATS, getFoods, getMeals, mealCalc, isMissing, perOne, qtyText } from './foods.js';
 
 const TOL = 25; // a meal may pass the remaining calories by this much and still count as fitting
@@ -101,15 +101,46 @@ function logHTML(b) {
 function installCard() {
   const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
   if (standalone || app.flags.installDismissed) return '';
-  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const how = ios
-    ? 'בספארי: כפתור השיתוף <span class="kbd">⬆︎</span> ← ״הוספה למסך הבית״.'
-    : 'בתפריט הדפדפן <span class="kbd">⋮</span> ← ״התקנת האפליקציה״ או ״הוספה למסך הבית״.';
-  const btn = window.rkInstall ? '<button type="button" class="btn primary sm" data-act="install">התקנה</button>' : '';
   return `<section class="install">
-    <div><b>להתקין כאפליקציה בטלפון</b><p>${how}</p>${btn}</div>
+    <button type="button" class="install-go" data-act="install-help"><b>להתקין כאפליקציה בטלפון</b><span>לוחצים כאן להסבר קצר ←</span></button>
     <button type="button" class="log-x" data-act="install-dismiss" aria-label="סגירה">✕</button>
   </section>`;
+}
+
+// ---------- weight
+export const kgText = (kg) => (Math.round(kg * 100) / 100).toLocaleString('en-US');
+
+/** "ירידה של 0.3 ק״ג" / "עלייה של 0.2 ק״ג" / "בלי שינוי" */
+export function changeText(diff) {
+  const d = Math.round(diff * 10) / 10;
+  if (!d) return 'בלי שינוי';
+  return `${d < 0 ? 'ירידה' : 'עלייה'} של ${Math.abs(d).toLocaleString('en-US')} ק״ג`;
+}
+
+export function dayText(day) {
+  const [y, m, d] = day.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  const now = new Date();
+  const diff = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - date) / 864e5);
+  if (diff === 0) return 'היום';
+  if (diff === 1) return 'אתמול';
+  return `${date.toLocaleDateString('he-IL', { weekday: 'short' })} ${d}.${m}`;
+}
+
+function weightCard() {
+  const list = weighIns();
+  const last = list[list.length - 1];
+  const prev = list[list.length - 2];
+  const done = !!last && last.day === todayKey();
+  let sub;
+  if (!last) sub = 'עוד לא נרשם משקל';
+  else if (!done) sub = `עוד לא נרשם היום · אחרון: ${dayText(last.day)}`;
+  else sub = prev ? `נרשם היום · ${changeText(last.kg - prev.kg)}` : 'נרשם היום';
+  return `<button type="button" class="weight${done ? ' done' : ''}" data-act="weight">
+    <span class="w-ico">⚖️</span>
+    <span class="w-txt"><b>${last ? `${kgText(last.kg)} ק״ג` : 'משקל'}</b><small>${sub}</small></span>
+    <span class="w-go">${done ? 'עדכון' : 'רישום משקל'}</span>
+  </button>`;
 }
 
 function todayHTML() {
@@ -119,7 +150,7 @@ function todayHTML() {
       <h2>עוד לא הוגדר יעד יומי</h2>
       <p>מגדירים פעם אחת כמה קלוריות וכמה חלבון ביום — ומכאן הכול מחושב לבד.</p>
       <button type="button" class="btn primary" data-act="settings">הגדרת יעד</button>
-    </section>${installCard()}`;
+    </section>${weightCard()}${installCard()}`;
   }
   const over = b.left < 0;
   const kPct = Math.min(100, Math.max(0, (b.kcal / b.kcalGoal) * 100));
@@ -148,11 +179,15 @@ function todayHTML() {
     </div>
     <p class="hint">${esc(hint(b))}</p>
   </section>
+  <button type="button" class="goal-line" data-act="settings">
+    <span>היעד היומי: ${fmt(b.kcalGoal)} קל׳${b.proteinGoal ? ` · ${fmt(b.proteinGoal)} ג׳ חלבון` : ''}</span><b>שינוי היעד</b>
+  </button>
 
   <div class="actions">
     <button type="button" class="btn primary" data-act="add-entry"><span class="plus">+</span> אכלתי משהו</button>
     <button type="button" class="btn" data-act="go-ideas">מה להכין?</button>
   </div>
+  ${weightCard()}
 
   <section class="block">
     <header><h2>מה נאכל היום</h2></header>

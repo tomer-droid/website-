@@ -84,6 +84,13 @@ export function budget() {
   };
 }
 
+/** All weigh-ins, oldest first: [{ day: 'YYYY-MM-DD', kg }] */
+export function weighIns(state = app.state) {
+  return Object.keys(state.weights || {})
+    .sort()
+    .map((day) => ({ day, kg: state.weights[day] }));
+}
+
 export function saveFlags(patch) {
   Object.assign(app.flags, patch);
   ls.set(K.flags, app.flags);

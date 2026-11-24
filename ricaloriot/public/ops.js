@@ -10,6 +10,7 @@ export function emptyState() {
     days: {}, // 'YYYY-MM-DD' -> { entries: [{ id, at, kcal, protein, note }] }
     foods: {}, // food id -> edited / custom food (see cleanFood)
     meals: {}, // meal id -> custom idea, or { hidden: true } for a built-in one
+    weights: {}, // 'YYYY-MM-DD' -> kg. One weigh-in per day; these are kept (they do not reset)
   };
 }
 
@@ -72,6 +73,7 @@ export function applyOps(state, ops) {
   s.days ||= {};
   s.foods ||= {};
   s.meals ||= {};
+  s.weights ||= {};
   for (const op of Array.isArray(ops) ? ops : []) {
     if (!op || typeof op !== 'object') continue;
     switch (op.t) {
@@ -101,6 +103,16 @@ export function applyOps(state, ops) {
         if (day) day.entries = day.entries.filter((e) => e.id !== op.id);
         break;
       }
+      case 'weight': {
+        if (!isDay(op.day)) break;
+        if (op.kg === null || op.kg === undefined) {
+          delete s.weights[op.day];
+          break;
+        }
+        const kg = num(op.kg, 20, 400, 2);
+        if (kg !== null) s.weights[op.day] = kg;
+        break;
+      }
       case 'food': {
         if (!isId(op.id)) break;
         if (op.data === null || op.data === undefined) {
@@ -125,5 +137,7 @@ export function applyOps(state, ops) {
   }
   const keys = Object.keys(s.days).sort();
   while (keys.length > 14) delete s.days[keys.shift()];
+  const weighed = Object.keys(s.weights).sort();
+  while (weighed.length > 1100) delete s.weights[weighed.shift()]; // about three years
   return s;
 }

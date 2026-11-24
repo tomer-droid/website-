@@ -141,6 +141,29 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 .hero.over .stat.kcal .bar i { background: var(--hero-over); }
 .hint { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--hero-track); font-size: 15px; line-height: 1.5; }
 
+/* ---------- goal line + weight card */
+.goal-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 44px; margin-top: 4px; padding: 6px 6px; border: 0; background: none; color: var(--ink2); font-size: 14px; text-align: start; }
+.goal-line b { flex: none; color: var(--kcal); font-weight: 600; }
+.weight { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 12px 12px 12px 14px; padding-inline: 14px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; text-align: start; }
+.weight:active { background: var(--surface2); }
+.w-ico { flex: none; font-size: 26px; line-height: 1; }
+.w-txt { flex: 1; min-width: 0; }
+.w-txt b { display: block; font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.w-txt small { display: block; font-size: 13px; color: var(--ink2); line-height: 1.4; }
+.w-go { flex: none; height: 40px; padding: 0 14px; border-radius: 13px; display: grid; place-items: center; background: var(--kcal); color: #fff; font-weight: 600; font-size: 14.5px; }
+.weight.done .w-go { background: var(--surface2); color: var(--ink); }
+.spark { display: block; width: 100%; height: 64px; margin: 10px 0 4px; color: var(--kcal); overflow: visible; }
+.spark polyline { stroke-width: 2.5; vector-effect: non-scaling-stroke; }
+.spark circle { fill: currentColor; stroke: none; }
+.wlog { margin-top: 10px; }
+.wlog small { flex: none; font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.wlog small.down { color: var(--kcal); }
+.wlog small.up { color: var(--warn); }
+.steps { list-style: none; counter-reset: step; margin-top: 6px; }
+.steps li { counter-increment: step; position: relative; padding-inline-start: 46px; margin-top: 16px; min-height: 34px; font-size: 16px; line-height: 1.5; }
+.steps li::before { content: counter(step); position: absolute; inset-inline-start: 0; top: 0; width: 34px; height: 34px; border-radius: 50%; background: var(--kcal); color: #fff; font-weight: 700; display: grid; place-items: center; }
+.help.warn { background: var(--warn-soft); color: var(--warn); border-radius: 14px; padding: 10px 12px; }
+
 /* ---------- buttons */
 .btn {
   height: 52px; padding: 0 18px; border: 0; border-radius: 16px;
@@ -225,10 +248,10 @@ h2.sep, h2.cat { font-size: 13.5px; font-weight: 600; color: var(--ink2); margin
 .log-k b { color: var(--ink); font-size: 15.5px; }
 .log-x { flex: none; width: 40px; height: 40px; border: 0; border-radius: 12px; background: transparent; color: var(--ink3); font-size: 14px; }
 .log-x:active { background: var(--surface2); }
-.install { display: flex; gap: 8px; align-items: flex-start; margin-top: 28px; padding: 14px 8px 14px 16px; padding-inline: 16px 8px; border: 1px dashed var(--line); border-radius: 18px; font-size: 14.5px; }
-.install > div { flex: 1; }
-.install p { color: var(--ink2); margin-top: 2px; }
-.install .btn { margin-top: 10px; }
+.install { display: flex; gap: 4px; align-items: center; margin-top: 28px; padding-inline: 6px 6px; border: 1px dashed var(--line); border-radius: 18px; }
+.install-go { flex: 1; min-width: 0; border: 0; background: none; text-align: start; padding: 14px 10px; font-size: 15px; }
+.install-go b { display: block; }
+.install-go span { display: block; color: var(--kcal); font-weight: 600; font-size: 14px; margin-top: 2px; }
 .kbd { display: inline-block; padding: 0 6px; border-radius: 6px; background: var(--surface2); color: var(--ink); }
 
 /* ---------- chips, segmented */
